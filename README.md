@@ -1,4 +1,4 @@
-## Movie Ticket Booking System ##
+# Movie Ticket Booking System 
  ## This project is under development right now.
   This repository hosts the code for an Online Movie Ticket Booking System built in Java. 
   This application allows users to browse movies, check available showtimes, and book tickets online. The project follows a structured MVC architecture and is designed to provide a seamless booking experience.
@@ -7,7 +7,7 @@
   1. Data Model and DAO
      The data model and DAO (Data Access Object) classes are located at:
      
-          >>src/main/java/com
+          >> src/main/java/com
 
       # These classes are responsible for:
 
