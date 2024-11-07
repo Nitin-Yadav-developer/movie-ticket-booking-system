@@ -1,0 +1,3 @@
+create  Movie_Ticket_Booking_System;
+
+use Movie_Ticket_Booking_System;

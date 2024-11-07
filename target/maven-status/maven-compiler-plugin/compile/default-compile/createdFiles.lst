@@ -1,0 +1,10 @@
+com\movie\model\Movie.class
+com\user\dao\UserDao.class
+com\booking\model\Booking.class
+com\booking\dao\BookingDao.class
+com\theatre\model\Theatre.class
+com\theatre\dao\TheatreDao.class
+com\movie\dao\MovieDao.class
+com\showtime\model\Showtime.class
+com\user\model\User.class
+com\showtime\dao\ShowtimeDao.class
