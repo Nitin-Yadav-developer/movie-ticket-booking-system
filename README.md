@@ -9,7 +9,7 @@
      
           >> src/main/java/com
 
-      # These classes are responsible for:
+      #### These classes are responsible for:
 
         - Defining the structure of entities such as movies, theaters, seats, bookings, and users.
         - Handling database interactions, such as CRUD operations, with various entities in the system.
