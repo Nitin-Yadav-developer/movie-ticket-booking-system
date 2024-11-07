@@ -6,16 +6,18 @@
 ## Project Structure
   1. Data Model and DAO
      The data model and DAO (Data Access Object) classes are located at:
-         # >>>>> src/main/java/com
+     
+          >>src/main/java/com
 
       # These classes are responsible for:
 
         - Defining the structure of entities such as movies, theaters, seats, bookings, and users.
         - Handling database interactions, such as CRUD operations, with various entities in the system.
      
- 2. Web Application
+ 3. Web Application
       The web-related files, including JSP pages and web configuration files, are located at:
-        #  >>>>> src/main/webapp
+        
+             >> src/main/webapp
       These files are responsible for rendering the user interface, handling user inputs, and providing a responsive and interactive booking experience.
 
 
