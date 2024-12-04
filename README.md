@@ -70,7 +70,7 @@
   ### 2.Configure database connection:
 
                   -Open src/main/java/com/user/dao/UserDao.java
-                  -Update the database URL, username, and password
+                  -Update the database URL, username, and password in other DAO classes
 
  ### 3.Build the project:
                mvn clean install
