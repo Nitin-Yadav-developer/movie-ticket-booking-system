@@ -1,10 +1,8 @@
 package com.user.dao;
 
 import java.sql.*;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import com.user.model.User;
 
 public class UserDao {
@@ -14,11 +12,12 @@ public class UserDao {
     private String USERNAME = "root"; 
     private String PASSWORD = "Nitin@1513";
     
-    private static final String INSERT_USER_SQL="INSERT INTO users"+"(uname,email,country,password) VALUES "+"(?,?,?,?);";
-    private static final String SELECT_USER_BY_ID="SELECT * FROM UDERS WHERE ID=?;";
-    private static final String  SELECT_ALL_USERS="SELECT * FROM USERS;";
-    private static final String DELETE_USER_SQL="DELETE FROM USERS WHERE ID=?;";
-    private static final String UPADATE_USERS_SQL="UPDATE USERS SET UNAME=?, EMAIL=?, COUNTRY=?, PASSWORD=?, WHERE ID=?;";
+    private static final String INSERT_USER_SQL = "INSERT INTO users (username, name, email, country, address, password) VALUES (?,?,?,?,?,?);";
+    private static final String SELECT_USER_BY_ID="SELECT user_id, username, name, email, country, address, password, created_at FROM users WHERE user_id=?;";
+    private static final String  SELECT_ALL_USERS="SELECT user_id, username, name, email, country, address, password, created_at FROM users;";
+    private static final String DELETE_USER_SQL="DELETE FROM users WHERE user_id=?;";
+    private static final String UPDATE_USERS_SQL="UPDATE users SET username=?, name=?, email=?, country=?, address=?, password=? WHERE user_id=?;";
+    private static final String SELECT_USER_BY_EMAIL_AND_PASSWORD = "SELECT user_id, username, name, email, country, address, password, created_at FROM users WHERE email=? AND password=?;";
 	public UserDao() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -42,72 +41,81 @@ public class UserDao {
     }
     
     
-    public void insertUser(User user) {
-    	UserDao dao=new UserDao();
-    	try(Connection connection=dao.getConnection()){
-    		
-    		PreparedStatement preparedstatement=connection.prepareStatement(INSERT_USER_SQL);
-            preparedstatement.setString(1,user.getName());
-            preparedstatement.setString(2,user.getEmail());
-            preparedstatement.setString(3,user.getCountry());
-            preparedstatement.setString(4,user.getPassword());
+    public void insertUser(User user) throws SQLException {
+        if (!user.isValidEmail() || !user.isValidPassword()) {
+            throw new IllegalArgumentException("Invalid email or password");
+        }
+        
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        
+        try {
+            connection = getConnection();
+            stmt = connection.prepareStatement(INSERT_USER_SQL);
+            stmt.setString(1, user.getUsername());
+            stmt.setString(2, user.getName());
+            stmt.setString(3, user.getEmail());
+            stmt.setString(4, user.getCountry());
+            stmt.setString(5, user.getAddress());
+            stmt.setString(6, user.getPassword());
             
-            preparedstatement.executeUpdate();
-    		
-    		
-    	}
-    	catch(Exception e) {
-    		e.printStackTrace();
-    		
-    	}
-    	
-    	
-    }
-    public User selectuser(int id) {
-    	User user=new User();
-    	UserDao dao=new UserDao();
-    	try (Connection connection=dao.getConnection()){
-    		PreparedStatement preparedstatement=connection.prepareStatement(SELECT_USER_BY_ID);
-    		preparedstatement.setInt(1,id);
-    		
-    		ResultSet resultset=preparedstatement.executeQuery();
-    		while (resultset.next()) {
-    			user.setId(id);
-    			user.setName(resultset.getString("uname"));
-    			user.setEmail(resultset.getString("email"));
-    			user.setCountry(resultset.getString("country"));
-    			user.setPassword(resultset.getString("password"));
-    		}
-    	}
-    	catch(Exception e) {
-    		e.printStackTrace();
-    		
-    	}
-    	return user;
+            int result = stmt.executeUpdate();
+            if (result != 1) {
+                throw new SQLException("Registration failed");
+            }
+        } finally {
+            if (stmt != null) stmt.close();
+            if (connection != null) connection.close();
+        }
     }
     
-    public List<User> selectAllUsers(){
-    	List<User> users=new ArrayList<User>();
-    	UserDao  dao=new UserDao();
-    	try (Connection connection=dao.getConnection()){
-    		PreparedStatement preparedstatement=connection.prepareStatement(SELECT_ALL_USERS);
-    		ResultSet resultset=preparedstatement.executeQuery();
-    		while (resultset.next()) {
-    			int id=resultset.getInt("id");
-    			String uname=resultset.getString("uname");
-    			String email=resultset.getString("email");
-    			String country=resultset.getString("country");
-    			String password=resultset.getString("password");
-    			
-    			users.add(new User(id,uname,email,country,password));
-    			
-    		}
-    	}
-    	catch(Exception e) {
-    		e.printStackTrace();
-    		
-    	}
-    	return users;
+    private User mapResultSetToUser(ResultSet rs) throws SQLException {
+        return new User(
+            rs.getInt("user_id"),
+            rs.getString("username"),
+            rs.getString("name"),
+            rs.getString("email"),
+            rs.getString("country"),
+            rs.getString("address"),
+            rs.getString("password")
+        );
+    }
+
+    public User selectuser(int userId) {
+        User user = null;
+        try (Connection connection = getConnection();
+             PreparedStatement stmt = connection.prepareStatement(SELECT_USER_BY_ID)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                user = mapResultSetToUser(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+    
+    public List<User> selectAllUsers() {
+        List<User> users = new ArrayList<User>();
+        try (Connection connection = getConnection()) {
+            PreparedStatement preparedstatement = connection.prepareStatement(SELECT_ALL_USERS);
+            ResultSet resultset = preparedstatement.executeQuery();
+            while (resultset.next()) {
+                int id = resultset.getInt("user_id");
+                String username = resultset.getString("username");
+                String name = resultset.getString("name");
+                String email = resultset.getString("email");
+                String country = resultset.getString("country");
+                String address = resultset.getString("address");
+                String password = resultset.getString("password");
+                
+                users.add(new User(id, username, name, email, country, address, password));
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return users;
     }
     
     public boolean deleteuser(int id)
@@ -128,6 +136,40 @@ public class UserDao {
     	}
     	return status;
     	
+    }
+    
+    public User selectUserByEmailAndPassword(String email, String password) {
+        User user = null;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = getConnection();
+            preparedStatement = connection.prepareStatement(SELECT_USER_BY_EMAIL_AND_PASSWORD);
+            preparedStatement.setString(1, email);
+            preparedStatement.setString(2, password);
+            
+            System.out.println("Executing query for email: " + email); // Debug log
+            
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                user = mapResultSetToUser(resultSet);
+                System.out.println("User found: " + user.getUsername()); // Debug log
+            }
+        } catch (SQLException e) {
+            System.out.println("Database error: " + e.getMessage()); // Debug log
+            e.printStackTrace();
+        } finally {
+            try {
+                if (resultSet != null) resultSet.close();
+                if (preparedStatement != null) preparedStatement.close();
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return user;
     }
     
     

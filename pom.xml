@@ -24,14 +24,58 @@
 		</dependency>
 
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>4.0.1</version> <!-- Use a version compatible with your
-			server, e.g., 4.0.1 for Java EE 8 -->
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>5.0.0</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>jakarta.servlet.jsp</groupId>
+			<artifactId>jakarta.servlet.jsp-api</artifactId>
+			<version>3.0.0</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>jakarta.servlet.jsp.jstl</groupId>
+			<artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.glassfish.web</groupId>
+			<artifactId>jakarta.servlet.jsp.jstl</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+		
+		<!-- Add Gson for JSON handling -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
 
+        <!-- Add Jackson for JSON processing (alternative/additional option) -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.15.2</version>
+        </dependency>
 
+        <!-- Add JSON-P for JSON Processing -->
+        <dependency>
+            <groupId>jakarta.json</groupId>
+            <artifactId>jakarta.json-api</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+        
+        <!-- Add JSON-B for JSON Binding -->
+        <dependency>
+            <groupId>jakarta.json.bind</groupId>
+            <artifactId>jakarta.json.bind-api</artifactId>
+            <version>3.0.0</version>
+        </dependency>
 	</dependencies>
 	<build>
 		<finalName>movie-ticket-booking-system</finalName>

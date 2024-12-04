@@ -1,90 +1,73 @@
 package com.movie.dao;
 
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import com.movie.model.Movie;
 
+public class MovieDao {
+    private String jdbcURL = "jdbc:mysql://localhost:3306/Movie_Ticket_Booking_System";
+    private String jdbcUsername = "root";
+    private String jdbcPassword = "Nitin@1513";
 
-	    
-	    
-	   
+    private static final String SELECT_ALL_MOVIES = "SELECT * FROM movies";
+    private static final String SEARCH_MOVIES = "SELECT * FROM movies WHERE title LIKE ? OR genre LIKE ?";
 
-	   
-	    import java.sql.*;
-	    import java.util.ArrayList;
-	    import java.util.List;
+    public MovieDao() {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 
-	    public class MovieDao {
-	        private Connection connection;
+    public List<Movie> getAllMovies() {
+        List<Movie> movies = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+             PreparedStatement ps = connection.prepareStatement(SELECT_ALL_MOVIES)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Movie movie = new Movie();
+                movie.setId(rs.getInt("id"));
+                movie.setTitle(rs.getString("title"));
+                movie.setDescription(rs.getString("description"));
+                movie.setGenre(rs.getString("genre"));
+                movie.setRating(rs.getDouble("rating"));
+                movie.setImageUrl(rs.getString("image_url"));
+                movie.setPrice(rs.getDouble("price"));
+                movies.add(movie);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return movies;
+    }
 
-	        public MovieDao(Connection connection) {
-	            this.connection = connection;
-	        }
+    public List<Movie> searchMovies(String query) {
+        List<Movie> movies = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+             PreparedStatement ps = connection.prepareStatement(SEARCH_MOVIES)) {
+            String searchQuery = "%" + query + "%";
+            ps.setString(1, searchQuery);
+            ps.setString(2, searchQuery);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Movie movie = new Movie();
+                movie.setId(rs.getInt("id"));
+                movie.setTitle(rs.getString("title"));
+                movie.setDescription(rs.getString("description"));
+                movie.setGenre(rs.getString("genre"));
+                movie.setRating(rs.getDouble("rating"));
+                movie.setImageUrl(rs.getString("image_url"));
+                movie.setPrice(rs.getDouble("price"));
+                movies.add(movie);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return movies;
+    }
+}
 
-	        public boolean addMovie(Movie movie) throws SQLException {
-	            String sql = "INSERT INTO movies (title, genre, duration) VALUES (?, ?, ?)";
-	            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-	                stmt.setString(1, movie.getTitle());
-	                stmt.setString(2, movie.getGenre());
-	                stmt.setInt(3, movie.getDuration());
-	                return stmt.executeUpdate() > 0;
-	            }
-	        }
 
-	        public Movie getMovie(int id) throws SQLException {
-	            String sql = "SELECT * FROM movies WHERE id = ?";
-	            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-	                stmt.setInt(1, id);
-	                ResultSet rs = stmt.executeQuery();
-	                if (rs.next()) {
-	                    return new Movie(
-	                        rs.getInt("id"),
-	                        rs.getString("title"),
-	                        rs.getString("genre"),
-	                        rs.getInt("duration")
-	                    );
-	                }
-	            }
-	            return null;
-	        }
-
-	        public List<Movie> getAllMovies() throws SQLException {
-	            String sql = "SELECT * FROM movies";
-	            List<Movie> movies = new ArrayList<>();
-	            try (Statement stmt = connection.createStatement()) {
-	                ResultSet rs = stmt.executeQuery(sql);
-	                while (rs.next()) {
-	                    movies.add(new Movie(
-	                        rs.getInt("id"),
-	                        rs.getString("title"),
-	                        rs.getString("genre"),
-	                        rs.getInt("duration")
-	                    ));
-	                }
-	            }
-	            return movies;
-	        }
-
-	        public boolean updateMovie(Movie movie) throws SQLException {
-	            String sql = "UPDATE movies SET title = ?, genre = ?, duration = ? WHERE id = ?";
-	            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-	                stmt.setString(1, movie.getTitle());
-	                stmt.setString(2, movie.getGenre());
-	                stmt.setInt(3, movie.getDuration());
-	                stmt.setInt(4, movie.getMovieId());
-	                return stmt.executeUpdate() > 0;
-	            }
-	        }
-
-	        public boolean deleteMovie(int id) throws SQLException {
-	            String sql = "DELETE FROM movies WHERE id = ?";
-	            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-	                stmt.setInt(1, id);
-	                return stmt.executeUpdate() > 0;
-	            }
-	        }
-	    }
-
-	    
-	    
-	    
-	
 
