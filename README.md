@@ -87,8 +87,22 @@
        │   │   ├── java/
        │   │   │   ├── com/
        │   │   │   │   ├── controller/
-       │   │   │   │   ├── user/
-       │   │   │   │   └── util/
+       │   │   │   │   ├── booking/
+       │   │   │   │   |  |___ model/
+       │   │   │   │   |  |___ dao/
+       │   │   │   │   |___ User/
+       │   │   │   │   |  |__ model/
+       │   │   │   │   |  |__ dao/
+       │   │   │   │   ├── theatre/
+       │   │   │   │   |  |___ model/
+       │   │   │   │   |  |___ dao/
+       │   │   │   │   ├── showtime/
+       │   │   │   │   |  |___ model/
+       │   │   │   │   |  |___ dao/
+       │   │   │   │   ├── movie/
+       │   │   │   │   |  |___ model/
+       │   │   │   │   |  |___ dao/
+       │   │   │   │   └── filter/
        │   │   ├── webapp/
        │   │   │   ├── css/
        │   │   │   ├── js/
