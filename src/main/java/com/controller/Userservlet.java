@@ -27,9 +27,15 @@ public class Userservlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        if (action == null) {
+        
+        if ("logout".equals(action)) {
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                session.invalidate();
+            }
+            response.sendRedirect(request.getContextPath() + "/index.jsp");
+        } else if (action == null) {
             response.sendRedirect("index.jsp");
-            return;
         }
         // Add any GET request handling here
     }
@@ -42,6 +48,8 @@ public class Userservlet extends HttpServlet {
             registerUser(request, response);
         } else if ("login".equals(action)) {
             loginUser(request, response);
+        } else if ("updateProfile".equals(action)) {
+            updateUserProfile(request, response);
         }
     }
 
@@ -131,6 +139,39 @@ public class Userservlet extends HttpServlet {
             e.printStackTrace();
             request.setAttribute("error", "Login failed: " + e.getMessage());
             request.getRequestDispatcher("/login.jsp").forward(request, response);
+        }
+    }
+
+    private void updateUserProfile(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
+        
+        if (currentUser == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+        
+
+        try {
+            // Update user object with new values
+            currentUser.setName(request.getParameter("name"));
+            currentUser.setEmail(request.getParameter("email"));
+            currentUser.setCountry(request.getParameter("country"));
+            currentUser.setAddress(request.getParameter("address"));
+            
+            // Update in database
+            userDao.updateUser(currentUser);
+            
+            // Update session
+            session.setAttribute("user", currentUser);
+            
+            // Redirect with success message
+            response.sendRedirect("userProfile.jsp?updated=true");
+            
+        } catch (Exception e) {
+            request.setAttribute("error", "Update failed: " + e.getMessage());
+            request.getRequestDispatcher("/userProfile.jsp").forward(request, response);
         }
     }
 }

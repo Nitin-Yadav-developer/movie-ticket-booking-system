@@ -172,5 +172,24 @@ public class UserDao {
         return user;
     }
     
-    
+    public boolean updateUser(User user) throws SQLException {
+        boolean rowUpdated = false;
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(UPDATE_USERS_SQL)) {
+            
+            statement.setString(1, user.getUsername());
+            statement.setString(2, user.getName());
+            statement.setString(3, user.getEmail());
+            statement.setString(4, user.getCountry());
+            statement.setString(5, user.getAddress());
+            statement.setString(6, user.getPassword());
+            statement.setInt(7, user.getUserId());
+
+            rowUpdated = statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating user: " + e.getMessage());
+            throw e;
+        }
+        return rowUpdated;
+    }
 }

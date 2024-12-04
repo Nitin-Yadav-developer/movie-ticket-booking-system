@@ -136,5 +136,32 @@ function validateForm(formId) {
     return isValid;
 }
 
+// Add password strength indicator
+function updatePasswordStrength(password) {
+    const strength = {
+        0: "Very Weak",
+        1: "Weak",
+        2: "Medium",
+        3: "Strong"
+    };
+    
+    let score = 0;
+    if (password.length > 6) score++;
+    if (password.match(/[a-z]/) && password.match(/[A-Z]/)) score++;
+    if (password.match(/\d/)) score++;
+    
+    return strength[score];
+}
+
+// Add live validation feedback
+function addLiveValidation() {
+    const inputs = document.querySelectorAll('input[required]');
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            validateField(this);
+        });
+    });
+}
+
 // Initialize validation on page load
 document.addEventListener('DOMContentLoaded', attachValidators);
