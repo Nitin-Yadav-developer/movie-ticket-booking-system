@@ -24,19 +24,22 @@
 
 ## Technology Stack
 
-         - **Frontend**
+   ### Frontend
              - JSP (JavaServer Pages)
              - HTML5
              - CSS3
              - JavaScript
              - Bootstrap 4.5.2
 
-        - **Backend**
+   ### Backend
+             -Java Model classes
+            - Java DAO classes
             - Java Servlets
             - JDBC
             - MySQL 8.0
+            
 
-       - **Tools & Libraries**
+   ### Tools & Libraries
             - Maven
             - jQuery
            - Font Awesome
@@ -52,10 +55,11 @@
 
 ## Database Setup
 
-         1. Create a new MySQL database:
+   ### 1. Create a new MySQL database:
                     -Follow schema.sql
                    
-                   
+   ### 2.Create the required tables:
+             -Follow schema.sql
 
 
 
