@@ -53,7 +53,7 @@
                - Maven 3.x
                - IDE (Eclipse/IntelliJ IDEA)
 
-## Database Setup
+# Database Setup
 
    ### 1. Create a new MySQL database:
                     -Follow schema.sql
