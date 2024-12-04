@@ -1,40 +1,100 @@
-# Movie Ticket Booking System 
- ## This project is under development right now.
+# Movie Ticket Booking System
+ ## This Project is underdevelopment.
   This repository hosts the code for an Online Movie Ticket Booking System built in Java. 
   This application allows users to browse movies, check available showtimes, and book tickets online. The project follows a structured MVC architecture and is designed to provide a seamless booking experience.
+  A web-based application that allows users to browse movies and book tickets online. Built with Java Servlets, JSP, and MySQL.
 
-## Project Structure
-  1. Data Model and DAO
-     The data model and DAO (Data Access Object) classes are located at:
-     
-          >> src/main/java/com
+## Features
 
-      #### These classes are responsible for:
+                 - User Authentication
+                    - Register new account
+                    - Login/Logout
+                    - Profile management
 
-        - Defining the structure of entities such as movies, theaters, seats, bookings, and users.
-        - Handling database interactions, such as CRUD operations, with various entities in the system.
-     
- 3. Web Application
-      The web-related files, including JSP pages and web configuration files, are located at:
-        
-             >> src/main/webapp
-      These files are responsible for rendering the user interface, handling user inputs, and providing a responsive and interactive booking experience.
+                - Movie Management
+                  - Browse available movies
+                  - Search movies
+                  - View movie details
+                  - Real-time seat availability
+
+                - Booking System
+                  - Select show time and seats
+                  - Book multiple tickets
+                  - View booking history
+
+## Technology Stack
+
+         - **Frontend**
+             - JSP (JavaServer Pages)
+             - HTML5
+             - CSS3
+             - JavaScript
+             - Bootstrap 4.5.2
+
+        - **Backend**
+            - Java Servlets
+            - JDBC
+            - MySQL 8.0
+
+       - **Tools & Libraries**
+            - Maven
+            - jQuery
+           - Font Awesome
+           - MySQL Connector/J
+
+## Prerequisites
+
+               - JDK 11 or higher
+               - Apache Tomcat 9.0 or higher
+               - MySQL 8.0
+               - Maven 3.x
+               - IDE (Eclipse/IntelliJ IDEA)
+
+## Database Setup
+
+         1. Create a new MySQL database:
+                    -Follow schema.sql
+                   
+                   
 
 
-## Key Features ##
-    1.  User Registration and Authentication
-         >>Users can sign up, log in, and manage their profiles.
-    2.Movie Listing and Showtimes
-         >>A catalog of movies with descriptions, ratings, and available showtimes.
-    3.Seat Selection and Booking
-       >>Users can select seats, view available options, and confirm bookings.
-    4.Admin Dashboard
-       >>Admin functionalities to manage movies, theaters, and schedules.
 
-## Tech Stack ##
-      >>Backend: Java
-      >>Frontend: JSP, HTML, CSS, JavaScript
-      >>Database: MySQL 
+# Installation & Setup
+   ### 1.Clone the repository:
+        git clone https://github.com/Nitin-Yadav-developer/movie-ticket-booking-system.git
 
+  ### 2.Configure database connection:
 
-      
+                  -Open src/main/java/com/user/dao/UserDao.java
+                  -Update the database URL, username, and password
+
+ ### 3.Build the project:
+               mvn clean install
+ ### 4.Deploy to Tomcat:
+
+              Copy the WAR file from target/movie-ticket-booking-system.war to Tomcat's webapps directory
+              Start Tomcat server
+ ### 5.Access the application:
+              http://localhost:8080/movie-ticket-booking-system
+ # Project Structure
+       movie-ticket-booking-system/
+       ├── src/
+       │   ├── main/
+       │   │   ├── java/
+       │   │   │   ├── com/
+       │   │   │   │   ├── controller/
+       │   │   │   │   ├── user/
+       │   │   │   │   └── util/
+       │   │   ├── webapp/
+       │   │   │   ├── css/
+       │   │   │   ├── js/
+       │   │   │   ├── WEB-INF/
+       │   │   │   └── *.jsp
+       │   │   └── resources/
+       │   └── test/
+       ├── pom.xml
+       └── README.md
+## Contact
+## Nitin Yadav 
+
+## Project Link: https://github.com/Nitin-Yadav-developer/movie-ticket-booking-system
