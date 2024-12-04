@@ -12,7 +12,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="css/styles.css" rel="stylesheet">
     <!-- Add to your HTML head -->
-<script src="https://polyfill.io/v3/polyfill.min.js"></script>
+
 </head>
 
 <body>
