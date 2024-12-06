@@ -9,7 +9,7 @@
    ### User Authentication
     - Register new account
     - Login/Logout
-   ###Profile management
+   ### Profile management
 
     - Movie Management
     - Browse available movies
