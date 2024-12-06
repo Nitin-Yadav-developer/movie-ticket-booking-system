@@ -6,80 +6,81 @@
 
 ## Features
 
-                 - User Authentication
-                    - Register new account
-                    - Login/Logout
-                    - Profile management
+   ### User Authentication
+    - Register new account
+    - Login/Logout
+   ###Profile management
 
-                - Movie Management
-                  - Browse available movies
-                  - Search movies
-                  - View movie details
-                  - Real-time seat availability
+    - Movie Management
+    - Browse available movies
+    - Search movies
+    - View movie details
+    - Real-time seat availability
 
-                - Booking System
-                  - Select show time and seats
-                  - Book multiple tickets
-                  - View booking history
+   ### Booking System
+    - Select show time and seats
+    - Book multiple tickets
+    - View booking history
 
 ## Technology Stack
 
    ### Frontend
-             - JSP (JavaServer Pages)
-             - HTML5
-             - CSS3
-             - JavaScript
-             - Bootstrap 4.5.2
+    - JSP (JavaServer Pages)
+    - HTML5
+    - CSS3
+    - JavaScript
+    - Bootstrap 4.5.2
 
    ### Backend
-             -Java Model classes
-            - Java DAO classes
-            - Java Servlets
-            - JDBC
-            - MySQL 8.0
+    -Java Model classes
+    - Java DAO classes
+    - Java Servlets
+    - JDBC
+    - MySQL 8.0
             
 
    ### Tools & Libraries
-            - Maven
-            - jQuery
-           - Font Awesome
-           - MySQL Connector/J
+    - Maven
+    - jQuery
+    - Font Awesome
+    - MySQL Connector/J
 
 ## Prerequisites
 
-               - JDK 11 or higher
-               - Apache Tomcat 9.0 or higher
-               - MySQL 8.0
-               - Maven 3.x
-               - IDE (Eclipse/IntelliJ IDEA)
+    - JDK 11 or higher
+    - Apache Tomcat 9.0 or higher
+    - MySQL 8.0
+    - Maven 3.x
+    - IDE (Eclipse/IntelliJ IDEA)
 
 # Database Setup
 
    ### 1. Create a new MySQL database:
-                    -Follow schema.sql
+    -See schema.sql
                    
    ### 2.Create the required tables:
-             -Follow schema.sql
+    -See schema.sql
 
 
 
 # Installation & Setup
    ### 1.Clone the repository:
-        git clone https://github.com/Nitin-Yadav-developer/movie-ticket-booking-system.git
+    git clone https://github.com/Nitin-Yadav-developer/movie-ticket-booking-system.git
 
   ### 2.Configure database connection:
 
-                  -Open src/main/java/com/user/dao/UserDao.java
-                  -Update the database URL, username, and password in other DAO classes
+    -Open src/main/java/com/user/dao/UserDao.java
+    -Update the database URL, username, and password in other DAO classes
 
  ### 3.Build the project:
-               mvn clean install
+    mvn clean install
  ### 4.Deploy to Tomcat:
 
-              Copy the WAR file from target/movie-ticket-booking-system.war to Tomcat's webapps directory
-              Start Tomcat server
+    Copy the WAR file from target/movie-ticket-booking-system.war to Tomcat's webapps directory
+    Start Tomcat server
+    
  ### 5.Access the application:
-              http://localhost:8080/movie-ticket-booking-system
+    http://localhost:8080/movie-ticket-booking-system
  # Project Structure
        movie-ticket-booking-system/
        ├── src/
