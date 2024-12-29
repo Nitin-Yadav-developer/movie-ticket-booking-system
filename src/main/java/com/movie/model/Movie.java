@@ -1,23 +1,25 @@
 package com.movie.model;
 
+import java.sql.Timestamp;
 
 public class Movie {
-    private int id;
+    private int movieId;  // Changed from id to movieId
     private String title;
     private String description;
     private String genre;
     private double rating;
     private String imageUrl;
     private double price;
+    private Timestamp createdAt;  // Add this field
     
 	public Movie() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Movie(int id, String title, String description, String genre, double rating, String imageUrl, double price) {
+	public Movie(int movieId, String title, String description, String genre, double rating, String imageUrl, double price) {
 		super();
-		this.id = id;
+		this.movieId = movieId;
 		this.title = title;
 		this.description = description;
 		this.genre = genre;
@@ -25,14 +27,26 @@ public class Movie {
 		this.imageUrl = imageUrl;
 		this.price = price;
 	}
+
+	public Movie(int movieId, String title, String description, String genre, 
+                double rating, String imageUrl, double price, Timestamp createdAt) {
+        this.movieId = movieId;
+        this.title = title;
+        this.description = description;
+        this.genre = genre;
+        this.rating = rating;
+        this.imageUrl = imageUrl;
+        this.price = price;
+        this.createdAt = createdAt;
+    }
 	
 
-	public int getId() {
-		return id;
+	public int getMovieId() {
+		return movieId;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public void setMovieId(int movieId) {
+		this.movieId = movieId;
 	}
 
 	public String getTitle() {
@@ -64,8 +78,9 @@ public class Movie {
 	}
 
 	public void setRating(double rating) {
-		this.rating = rating;
-	}
+        // Ensure rating is between 0 and 10
+        this.rating = Math.min(Math.max(rating, 0), 10);
+    }
 
 	public String getImageUrl() {
 		return imageUrl;
@@ -80,13 +95,22 @@ public class Movie {
 	}
 
 	public void setPrice(double price) {
-		this.price = price;
+        // Ensure price is not negative
+        this.price = Math.max(price, 0);
+    }
+
+	public Timestamp getCreatedAt() { 
+		return createdAt; 
+	}
+
+	public void setCreatedAt(Timestamp createdAt) { 
+		this.createdAt = createdAt; 
 	}
 
 	@Override
 	public String toString() {
-		return "Movie [id=" + id + ", title=" + title + ", description=" + description + ", genre=" + genre
-				+ ", rating=" + rating + ", imageUrl=" + imageUrl + ", price=" + price + "]";
+		return "Movie [movieId=" + movieId + ", title=" + title + ", description=" + description + ", genre=" + genre
+				+ ", rating=" + rating + ", imageUrl=" + imageUrl + ", price=" + price + ", createdAt=" + createdAt + "]";
 	}
     
 	

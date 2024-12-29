@@ -16,7 +16,7 @@ public class UserDao {
     private static final String SELECT_USER_BY_ID="SELECT user_id, username, name, email, country, address, password, created_at FROM users WHERE user_id=?;";
     private static final String  SELECT_ALL_USERS="SELECT user_id, username, name, email, country, address, password, created_at FROM users;";
     private static final String DELETE_USER_SQL="DELETE FROM users WHERE user_id=?;";
-    private static final String UPDATE_USERS_SQL="UPDATE users SET username=?, name=?, email=?, country=?, address=?, password=? WHERE user_id=?;";
+    private static final String UPDATE_USERS_SQL = "UPDATE users SET name=?, email=?, country=?, address=? WHERE user_id=?;";
     private static final String SELECT_USER_BY_EMAIL_AND_PASSWORD = "SELECT user_id, username, name, email, country, address, password, created_at FROM users WHERE email=? AND password=?;";
 	public UserDao() {
 		super();
@@ -174,21 +174,33 @@ public class UserDao {
     
     public boolean updateUser(User user) throws SQLException {
         boolean rowUpdated = false;
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(UPDATE_USERS_SQL)) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        
+        try {
+            connection = getConnection();
+            statement = connection.prepareStatement(UPDATE_USERS_SQL);
             
-            statement.setString(1, user.getUsername());
-            statement.setString(2, user.getName());
-            statement.setString(3, user.getEmail());
-            statement.setString(4, user.getCountry());
-            statement.setString(5, user.getAddress());
-            statement.setString(6, user.getPassword());
-            statement.setInt(7, user.getUserId());
+            System.out.println("Executing update for user ID: " + user.getUserId()); // Debug log
+            
+            // Remove username and password from update, fix parameter order
+            statement.setString(1, user.getName());
+            statement.setString(2, user.getEmail());
+            statement.setString(3, user.getCountry());
+            statement.setString(4, user.getAddress());
+            statement.setInt(5, user.getUserId());
 
-            rowUpdated = statement.executeUpdate() > 0;
+            int rowsAffected = statement.executeUpdate();
+            System.out.println("Rows affected: " + rowsAffected); // Debug log
+            
+            rowUpdated = rowsAffected > 0;
+            
         } catch (SQLException e) {
             System.out.println("Error updating user: " + e.getMessage());
             throw e;
+        } finally {
+            if (statement != null) statement.close();
+            if (connection != null) connection.close();
         }
         return rowUpdated;
     }

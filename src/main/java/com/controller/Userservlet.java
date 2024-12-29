@@ -144,34 +144,56 @@ public class Userservlet extends HttpServlet {
 
     private void updateUserProfile(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false);
         User currentUser = (User) session.getAttribute("user");
+        
+        System.out.println("Update Profile Request Received"); // Debug log
         
         if (currentUser == null) {
             response.sendRedirect("login.jsp");
             return;
         }
-        
 
         try {
-            // Update user object with new values
-            currentUser.setName(request.getParameter("name"));
-            currentUser.setEmail(request.getParameter("email"));
-            currentUser.setCountry(request.getParameter("country"));
-            currentUser.setAddress(request.getParameter("address"));
+            String name = request.getParameter("name");
+            String email = request.getParameter("email");
+            String country = request.getParameter("country");
+            String address = request.getParameter("address");
+            
+            // Debug logs
+            System.out.println("Updating user: " + currentUser.getUserId());
+            System.out.println("New name: " + name);
+            System.out.println("New email: " + email);
+
+            // Validate input
+            if (name == null || email == null || country == null || address == null ||
+                name.trim().isEmpty() || email.trim().isEmpty() || 
+                country.trim().isEmpty() || address.trim().isEmpty()) {
+                throw new IllegalArgumentException("All fields are required");
+            }
+
+            // Update user object
+            currentUser.setName(name.trim());
+            currentUser.setEmail(email.trim());
+            currentUser.setCountry(country.trim());
+            currentUser.setAddress(address.trim());
             
             // Update in database
-            userDao.updateUser(currentUser);
+            boolean updated = userDao.updateUser(currentUser);
             
-            // Update session
-            session.setAttribute("user", currentUser);
-            
-            // Redirect with success message
-            response.sendRedirect("userProfile.jsp?updated=true");
+            if (updated) {
+                // Update session
+                session.setAttribute("user", currentUser);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"success\": true}");
+            } else {
+                throw new Exception("Failed to update user in database");
+            }
             
         } catch (Exception e) {
-            request.setAttribute("error", "Update failed: " + e.getMessage());
-            request.getRequestDispatcher("/userProfile.jsp").forward(request, response);
+            System.out.println("Error updating profile: " + e.getMessage());
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
         }
     }
 }

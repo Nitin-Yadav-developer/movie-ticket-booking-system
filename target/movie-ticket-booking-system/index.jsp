@@ -1,293 +1,214 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page import="com.movie.dao.MovieDao"%>
+<%@ page import="com.movie.model.Movie"%>
+<%@ page import="java.util.List"%>
+<%@ page import="java.util.stream.Collectors"%>
+<!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Movie ticket Boking System</title>
 
-
-<script>
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            var lat = position.coords.latitude;
-            var lon = position.coords.longitude;
-            document.getElementById("location").value = `Lat: ${lat}, Lon: ${lon}`;
-        });
-    } else {
-        document.getElementById("location").placeholder = "Geolocation not supported.";
-    }
-</script>
-
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Ticket Booking System</title>
     
-    body {
-        font-family: Arial, sans-serif;
-        background-color: rgb(252, 244, 235);
-    }
-    
-    .list-container {
-        display: flex;
-        justify-content: center; /* Centers the boxes horizontally */
-        gap: 10px; /* Adds space between the boxes */
-    }
-    
-    
-    .list-item {
-        
-        border: 2px solid #000;
-        background-color: #f2eded;
-        height: fit-content;
-        width: fit-content;
-        text-align: center;
-
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adds some shadow for a box effect */
-        transition: transform 0.3s ease; /* For smooth hover effect */
-    }
-    
-    .list-item:hover {
-        transform: scale(1.1); /* Enlarges the item slightly on hover */
-    }
-    h2{
-        padding-bottom: 10px;
-        padding-top: 10px;
-        
-    }
-    h1{
-        padding-bottom: 50px;
-    }
-     form{
-        padding-bottom: 30px;
-     }
-
-     .locinput{
-       
-        
-     }
-     .searchinput{
-        height: 30px;
-       
-        text-align:center;
-        color:black ;
-        
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border:2px solid black;
-        border-radius:10px;
-        transition: transform 0.3s ease;  
-     }
-     .searchinput:hover{
-        transform: scale(1.1);
-     }
-
-     .searchbutton{
-        height: 30px;
-        
-        text-align:center;
-        color:black ;
-        background-color: rgb(240, 85, 85);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border:2px solid black;
-        border-radius:15px;
-        transition: transform 0.3s ease;
-     }
-     .searchbutton:hover{
-        transform: scale(1.1);
-        background-color: rgb(73, 231, 73);
-     }
-     .space{
-        height:10px;
-        width: 100%;
-        background-color: blanchedalmond;
-     }
-     .links{
-        text-decoration: none;
-        color: black;
-        
-
-     }
-     .links:hover{
-        background-color: greenyellow;
-        border:4px solid greenyellow;
-        border-radius: 4px;
-     }
-
-    #menubar{
-        display: flex; 
-        width: 100%;
-        height:50px;
-        justify-content: center;
-
-        
-    }
-    #heading{
-        flex: 0 0 60%; 
-        padding: 10px; 
-        background-color:whitesmoke;
-       
-        
-    }
-    #searchinput{
-        flex: 0 0 20%; 
-        padding: 10px; 
-        background-color: whitesmoke; 
-         
-
-        
-
-    }
-    #searchloc{
-        flex: 0 0 20%; 
-        padding: 10px; 
-        background-color:whitesmoke;
-         
-    }
-    #menu{
-        display: flex;
-        height:50px;
-        width:100%;
-        
-    }
-    #menubox1{
-        display:flex;
-        height:50px;
-        flex: 0 0 50%;
-        background-color: blanchedalmond;
-       
-    }
-    #menubox2{
-        display:flex;
-        flex: 0 0 50%;
-        height:50px;
-        background-color: blanchedalmond;
-        
-
-    }
-    #home{
-       margin-left: 50%;
-       background-color: aquamarine;
-      height: fit-content;
-      border:4px solid aquamarine;
-      border-radius:4px;
-      
-    }
-
-    #allmovie{
-      margin-left: 5%;
-      background-color: aquamarine;
-      height: fit-content;
-      border:4px solid aquamarine;
-      border-radius:4px;
-    }
-
-    #signin{
-        margin-left: 70%;
-        background-color: aquamarine;
-      height: fit-content;
-      border:4px solid aquamarine;
-      border-radius:4px;
-    }
-    #signup{
-        margin-left: 10%;
-        background-color: aquamarine;
-      height: fit-content;
-      border:4px solid aquamarine;
-      border-radius:4px;
-       
-    }
-    .menul{
-         padding: 20px;
-         transition: transform 0.3s ease;
-     }
-
-     .menul:hover{
-        transform: scale(1.1);
-        color:blue;
-       
-       
-     }
-
-    
-    #menulist{
-        border:4px solid black;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        height:400px;
-        width:200px;
-    }
-</style>
-
+ 
+ 
+   
+    <!-- CSS Files -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+    <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon">
 </head>
 
 <body>
-    <!---header-->
-  <div id="menubar">
-    <div id="heading">
-         <h1 align="center">Movie Ticket Booking System</h1>
-    </div>
-    <div id="searchinput" >
-        <input type="text" class="searchinput" placeholder="search">   
-        <button class="searchbutton">Movies</button>
-    </div> 
-    <div id="searchloc" >
-        <input id="location" type="text" class="searchinput" placeholder="search ">
-        <button class="searchbutton">Location </button>
-    </div>
-       
-  </div>
-
-
-    <div class="space">
-
-
-    </div>
-
-    <div id="menu">
-        <div id="menubox1">
-        <div id="home"> <a  href=""  class="links">  Home</a></div>
-        <div id="allmovie"><a href=" " class="links">All movies</a></div>
-         </div>
-
-         <div id="menubox2">
-        <div id="signin"><a href="" class="links">Sign in</a></div>
-        <div id="signup"><a href="" class="links">Sign up</a></div>
-         </div>
-    </div>
-
-
-
-
-
-<!--recent release moviees -->
-  <h2 align="center">Recent Release Movies</h2>
-<div>
-
-
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">Movie Ticket Booking</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="index.jsp">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="movies.jsp">Movies</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="${pageContext.request.contextPath}/showtime/list">Showtimes</a>
+                    </li>
+                    <c:choose>
+                        <c:when test="${sessionScope.user != null}">
+                            <li class="nav-item">
+                                <a class="nav-link" href="userProfile.jsp">Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="Userservlet?action=logout">Logout</a>
+                            </li>
+                        </c:when>
+                        
+                        <c:otherwise>
+                            <li class="nav-item">
+                                <a class="nav-link" href="login.jsp">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="register.jsp">Register</a>
+                            </li>
+                        </c:otherwise>
+                    </c:choose>
+                </ul>
+            </div>
+        </div>
+    </nav>
    
 
-    <div class="list-container">
-        <div  id="menulist">
-            <div class="menul">Dashboard</div>
-            <div class="menul">All movies</div>
-            <div class="menul">Theaters</div>
-            <div class="menul">show</div>
-            <div class="menul">Feedback</div>
-            <div class="menul">Profile</div>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1>Book Your Movie Tickets</h1>
+                    <div class="search-box">
+                        <input type="text" class="form-control" placeholder="Search movies...">
+                        <button class="btn btn-primary">Search</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="list-item"><img src="E:/WebDevelopment/2.jpg" height="200" width="200"><h5>Goat</h5></div>
-       
+    </section>
 
-        <div class="list-item"> <img src="E:/WebDevelopment/1.jpg" height="200" width="200"><h5>Stree 2</h5></div>
-        <div class="list-item"><img src="E:/WebDevelopment/3.jpg" height="200" width="200"><h5>The Goat Life</h5></div>
-        <div class="list-item"><img src="E:/WebDevelopment/4.jpg" height="200" width="200"><h5>Raayan</h5></div>
-        <div class="list-item" style="border-radius: 30px;">See more..</div>
-    </div>
+    <!-- Movies Section -->
+    <section class="movies-section py-5">
+        <div class="container">
+            <h2 class="section-title mb-4">Now Showing</h2>
+            <!-- Genre Filter Buttons -->
+            <div class="genre-filters mb-4 text-center">
+                <button class="btn btn-outline-primary mx-1 genre-filter active" onclick="filterMovies('all')">All</button>
+                <button class="btn btn-outline-primary mx-1 genre-filter" onclick="filterMovies('action')">Action</button>
+                <button class="btn btn-outline-primary mx-1 genre-filter" onclick="filterMovies('comedy')">Comedy</button>
+                <button class="btn btn-outline-primary mx-1 genre-filter" onclick="filterMovies('drama')">Drama</button>
+            </div>
+    
+            <!-- Movies Grid -->
+            <div class="row" id="moviesContainer">
+                <%
+                try {
+                    MovieDao movieDao = new MovieDao();
+                    List<Movie> recentMovies = movieDao.getRecentMovies(10); // Get last 10 movies
+                    
+                    if (recentMovies.isEmpty()) {
+                %>
+                        <div class="col-12">
+                            <div class="alert alert-info">No movies available</div>
+                        </div>
+                <%
+                    } else {
+                        for (Movie movie : recentMovies) {
+                            if (movie != null && movie.getTitle() != null) {
+                %>
+                            <div class="col-md-3 col-sm-6 mb-4 movie-item" data-genre="<%= movie.getGenre() != null ? movie.getGenre().toLowerCase() : "" %>">
+                                <div class="movie-card">
+                                    <div class="image-container">
+                                        <img src="<%= movie.getImageUrl() != null ? movie.getImageUrl() : "images/default-movie.jpg" %>" 
+                                             alt="<%= movie.getTitle() %>" 
+                                            class="card-img-top"
+                                            onerror="this.onerror=null; this.src='images/hero-bg.jpg';">
+                                   </div>
+           
+            
+                                   <div class="movie-info">
+                                        <h5 class="card-title"><%= movie.getTitle() %></h5>
+                                        <p class="movie-description"><%= movie.getDescription() != null ? movie.getDescription() : "No description available" %></p>
+                                        <div class="movie-rating mb-2">
+                                           <%= generateStarRating(movie.getRating()) %>
+                                        </div>
+                                    
+                                        <p class="genre-badge">
+                                            <span class="badge badge-secondary"><%= movie.getGenre() != null ? movie.getGenre() : "Unspecified" %></span>
+                                        </p>
+                                        
+                                
+                                        <p class="movie-price">₹<%= String.format("%.2f", movie.getPrice()) %></p>
+                                        <a href="${pageContext.request.contextPath}/showtime/movie?id=<%= movie.getMovieId() %>" 
+                                   class="btn btn-primary btn-block">View Showtimes</a>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                <%
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                %>
+                    <div class="col-12">
+                        <div class="alert alert-danger">Error loading movies: <%= e.getMessage() %></div>
+                    </div>
+                <%
+                }
+                %>
+            </div>
+        </div>
+    </section>
 
+    <%!
+    private String generateStarRating(double rating) {
+        int stars = (int) Math.round(rating / 2);
+        StringBuilder html = new StringBuilder("<span class='stars'>");
+        for (int i = 1; i <= 5; i++) {
+            html.append(i <= stars ? "★" : "☆");
+        }
+        html.append("</span><span class='rating-value'>")
+            .append(String.format("%.1f", rating/2))
+            .append("/5</span>");
+        return html.toString();
+    }
+    %>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-white">
+        <div class="container py-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Movie Ticket Booking</h5>
+                    <p>Book your favorite movies easily</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Contact Us</h5>
+                    <p>Email: contact@example.com</p>
+                </div>
+            </div>
+        </div>
+    </footer>
     
 
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+   <!--  <script src="${pageContext.request.contextPath}/js/main.js"></script>  -->
+    <script>
+        function filterMovies(genre) {
+            document.querySelectorAll('.genre-filter').forEach(button => {
+                button.classList.remove('active');
+                if(button.textContent.toLowerCase() === genre.toLowerCase()) {
+                    button.classList.add('active');
+                }
+            });
 
-
- </div>
+            document.querySelectorAll('.movie-item').forEach(movieItem => {
+                const movieGenre = movieItem.dataset.genre;
+                if (genre.toLowerCase() === 'all' || movieGenre === genre.toLowerCase()) {
+                    movieItem.style.display = '';
+                } else {
+                    movieItem.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </body>
 </html>

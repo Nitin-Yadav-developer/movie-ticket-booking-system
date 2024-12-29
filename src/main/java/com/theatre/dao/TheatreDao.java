@@ -23,7 +23,7 @@ import com.theatre.model.Theatre;
 	            	stmt.setInt(1, theatre.getTheatreId());
 	            	stmt.setString(2, theatre.getName());
 	                stmt.setString(3, theatre.getLocation());
-	                stmt.setInt(4, theatre.getToatalseats());
+	                stmt.setInt(4, theatre.getTotalSeats());
 	               
 	                return stmt.executeUpdate() > 0;
 	            }
@@ -54,10 +54,10 @@ import com.theatre.model.Theatre;
 	                ResultSet rs = stmt.executeQuery(sql);
 	                while (rs.next()) {
 	                    theatres.add(new Theatre(
-	                        rs.getInt("id"),
+	                        rs.getInt("theatre_id"),
 	                        rs.getString("name"),
 	                        rs.getString("location"),
-	                        rs.getInt("totalseats")
+	                        rs.getInt("total_seats")
 	                    ));
 	                }
 	            }
@@ -83,6 +83,6 @@ import com.theatre.model.Theatre;
 	        }
 	    }
 
-	    
-	    
+
+
 

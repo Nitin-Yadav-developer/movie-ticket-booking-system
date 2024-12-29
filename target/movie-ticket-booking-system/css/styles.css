@@ -1,0 +1,395 @@
+@charset "UTF-8";
+
+/* New file: /webapp/css/styles.css */
+.profile-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+.profile-header {
+    border-bottom: 2px solid #f5f5f5;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+}
+
+.profile-header h2 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.form-feedback {
+    color: red;
+    font-size: 0.8em;
+    margin-top: 5px;
+    display: none;
+}
+
+.input-error {
+    border-color: red !important;
+}
+
+/* Common Form Styles */
+.form-container {
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    background: #fff;
+}
+
+@media (max-width: 576px) {
+    .form-container {
+        margin: 1rem;
+        padding: 1rem;
+    }
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+    border-color: #80bdff;
+}
+
+.invalid-feedback {
+    display: none;
+    color: #dc3545;
+    font-size: 80%;
+    margin-top: 0.25rem;
+}
+
+.is-invalid ~ .invalid-feedback {
+    display: block;
+}
+
+/* Password strength indicator */
+.password-strength {
+    height: 5px;
+    margin-top: 5px;
+    transition: all 0.3s ease;
+}
+
+.strength-weak { background: #dc3545; }
+.strength-medium { background: #ffc107; }
+.strength-strong { background: #28a745; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .btn-block {
+        padding: 0.75rem;
+    }
+}
+
+/* General Styles */
+body {
+    padding-top: 76px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                url('../images/hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    color: white;
+    margin-top: 56px; /* Height of navbar */
+}
+
+.hero-section h1 {
+    font-size: 3rem;
+    margin-bottom: 30px;
+}
+
+.search-box {
+    display: flex;
+    gap: 10px;
+    max-width: 500px;
+}
+
+/* Movies Section */
+.section-title {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.movie-card {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.movie-card:hover {
+    transform: translateY(-5px);
+}
+
+.movie-info {
+    padding: 15px;
+    background: white;
+}
+
+.movie-info h5 {
+    margin-bottom: 15px;
+}
+
+/* Footer */
+.footer {
+    margin-top: 50px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 50px 0;
+    }
+
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+
+    .search-box {
+        flex-direction: column;
+    }
+}
+
+/* Add to your styles.css */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.alert-info {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+}
+
+.no-image-placeholder {
+    height: 200px;
+    background-color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-style: italic;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.image-container {
+    height: 200px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+}
+
+.image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.movie-card .no-image-placeholder {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Add to styles.css */
+.password-strength-meter {
+    margin-top: 10px;
+    height: 4px;
+    background: #eee;
+}
+
+.form-success-message {
+    color: #28a745;
+    display: none;
+    margin-top: 10px;
+}
+
+ /*// Add visual feedback styles*/
+.form-control.is-invalid {
+    border-color: #dc3545;
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.form-control.is-valid {
+    border-color: #28a745;
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+/* Movie Cards */
+.movie-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 25px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+}
+
+.movie-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.movie-card .image-container {
+    position: relative;
+    padding-top: 150%; /* 2:3 Aspect Ratio */
+    overflow: hidden;
+    border-radius: 8px 8px 0 0;
+}
+
+.movie-card .image-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.movie-card .movie-info {
+    padding: 1.5rem;
+}
+
+.movie-card h5 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.movie-card .movie-description {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 4.5em;
+}
+
+.movie-card .movie-rating {
+    color: #ffc107;
+}
+
+.movie-card .stars {
+    letter-spacing: 2px;
+}
+
+.movie-card .rating-value {
+    color: #666;
+    margin-left: 5px;
+}
+
+.movie-card .movie-price {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #28a745;
+    margin: 0.5rem 0;
+}
+
+.movie-card .book-now {
+    width: 100%;
+    padding: 0.5rem;
+    font-weight: 500;
+}
+
+/* Genre Filter Buttons */
+.genre-filters {
+    margin-bottom: 2rem;
+}
+
+.genre-filter {
+    margin: 0 0.25rem;
+    transition: all 0.3s ease;
+}
+
+.genre-filter.active {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Loading Spinner */
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .movie-card .movie-info {
+        padding: 1rem;
+    }
+    
+    .movie-card h5 {
+        font-size: 1rem;
+    }
+    
+    .movie-card .movie-description {
+        font-size: 0.8rem;
+    }
+}
+
+.bookings-container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.bookings-header {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.table-responsive {
+    margin-top: 20px;
+}
+
+.badge-success {
+    background-color: #28a745;
+}
+
+.badge-secondary {
+    background-color: #6c757d;
+}

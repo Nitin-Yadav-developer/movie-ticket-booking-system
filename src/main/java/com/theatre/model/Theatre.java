@@ -40,7 +40,7 @@ public class Theatre {
 	    public void setLocation(String location) { this.location = location; }
 
 
-		public int getToatalseats() {
+		public int getTotalSeats() {
 			return totalseats;
 		}
 

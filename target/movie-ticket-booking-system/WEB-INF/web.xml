@@ -1,17 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE web-app PUBLIC
  "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
  "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
-<web-app>
-  <display-name>Archetype Created Web Application</display-name>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+         version="5.0">
+  <display-name>Movie Ticket Booking System</display-name>
+
+  <!-- Welcome File List -->
+  <welcome-file-list>
+      <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+
+  <!-- Session Configuration -->
+  <session-config>
+      <session-timeout>30</session-timeout>
+  </session-config>
+
+  <error-page>
+      <exception-type>java.lang.Exception</exception-type>
+      <location>/error.jsp</location>
+  </error-page>
+
+  <error-page>
+      <error-code>404</error-code>
+      <location>/error.jsp</location>
+  </error-page>
+
+  <error-page>
+      <error-code>500</error-code>
+      <location>/error.jsp</location>
+  </error-page>
+
   <servlet>
-  	<servlet-name>MovieServlet</servlet-name>
-  	<display-name>MovieServlet</display-name>
-  	<description></description>
-  	<servlet-class>servlet.MovieServlet</servlet-class>
+      <servlet-name>InitiateBooking</servlet-name>
+      <servlet-class>com.booking.servlet.InitiateBookingServlet</servlet-class>
   </servlet>
-  <servlet-mapping>
-  	<servlet-name>MovieServlet</servlet-name>
-  	<url-pattern>/MovieServlet</url-pattern>
-  </servlet-mapping>
+
+  <servlet>
+      <servlet-name>InitiatePaymentServlet</servlet-name>
+      <servlet-class>com.controller.InitiatePaymentServlet</servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>PaymentServlet</servlet-name>
+    <servlet-class>com.controller.PaymentServlet</servlet-class>
+  </servlet>
 </web-app>

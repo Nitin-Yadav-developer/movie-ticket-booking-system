@@ -10,9 +10,12 @@ import com.movie.model.Movie;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 
-@WebServlet(name = "MovieServlet", urlPatterns = {"/MovieServlet", "/MovieServlet/*"})
+@WebServlet(name = "MovieServlet", urlPatterns = {"/MovieServlet", "/movies/*"})
 public class MovieServlet extends HttpServlet {
     private MovieDao movieDao;
     private Gson gson;
@@ -24,29 +27,36 @@ public class MovieServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws IOException {
+        // Set headers before any error might occur
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "GET");
+        response.setContentType("application/json;charset=UTF-8");
+
         try {
             String action = request.getParameter("action");
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            
             List<Movie> movies;
+            
             if ("search".equals(action)) {
                 String query = request.getParameter("query");
-                movies = movieDao.searchMovies(query);
+                movies = movieDao.searchMovies(query != null ? query : "");
             } else {
                 movies = movieDao.getAllMovies();
             }
             
-            System.out.println("Movies found: " + movies.size()); // Add logging
+            // Log the response for debugging
             String jsonMovies = gson.toJson(movies);
-            System.out.println("JSON response: " + jsonMovies); // Add logging
+            System.out.println("Sending JSON response: " + jsonMovies);
+            
             response.getWriter().write(jsonMovies);
             
         } catch (Exception e) {
             System.err.println("Error in MovieServlet: " + e.getMessage());
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "An error occurred while processing your request");
+            errorResponse.put("details", e.getMessage());
+            response.getWriter().write(gson.toJson(errorResponse));
         }
     }
 }

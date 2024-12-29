@@ -1,68 +1,79 @@
 package com.booking.model;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Booking {
+    private int bookingId;
+    private int showtimeId;
+    private Integer userId;    // Changed to Integer to allow null
+    private String seatsBooked; // Changed to String to store JSON
+    private Timestamp bookingDate;
+    private int theatreId;    // Added new field
+    private int totalSeats;   // Added new field
+    
+    // Additional fields for display purposes
+    private String movieTitle;
+    private String theatreName;
+    private double ticketPrice;
+    private double totalAmount;
 
-	
-	
-	
-	    private int bookingId;
-	    private int userId;
-	    private int showtimeId;
-	    private int numberOfSeats;
-	    private Date bookingdate;
+    // Default constructor
+    public Booking() {}
+    
+    // Updated constructor with new fields
+    public Booking(int bookingId, int showtimeId, Integer userId, String seatsBooked, 
+                  Timestamp bookingDate, int theatreId, int totalSeats) {
+        this.bookingId = bookingId;
+        this.showtimeId = showtimeId;
+        this.userId = userId;
+        this.seatsBooked = seatsBooked;
+        this.bookingDate = bookingDate;
+        this.theatreId = theatreId;
+        this.totalSeats = totalSeats;
+    }
 
-	    public Booking() {
-			super();
-			// TODO Auto-generated constructor stub
-		}
-	    
-	    
-		public Booking(int bookingId, int userId, int showtimeId,int numberofSeats, Date bookingdate) {
-			super();
-			this.bookingId = bookingId;
-			this.userId = userId;
-			this.showtimeId = showtimeId;
-			this.numberOfSeats = numberofSeats;
-			this.bookingdate=bookingdate;
-		}
+    // Getters and Setters
+    public int getBookingId() { return bookingId; }
+    public void setBookingId(int bookingId) { this.bookingId = bookingId; }
 
+    public int getShowtimeId() { return showtimeId; }
+    public void setShowtimeId(int showtimeId) { this.showtimeId = showtimeId; }
 
-		// Getters and Setters
-	    public int getBookingId() { return bookingId; }
-	    public void setBookingId(int bookingId) { this.bookingId = bookingId; }
+    public Integer getUserId() { return userId; }
+    public void setUserId(Integer userId) { this.userId = userId; }
 
-	    public int getUserId() { return userId; }
-	    public void setUserId(int userId) { this.userId = userId; }
+    public String getSeatsBooked() { return seatsBooked; }
+    public void setSeatsBooked(String seatsBooked) { this.seatsBooked = seatsBooked; }
 
-	    public int getShowtimeId() { return showtimeId; }
-	    public void setShowtimeId(int showtimeId) { this.showtimeId = showtimeId; }
+    public Timestamp getBookingDate() { return bookingDate; }
+    public void setBookingDate(Timestamp bookingDate) { this.bookingDate = bookingDate; }
 
-	    public int getNumberOfSeats() { return numberOfSeats; }
-	    public void setNumberOfSeats(int numberOfSeats) { this.numberOfSeats = numberOfSeats; }
+    public int getTheatreId() { return theatreId; }
+    public void setTheatreId(int theatreId) { this.theatreId = theatreId; }
 
+    public int getTotalSeats() { return totalSeats; }
+    public void setTotalSeats(int totalSeats) { this.totalSeats = totalSeats; }
 
-		
+    public String getMovieTitle() { return movieTitle; }
+    public void setMovieTitle(String movieTitle) { this.movieTitle = movieTitle; }
 
-		public Date getBookingdate() {
-			return bookingdate;
-		}
+    public String getTheatreName() { return theatreName; }
+    public void setTheatreName(String theatreName) { this.theatreName = theatreName; }
 
+    public double getTicketPrice() { return ticketPrice; }
+    public void setTicketPrice(double ticketPrice) { this.ticketPrice = ticketPrice; }
 
-		public void setBookingdate(Date bookingdate) {
-			this.bookingdate = bookingdate;
-		}
+    public double getTotalAmount() { return totalAmount; }
+    public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
 
-
-		@Override
-		public String toString() {
-			return "Booking [bookingId=" + bookingId + ", userId=" + userId + ", showtimeId=" + showtimeId
-					+ ", numberOfSeats=" + numberOfSeats + ", bookingdate=" + bookingdate + "]";
-		}
-
-
-		
-
+    @Override
+    public String toString() {
+        return "Booking [bookingId=" + bookingId + ", showtimeId=" + showtimeId + 
+               ", userId=" + userId + ", seatsBooked=" + seatsBooked + 
+               ", bookingDate=" + bookingDate + ", theatreId=" + theatreId + 
+               ", totalSeats=" + totalSeats + ", movieTitle=" + movieTitle + 
+               ", theatreName=" + theatreName + ", ticketPrice=" + ticketPrice + 
+               ", totalAmount=" + totalAmount + "]";
+    }
 }
 
