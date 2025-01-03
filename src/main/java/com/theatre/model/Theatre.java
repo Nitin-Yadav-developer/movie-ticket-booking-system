@@ -1,73 +1,51 @@
 package com.theatre.model;
 
+import java.sql.Timestamp;
+
 public class Theatre {
 
-	
-	
-	
-	    private int theatreId;
-	    private String name;
-	    private String location;
-	    private int totalseats;
-	    
-	    
+    // Match exact database column names
+    private int theatre_id;
+    private String name;
+    private String location;
+    private int total_seats;
+    private String status;
+    private Timestamp created_at;
 
-	    public Theatre() {
-			super();
-			// TODO Auto-generated constructor stub
-		}
-	    
-	    
-		
+    public Theatre() {
+        this.status = "ACTIVE"; // Set default status
+    }
 
-		public Theatre(int theatreId, String name, String location, int totalseats) {
-			super();
-			this.theatreId = theatreId;
-			this.name = name;
-			this.location = location;
-			this.totalseats = totalseats;
-		}
+    public Theatre(int theatre_id, String name, String location, int total_seats) {
+        this.theatre_id = theatre_id;
+        this.name = name;
+        this.location = location;
+        this.total_seats = total_seats;
+        this.status = "ACTIVE";
+    }
 
+    // Update getters/setters to match column names
+    public int getTheatre_id() { return theatre_id; }
+    public void setTheatre_id(int theatre_id) { this.theatre_id = theatre_id; }
 
-		// Getters and Setters
-	    public int getTheatreId() { return theatreId; }
-	    public void setTheatreId(int theatreId) { this.theatreId = theatreId; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-	    public String getName() { return name; }
-	    public void setName(String name) { this.name = name; }
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
 
-	    public String getLocation() { return location; }
-	    public void setLocation(String location) { this.location = location; }
+    public int getTotal_seats() { return total_seats; }
+    public void setTotal_seats(int total_seats) { this.total_seats = total_seats; }
 
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
-		public int getTotalSeats() {
-			return totalseats;
-		}
+    public Timestamp getCreated_at() { return created_at; }
+    public void setCreated_at(Timestamp created_at) { this.created_at = created_at; }
 
-
-
-
-		public void setToatalseats(int toatalseats) {
-			this.totalseats = toatalseats;
-		}
-
-
-
-		
-
-		@Override
-		public String toString() {
-			return "Theatre [theatreId=" + theatreId + ", name=" + name + ", location=" + location + ", toatalseats="
-					+ totalseats + "]";
-		}
-
-
-
-
-		
-
-
-		
-	    
-	    
-	}
+    @Override
+    public String toString() {
+        return "Theatre [theatreId=" + theatre_id + ", name=" + name + ", location=" + location + ", total_seats="
+                + total_seats + ", status=" + status + ", created_at=" + created_at + "]";
+    }
+}

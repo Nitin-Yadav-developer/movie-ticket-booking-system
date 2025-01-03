@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1038,9 +1038,9 @@ z"/>
 </svg>
   
     <!-- Main Title -->
-     <text x="260" y="50" fill="#FFFFFF" font-size="14" font-family="Arial, sans-serif" letter-spacing="1">PREMIERE MOVIE TICKET</text>
+     <text x="210" y="50" fill="#FFFFFF" font-size="20" font-weight="bold" font-family="Arial, sans-serif" letter-spacing="1">PREMIERE MOVIE TICKET</text>
 
-    <text x="260" y="100" fill="#FFFFFF" font-size="40" font-weight="bold" font-family="Arial, sans-serif">${sessionScope.movieTitle}</text>
+    <text x="270" y="100" fill="#FFFFFF" font-size="15" font-weight="strong" font-family="Arial, sans-serif">${sessionScope.movieTitle}</text>
     
      <!-- Address 
     <text x="50" y="40" fill="white" font-size="12" font-weight="bold" font-family="Arial, sans-serif" transform="rotate(0,525,40)">ADDRESS</text>
@@ -1049,13 +1049,17 @@ z"/>
 
     <!-- Date & Time -->
     <text x="250" y="170" fill="#FFFFFF" font-size="14" font-family="Arial, sans-serif">TIME</text>
-    <text x="250" y="190" fill="#FFFFFF" font-size="14" font-weight="bold" font-family="Arial, sans-serif">${sessionScope.showtime}</text>
+    <text x="250" y="190" fill="#FFFFFF" font-size="14" font-weight="bold" font-family="Arial, sans-serif">
+        <fmt:formatDate value="${sessionScope.showDate}" pattern="hh:mm a"/>
+    </text>
     <text x="350" y="170" fill="#FFFFFF" font-size="14" font-family="Arial, sans-serif">DATE</text>
-    <text x="350" y="190" fill="#FFFFFF" font-size="14" font-weight="bold" font-family="Arial, sans-serif">${sessionScope.showtime} </text>
+    <text x="350" y="190" fill="#FFFFFF" font-size="14" font-weight="bold" font-family="Arial, sans-serif">
+        <fmt:formatDate value="${sessionScope.showDate}" pattern="dd MMM yyyy"/>
+    </text>
 
     <!-- Address -->
-    <text x="520" y="30" fill="#1B1647" font-size="12" font-weight="bold" font-family="Arial, sans-serif" transform="rotate(0,525,40)">ADDRESS</text>
-    <text x="520" y="50" fill="#1B1647" font-size="10" font-family="Arial, sans-serif" transform="rotate(540,60)">123 Anywhere St, Any City </text>
+    <text x="520" y="30" fill="#1B1647" font-size="12" font-weight="bold" font-family="Arial, sans-serif">ADDRESS</text>
+    <text x="520" y="50" fill="#1B1647" font-size="10" font-family="Arial, sans-serif">${sessionScope.theatreLocation}</text>
     
     
 
@@ -1063,20 +1067,11 @@ z"/>
     
     <!-- Row, Seat, Gate -->
     <text x="520" y="90" fill="#1B1647" font-size="12" font-weight="bold" font-family="Arial, sans-serif">TOTAL SEATS:</text>
-    <text x="610" y="90" fill="#1B1647" font-size="12" font-weight="bold" font-family="Arial, sans-serif">${booking.totalSeats}</text>
-    <text x="520" y="110" fill="#1B1647" font-size="12" font-weight="bold" font-family="Arial, sans-serif">SEATS NAME:</text>
-    
-    
+    <text x="610" y="90" fill="#1B1647" font-size="12" font-weight="bold" font-family="Arial, sans-serif">${sessionScope.totalSeats}</text>
+    <text x="520" y="110" fill="#1B1647" font-size="12" font-weight="bold" font-family="Arial, sans-serif">SEATS:</text>
     <text x="605" y="110" fill="#1B1647" font-size="12" font-weight="bold" font-family="Arial, sans-serif">
-    
-   
-                            <% String selectedSeats = (String) session.getAttribute("selectedSeats"); 
-                                if (selectedSeats != null && selectedSeats.startsWith("[")) {
-                                    selectedSeats = selectedSeats.replace("[", "").replace("]", "").replace("\"", "");
-                                }
-                            %>
-                            <%= selectedSeats %>
-    
+        <c:set var="seatsStr" value="${fn:replace(fn:replace(fn:replace(fn:replace(sessionScope.selectedSeats, '[', ''), ']', ''), '\"', ''), ',', ', ')}"/>
+        ${seatsStr}
     </text>
     
     <text x="520" y="130" fill="#1B1647" font-size="12" font-weight="bold" font-family="Arial, sans-serif">THEATRE:</text>

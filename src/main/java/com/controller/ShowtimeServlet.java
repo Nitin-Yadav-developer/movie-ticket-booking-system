@@ -59,7 +59,23 @@ public class ShowtimeServlet extends HttpServlet {
     private void listShowtimes(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         try {
-            List<Showtime> showtimes = showtimeDao.getAllShowtimes();
+            List<Showtime> showtimes;
+            String movieId = request.getParameter("movieId");
+            
+            if (movieId != null && !movieId.trim().isEmpty()) {
+                // If movieId is provided, get showtimes for that movie
+                showtimes = showtimeDao.getShowtimesByMovie(Integer.parseInt(movieId));
+            } else {
+                // Otherwise get all showtimes
+                showtimes = showtimeDao.getAllShowtimes();
+            }
+            
+            System.out.println("Number of showtimes retrieved: " + (showtimes != null ? showtimes.size() : 0));
+            
+            if (showtimes != null && !showtimes.isEmpty()) {
+                System.out.println("First showtime: " + showtimes.get(0).toString());
+            }
+            
             String sortBy = request.getParameter("sort");
             
             if (showtimes != null && !showtimes.isEmpty() && sortBy != null) {
@@ -77,12 +93,16 @@ public class ShowtimeServlet extends HttpServlet {
             }
 
             request.setAttribute("showtimes", showtimes);
-            if (showtimes.isEmpty()) {
+            if (showtimes == null || showtimes.isEmpty()) {
                 request.setAttribute("message", "No upcoming showtimes available.");
             }
         } catch (SQLException e) {
+            System.err.println("Database error in listShowtimes: " + e.getMessage());
             e.printStackTrace();
             request.setAttribute("error", "Database error: Please ensure all required tables are properly set up.");
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid movie ID: " + e.getMessage());
+            request.setAttribute("error", "Invalid movie ID provided");
         }
         request.getRequestDispatcher("/showtime.jsp").forward(request, response);
     }

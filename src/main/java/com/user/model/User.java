@@ -3,48 +3,41 @@ package com.user.model;
 import java.sql.Timestamp;
 
 public class User {
-    // Rename id to userId to match database
-    private int userId;
+    // Match exact database column names
+    private int user_id;
     private String username;
     private String name;
     private String email;
     private String country;
     private String address;
     private String password;
-    private Timestamp createdAt;  // Add timestamp field
+    private String role;
+    private Timestamp created_at;
 
     public User() {
         super();
         // TODO Auto-generated constructor stub
     }
 
-    // Update constructor
-    public User(int userId, String username, String name, String email, String country, String address, String password) {
-        this.userId = userId;
+    // Update constructor to match field names
+    public User(int user_id, String username, String name, String email, 
+               String country, String address, String password) {
+        this.user_id = user_id;
         this.username = username;
         this.name = name;
         this.email = email;
         this.country = country;
         this.address = address;
         this.password = password;
+        this.role = "USER"; // Set default role
     }
 
-    // Add getter/setter for userId and createdAt
-    public int getUserId() {
-        return userId;
-    }
+    // Update getter/setter names to match fields
+    public int getUser_id() { return user_id; }
+    public void setUser_id(int user_id) { this.user_id = user_id; }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
+    public Timestamp getCreated_at() { return created_at; }
+    public void setCreated_at(Timestamp created_at) { this.created_at = created_at; }
 
     public String getName() {
         return name;
@@ -94,6 +87,18 @@ public class User {
         this.address = address;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public boolean isAdmin() {
+        return "ADMIN".equals(role);
+    }
+
     public boolean isValidEmail() {
         String emailPattern = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
         return this.email.matches(emailPattern);
@@ -105,7 +110,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User [userId=" + userId + ", username=" + username + ", name=" + name + ", email=" + email + ", country=" + country + ", address=" + address + ", password=" + password + "]";
+        return "User [user_id=" + user_id + ", username=" + username + ", name=" + name + ", email=" + email + ", country=" + country + ", address=" + address + ", password=" + password + "]";
     }
 
 }

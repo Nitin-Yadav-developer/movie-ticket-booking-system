@@ -4,6 +4,7 @@
 <head>
     <title>Booking Successful</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-5">
@@ -16,21 +17,31 @@
                 <div class="spinner-border text-primary" role="status">
                     <span class="sr-only">Loading...</span>
                 </div>
-                <p class="mt-3">Redirecting to your ticket in <span id="counter">3</span> seconds...</p>
+                <p class="mt-3">Redirecting to your ticket in <span id="counter">5</span> seconds...</p>
+                
+                <!-- Add debug information -->
+                <div class="d-none">
+                    <p>Debug Info:</p>
+                    <p>Booking ID: ${sessionScope.bookingId}</p>
+                    <p>Movie: ${sessionScope.bookingMovieTitle}</p>
+                    <p>Selected Seats: ${sessionScope.paymentSelectedSeats}</p>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        let count = 3;
+        let count = 5;
         const counter = document.getElementById('counter');
         
         const countdown = setInterval(() => {
             count--;
             counter.textContent = count;
+            
             if (count <= 0) {
                 clearInterval(countdown);
-                window.location.href = "${pageContext.request.contextPath}/GenerateTicket";
+                // Use the stored bookingId from session
+                window.location.href = "${pageContext.request.contextPath}/GenerateTicket?bookingId=${sessionScope.bookingId}";
             }
         }, 1000);
     </script>

@@ -32,12 +32,11 @@
                     
                     <form id="profileForm" action="${pageContext.request.contextPath}/Userservlet" method="post">
                         <input type="hidden" name="action" value="updateProfile">
-                        <input type="hidden" name="userId" value="${user.userId}">
+                        <input type="hidden" name="user_id" value="${user.user_id}">
                         
                         <div class="form-group">
                             <label>Username:</label>
-                            <input type="text" class="form-control" id="username" name="username" 
-                                   value="${user.username}" readonly>
+                            <input type="text" class="form-control" value="${user.username}" readonly>
                         </div>
 
                         <div class="form-group">

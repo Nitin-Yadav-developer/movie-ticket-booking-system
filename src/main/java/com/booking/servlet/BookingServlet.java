@@ -1,6 +1,9 @@
 package com.booking.servlet;
+import com.booking.model.Booking;
+import com.util.DatabaseConnection;
 
 import jakarta.servlet.ServletException;
+
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,8 +14,7 @@ import java.sql.Connection;
 import java.sql.Timestamp;
 import java.sql.SQLException;
 import com.booking.dao.BookingDao;
-import com.booking.model.Booking;
-import com.util.DatabaseConnection;
+
 
 @WebServlet("/BookingServlet")
 public class BookingServlet extends HttpServlet {

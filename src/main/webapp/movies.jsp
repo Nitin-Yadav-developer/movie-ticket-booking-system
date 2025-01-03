@@ -3,6 +3,7 @@
 <%@ page import="com.movie.dao.MovieDao"%>
 <%@ page import="com.movie.model.Movie"%>
 <%@ page import="java.util.List"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>  <!-- Add this line -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -85,13 +86,23 @@
                                 <h5 class="card-title"><%= movie.getTitle() %></h5>
                                 <p class="movie-description"><%= movie.getDescription() %></p>
                                 <div class="movie-rating mb-2">
-                                    <%= generateStarRating(movie.getRating()) %>
+                                    <%= generateStarRating(movie.getRatingAsDouble()) %>
                                 </div>
                                 <p class="genre-badge">
                                     <span class="badge badge-secondary"><%= movie.getGenre() %></span>
                                 </p>
+                                <p class="movie-duration"><i class="fas fa-clock"></i> <%= movie.getDuration() %></p>
+                                <p class="movie-status"><%= movie.getStatus() %></p>
+                                <p class="movie-release">
+                                    Released: 
+                                    <% if (movie.getReleaseDate() != null) { %>
+                                        <fmt:formatDate value="<%= movie.getReleaseDate() %>" pattern="dd MMM yyyy"/>
+                                    <% } else { %>
+                                        Not Available
+                                    <% } %>
+                                </p>
                                 <p class="movie-price">₹<%= String.format("%.2f", movie.getPrice()) %></p>
-                                <a href="${pageContext.request.contextPath}/showtime/movie?id=<%= movie.getMovieId() %>" 
+                                <a href="${pageContext.request.contextPath}/showtime/list?movieId=<%= movie.getMovieId() %>" 
                                    class="btn btn-primary btn-block">View Showtimes</a>
                             </div>
                         </div>
@@ -107,13 +118,13 @@
     <!-- Add this helper function at the bottom of your JSP -->
     <%!
     private String generateStarRating(double rating) {
-        int stars = (int) Math.round(rating / 2);
+        int stars = (int) Math.round(rating);  // Remove the division by 2
         StringBuilder html = new StringBuilder("<span class='stars'>");
         for (int i = 1; i <= 5; i++) {
             html.append(i <= stars ? "★" : "☆");
         }
         html.append("</span><span class='rating-value'>")
-            .append(String.format("%.1f", rating/2))
+            .append(String.format("%.1f", rating))
             .append("/5</span>");
         return html.toString();
     }

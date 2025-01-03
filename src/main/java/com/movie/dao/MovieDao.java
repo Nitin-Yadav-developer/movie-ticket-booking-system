@@ -1,19 +1,31 @@
 package com.movie.dao;
 
 import java.sql.*;
+
+import com.movie.model.Movie;
 import java.util.ArrayList;
 import java.util.List;
-import com.movie.model.Movie;
+
+import com.util.Constants;
 
 public class MovieDao {
-    private String jdbcURL = "jdbc:mysql://localhost:3306/Movie_Ticket_Booking_System";
-    private String jdbcUsername = "root";
-    private String jdbcPassword = "Nitin@1513";
+    private String jdbcURL = Constants.DB_URL;
+    private String jdbcUsername = Constants.DB_USERNAME;
+    private String jdbcPassword = Constants.DB_PASSWORD;
 
     private static final String SELECT_ALL_MOVIES = 
-        "SELECT movie_id, title, description, genre, rating, image_url, price, created_at FROM movies";
+        "SELECT movie_id, title, description, genre, duration, release_date, status, rating, image_url, price, created_at FROM movies";
     private static final String SEARCH_MOVIES = 
         "SELECT movie_id, title, description, genre, rating, image_url, price, created_at FROM movies WHERE title LIKE ? OR genre LIKE ?";
+    private static final String ADD_MOVIE = "INSERT INTO movies (title, genre, duration, release_date, description, price, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private static final String DELETE_MOVIE = "DELETE FROM movies WHERE movie_id=?";
+    private static final String INSERT_MOVIE = 
+        "INSERT INTO movies (title, description, genre, duration, release_date, " +
+        "status, rating, image_url, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+    private static final String UPDATE_MOVIE = 
+        "UPDATE movies SET title=?, description=?, genre=?, duration=?, " +
+        "release_date=?, status=?, rating=?, image_url=?, price=? WHERE movie_id=?";
 
     public MovieDao() {
         try {
@@ -37,12 +49,15 @@ public class MovieDao {
                 movie.setTitle(rs.getString("title"));
                 movie.setDescription(rs.getString("description"));
                 movie.setGenre(rs.getString("genre"));
-                movie.setRating(rs.getDouble("rating"));
+                movie.setDuration(rs.getString("duration"));
+                movie.setReleaseDate(rs.getDate("release_date")); // Make sure this line exists
+                movie.setStatus(rs.getString("status"));
+                movie.setRating(rs.getBigDecimal("rating"));
                 movie.setImageUrl(rs.getString("image_url"));
                 movie.setPrice(rs.getDouble("price"));
                 movie.setCreatedAt(rs.getTimestamp("created_at"));
                 movies.add(movie);
-                System.out.println("Loaded movie: " + movie.getTitle());
+                System.out.println("Loaded movie: " + movie.getTitle() + ", Release Date: " + movie.getReleaseDate()); // Add debug log
             }
         } catch (SQLException e) {
             System.err.println("Database error: " + e.getMessage());
@@ -65,7 +80,7 @@ public class MovieDao {
                 movie.setTitle(rs.getString("title"));
                 movie.setDescription(rs.getString("description"));
                 movie.setGenre(rs.getString("genre"));
-                movie.setRating(rs.getDouble("rating"));
+                movie.setRating(rs.getBigDecimal("rating"));
                 movie.setImageUrl(rs.getString("image_url"));
                 movie.setPrice(rs.getDouble("price"));
                 movie.setCreatedAt(rs.getTimestamp("created_at"));
@@ -95,7 +110,7 @@ public class MovieDao {
                 movie.setTitle(rs.getString("title"));
                 movie.setDescription(rs.getString("description"));
                 movie.setGenre(rs.getString("genre"));
-                movie.setRating(rs.getDouble("rating"));
+                movie.setRating(rs.getBigDecimal("rating"));
                 movie.setImageUrl(rs.getString("image_url"));
                 movie.setPrice(rs.getDouble("price"));
                 movie.setCreatedAt(rs.getTimestamp("created_at"));
@@ -108,6 +123,56 @@ public class MovieDao {
         }
         return movies;
     }
+
+    public boolean addMovie(Movie movie) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+             PreparedStatement stmt = connection.prepareStatement(ADD_MOVIE)) {
+            stmt.setString(1, movie.getTitle());
+            stmt.setString(2, movie.getGenre());
+            stmt.setString(3, movie.getDuration());
+            stmt.setDate(4, movie.getReleaseDate());
+            stmt.setString(5, movie.getDescription());
+            stmt.setDouble(6, movie.getPrice());
+            stmt.setString(7, movie.getStatus());
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    public boolean updateMovie(Movie movie) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+             PreparedStatement stmt = connection.prepareStatement(UPDATE_MOVIE)) {
+            stmt.setString(1, movie.getTitle());
+            stmt.setString(2, movie.getGenre());
+            stmt.setString(3, movie.getDuration());
+            stmt.setDate(4, movie.getReleaseDate());
+            stmt.setString(5, movie.getDescription());
+            stmt.setDouble(6, movie.getPrice());
+            stmt.setString(7, movie.getStatus());
+            stmt.setInt(8, movie.getMovieId());
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    public boolean deleteMovie(int movieId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+             PreparedStatement stmt = connection.prepareStatement(DELETE_MOVIE)) {
+            stmt.setInt(1, movieId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    private void setMovieParameters(PreparedStatement stmt, Movie movie) throws SQLException {
+        stmt.setString(1, movie.getTitle());
+        stmt.setString(2, movie.getDescription());
+        stmt.setString(3, movie.getGenre());
+        stmt.setString(4, movie.getDuration());
+        stmt.setDate(5, movie.getReleaseDate());
+        stmt.setString(6, movie.getStatus());
+        stmt.setBigDecimal(7, movie.getRating());
+        stmt.setString(8, movie.getImageUrl());
+        stmt.setDouble(9, movie.getPrice());
+    }
+    
 }
 
 

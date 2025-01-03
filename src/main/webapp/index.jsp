@@ -7,14 +7,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Ticket Booking System</title>
     
- 
- 
-   
     <!-- CSS Files -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
@@ -51,6 +47,8 @@
                             </li>
                         </c:when>
                         
+                        
+                        
                         <c:otherwise>
                             <li class="nav-item">
                                 <a class="nav-link" href="login.jsp">Login</a>
@@ -64,6 +62,7 @@
             </div>
         </div>
     </nav>
+   
    
 
     <!-- Hero Section -->
@@ -80,7 +79,10 @@
             </div>
         </div>
     </section>
-
+    
+    
+    
+   
     <!-- Movies Section -->
     <section class="movies-section py-5">
         <div class="container">
@@ -118,23 +120,33 @@
                                             class="card-img-top"
                                             onerror="this.onerror=null; this.src='images/hero-bg.jpg';">
                                    </div>
+          
            
-            
                                    <div class="movie-info">
                                         <h5 class="card-title"><%= movie.getTitle() %></h5>
                                         <p class="movie-description"><%= movie.getDescription() != null ? movie.getDescription() : "No description available" %></p>
                                         <div class="movie-rating mb-2">
-                                           <%= generateStarRating(movie.getRating()) %>
+                                            <%= generateStarRating(movie.getRatingAsDouble()) %>
                                         </div>
-                                    
+                                        <div class="movie-details">
+                                            <p class="movie-duration">
+                                                <i class="fas fa-clock"></i> <%= movie.getDuration() != null ? movie.getDuration() : "TBA" %>
+                                            </p>
+                                            <p class="movie-status">
+                                                <i class="fas fa-info-circle"></i> <%= movie.getStatus() != null ? movie.getStatus() : "ACTIVE" %>
+                                            </p>
+                                            <p class="movie-release">
+                                                <i class="fas fa-calendar"></i> <%= movie.getReleaseDate() != null ? movie.getReleaseDate() : "Coming Soon" %>
+                                            </p>
+                                        </div>
                                         <p class="genre-badge">
                                             <span class="badge badge-secondary"><%= movie.getGenre() != null ? movie.getGenre() : "Unspecified" %></span>
                                         </p>
                                         
                                 
                                         <p class="movie-price">₹<%= String.format("%.2f", movie.getPrice()) %></p>
-                                        <a href="${pageContext.request.contextPath}/showtime/movie?id=<%= movie.getMovieId() %>" 
-                                   class="btn btn-primary btn-block">View Showtimes</a>
+                                        <a href="${pageContext.request.contextPath}/showtime/list?movieId=<%= movie.getMovieId() %>" 
+                                           class="btn btn-primary btn-block">View Showtimes</a>
                                         
                                     </div>
                                 </div>
@@ -158,17 +170,18 @@
 
     <%!
     private String generateStarRating(double rating) {
-        int stars = (int) Math.round(rating / 2);
+        int stars = (int) Math.round(rating);  // Remove the division by 2
         StringBuilder html = new StringBuilder("<span class='stars'>");
         for (int i = 1; i <= 5; i++) {
             html.append(i <= stars ? "★" : "☆");
         }
         html.append("</span><span class='rating-value'>")
-            .append(String.format("%.1f", rating/2))
+            .append(String.format("%.1f", rating))
             .append("/5</span>");
         return html.toString();
     }
     %>
+    
 
     <!-- Footer -->
     <footer class="footer bg-dark text-white">
@@ -186,6 +199,8 @@
         </div>
     </footer>
     
+    
+
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

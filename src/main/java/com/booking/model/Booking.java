@@ -10,31 +10,41 @@ public class Booking {
     private Timestamp bookingDate;
     private int theatreId;    // Added new field
     private int totalSeats;   // Added new field
+    private String theatreLocation; // Add this field
     
     // Additional fields for display purposes
     private String movieTitle;
     private String theatreName;
     private double ticketPrice;
     private double totalAmount;
-
+    private String booking_status;
     // Default constructor
     public Booking() {}
     
     // Updated constructor with new fields
-    public Booking(int bookingId, int showtimeId, Integer userId, String seatsBooked, 
-                  Timestamp bookingDate, int theatreId, int totalSeats) {
-        this.bookingId = bookingId;
-        this.showtimeId = showtimeId;
-        this.userId = userId;
-        this.seatsBooked = seatsBooked;
-        this.bookingDate = bookingDate;
-        this.theatreId = theatreId;
-        this.totalSeats = totalSeats;
-    }
+    
 
     // Getters and Setters
     public int getBookingId() { return bookingId; }
-    public void setBookingId(int bookingId) { this.bookingId = bookingId; }
+    public Booking(int bookingId, int showtimeId, Integer userId, String seatsBooked, Timestamp bookingDate,
+			int theatreId, int totalSeats, String movieTitle, String theatreName, double ticketPrice,
+			double totalAmount, String booking_status) {
+		super();
+		this.bookingId = bookingId;
+		this.showtimeId = showtimeId;
+		this.userId = userId;
+		this.seatsBooked = seatsBooked;
+		this.bookingDate = bookingDate;
+		this.theatreId = theatreId;
+		this.totalSeats = totalSeats;
+		this.movieTitle = movieTitle;
+		this.theatreName = theatreName;
+		this.ticketPrice = ticketPrice;
+		this.totalAmount = totalAmount;
+		this.booking_status = booking_status;
+	}
+
+	public void setBookingId(int bookingId) { this.bookingId = bookingId; }
 
     public int getShowtimeId() { return showtimeId; }
     public void setShowtimeId(int showtimeId) { this.showtimeId = showtimeId; }
@@ -66,14 +76,25 @@ public class Booking {
     public double getTotalAmount() { return totalAmount; }
     public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
 
-    @Override
-    public String toString() {
-        return "Booking [bookingId=" + bookingId + ", showtimeId=" + showtimeId + 
-               ", userId=" + userId + ", seatsBooked=" + seatsBooked + 
-               ", bookingDate=" + bookingDate + ", theatreId=" + theatreId + 
-               ", totalSeats=" + totalSeats + ", movieTitle=" + movieTitle + 
-               ", theatreName=" + theatreName + ", ticketPrice=" + ticketPrice + 
-               ", totalAmount=" + totalAmount + "]";
-    }
+    public String getTheatreLocation() { return theatreLocation; }
+    public void setTheatreLocation(String theatreLocation) { this.theatreLocation = theatreLocation; }
+
+	public String getBooking_status() {
+		return booking_status;
+	}
+
+	public void setBooking_status(String booking_status) {
+		this.booking_status = booking_status;
+	}
+
+	@Override
+	public String toString() {
+		return "Booking [bookingId=" + bookingId + ", showtimeId=" + showtimeId + ", userId=" + userId
+				+ ", seatsBooked=" + seatsBooked + ", bookingDate=" + bookingDate + ", theatreId=" + theatreId
+				+ ", totalSeats=" + totalSeats + ", movieTitle=" + movieTitle + ", theatreName=" + theatreName
+				+ ", ticketPrice=" + ticketPrice + ", totalAmount=" + totalAmount + ", booking_status=" + booking_status
+				+ "]";
+	}
+	
 }
 

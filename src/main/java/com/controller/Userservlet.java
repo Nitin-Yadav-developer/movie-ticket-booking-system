@@ -102,35 +102,29 @@ public class Userservlet extends HttpServlet {
         try {
             String email = request.getParameter("email");
             String password = request.getParameter("password");
-
-            // Debug logs
-            System.out.println("Login attempt - Email: " + email);
-            
-            // Validate input
-            if (email == null || password == null || 
-                email.trim().isEmpty() || password.trim().isEmpty()) {
-                request.setAttribute("error", "Email and password are required");
-                request.getRequestDispatcher("/login.jsp").forward(request, response);
-                return;
-            }
+            boolean isAdminLogin = "on".equals(request.getParameter("adminLogin"));
 
             User user = userDao.selectUserByEmailAndPassword(email, password);
+            
             if (user != null) {
-                // Create session and set attributes
+                if (isAdminLogin && !user.isAdmin()) {
+                    request.setAttribute("error", "You don't have admin privileges");
+                    request.getRequestDispatcher("/login.jsp").forward(request, response);
+                    return;
+                }
+
                 HttpSession session = request.getSession(true);
                 session.setAttribute("user", user);
-                session.setAttribute("userId", user.getUserId());
+                session.setAttribute("userId", user.getUser_id());
                 session.setAttribute("username", user.getUsername());
-                
-                // Debug log
-                System.out.println("User logged in successfully: " + user.getUsername());
-                
-                // Redirect to home page
-                response.sendRedirect("index.jsp");
+                session.setAttribute("isAdmin", user.isAdmin());
+
+                if (user.isAdmin()) {
+                    response.sendRedirect("AdminServlet?action=showDashboard");
+                } else {
+                    response.sendRedirect("index.jsp");
+                }
             } else {
-                // Debug log
-                System.out.println("Login failed for email: " + email);
-                
                 request.setAttribute("error", "Invalid email or password");
                 request.getRequestDispatcher("/login.jsp").forward(request, response);
             }
@@ -144,56 +138,30 @@ public class Userservlet extends HttpServlet {
 
     private void updateUserProfile(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        User currentUser = (User) session.getAttribute("user");
-        
-        System.out.println("Update Profile Request Received"); // Debug log
-        
-        if (currentUser == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
-
         try {
+            int user_id = Integer.parseInt(request.getParameter("user_id"));
             String name = request.getParameter("name");
             String email = request.getParameter("email");
             String country = request.getParameter("country");
             String address = request.getParameter("address");
             
-            // Debug logs
-            System.out.println("Updating user: " + currentUser.getUserId());
-            System.out.println("New name: " + name);
-            System.out.println("New email: " + email);
-
-            // Validate input
-            if (name == null || email == null || country == null || address == null ||
-                name.trim().isEmpty() || email.trim().isEmpty() || 
-                country.trim().isEmpty() || address.trim().isEmpty()) {
-                throw new IllegalArgumentException("All fields are required");
+            User currentUser = userDao.selectuser(user_id);
+            if (currentUser != null) {
+                currentUser.setName(name);
+                currentUser.setEmail(email);
+                currentUser.setCountry(country);
+                currentUser.setAddress(address);
+                
+                if (userDao.updateUser(currentUser)) {
+                    request.getSession().setAttribute("user", currentUser);
+                    response.sendRedirect("userProfile.jsp?updated=true");
+                    return;
+                }
             }
-
-            // Update user object
-            currentUser.setName(name.trim());
-            currentUser.setEmail(email.trim());
-            currentUser.setCountry(country.trim());
-            currentUser.setAddress(address.trim());
-            
-            // Update in database
-            boolean updated = userDao.updateUser(currentUser);
-            
-            if (updated) {
-                // Update session
-                session.setAttribute("user", currentUser);
-                response.setContentType("application/json");
-                response.getWriter().write("{\"success\": true}");
-            } else {
-                throw new Exception("Failed to update user in database");
-            }
-            
+            throw new ServletException("User update failed");
         } catch (Exception e) {
-            System.out.println("Error updating profile: " + e.getMessage());
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
+            request.setAttribute("error", "Error updating profile: " + e.getMessage());
+            request.getRequestDispatcher("/userProfile.jsp").forward(request, response);
         }
     }
 }
