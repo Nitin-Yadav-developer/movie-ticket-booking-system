@@ -71,9 +71,9 @@
                 <div class="tab-content">
                     <!-- Overview Tab -->
                     <div class="tab-pane fade show active" id="overview">
-                        <div class="row">
+                        <div class="row g-3 mb-3">
                             <div class="col-md-3">
-                                <div class="card bg-primary text-white">
+                                <div class="card bg-success text-white">
                                     <div class="card-body">
                                         <h5>Total Bookings</h5>
                                         <h3>${totalBookings}</h3>
@@ -85,6 +85,42 @@
                                     <div class="card-body">
                                         <h5>Revenue</h5>
                                         <h3>$${totalRevenue}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="row g-3 mb-3">
+                            <div class="col-md-3">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body">
+                                        <h5>Users</h5>
+                                        <h3>${users.size()}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body">
+                                        <h5>Movies</h5>
+                                        <h3>${movies.size()}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="row g-3 mb-3">
+                            <div class="col-md-3">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body">
+                                        <h5>Theatres</h5>
+                                        <h3>${theaters.size()}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body">
+                                        <h5>Shows</h5>
+                                        <h3>${shows.size()}</h3>
                                     </div>
                                 </div>
                             </div>
