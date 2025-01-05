@@ -1,5 +1,4 @@
 package com.showtime.dao;
-
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.sql.Time;
@@ -29,15 +28,7 @@ public class ShowtimeDao {
     private static final String INSERT_SHOWTIME = 
         "INSERT INTO showtimes (movie_id, theatre_id, show_date, show_time, " +
         "price, available_seats, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    private static final String SELECT_ALL_SHOWTIMES = 
-        "SELECT s.*, m.title as movie_title, t.name as theatre_name, " +
-        "t.total_seats " +
-        "FROM showtimes s " +
-        "JOIN movies m ON s.movie_id = m.movie_id " +
-        "JOIN theatres t ON s.theatre_id = t.theatre_id " +
-        "WHERE (s.show_date > CURRENT_DATE) OR " +
-        "(s.show_date = CURRENT_DATE AND s.show_time > CURRENT_TIME) " +
-        "ORDER BY s.show_date ASC, s.show_time ASC";
+   
 
     public boolean addShowtime(Showtime showtime) throws SQLException {
         try (Connection connection = getConnection();

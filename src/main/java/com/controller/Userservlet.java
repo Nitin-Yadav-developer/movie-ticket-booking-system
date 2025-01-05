@@ -1,6 +1,7 @@
 package com.controller;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -56,42 +57,41 @@ public class Userservlet extends HttpServlet {
     private void registerUser(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         try {
-            // Get form parameters
-            String username = request.getParameter("username");
-            String name = request.getParameter("name");
-            String email = request.getParameter("email");
-            String country = request.getParameter("country");
-            String address = request.getParameter("address");
-            String password = request.getParameter("password");
+            String username = request.getParameter("username").trim();
+            String name = request.getParameter("name").trim();
+            String email = request.getParameter("email").trim();
+            String country = request.getParameter("country").trim();
+            String address = request.getParameter("address").trim();
+            String password = request.getParameter("password").trim();
+            String role = request.getParameter("role");
 
-            // Debug print
-            System.out.println("Received registration request:");
-            System.out.println("Username: " + username);
-            System.out.println("Email: " + email);
-
-            // Validate required fields
-            if (username == null || name == null || email == null || 
-                country == null || address == null || password == null ||
-                username.trim().isEmpty() || name.trim().isEmpty() || 
-                email.trim().isEmpty() || country.trim().isEmpty() || 
-                address.trim().isEmpty() || password.trim().isEmpty()) {
-                request.setAttribute("error", "All fields are required");
-                request.getRequestDispatcher("/register.jsp").forward(request, response);
-                return;
+            // Validate inputs
+            if (username.isEmpty() || name.isEmpty() || email.isEmpty() || 
+                country.isEmpty() || address.isEmpty() || password.isEmpty()) {
+                throw new IllegalArgumentException("All fields are required");
             }
 
-            // Create user object
+            // Check if user already exists
+            if (userDao.selectUserByEmailAndPassword(email, password) != null) {
+                throw new IllegalArgumentException("Email already registered");
+            }
+
+            // Create and insert user
             User user = new User(0, username, name, email, country, address, password);
+            user.setRole(role != null ? role : "USER");
             
-            try {
-                userDao.insertUser(user);
-                response.sendRedirect("login.jsp?registered=true");
-            } catch (Exception e) {
-                request.setAttribute("error", "Registration failed: " + e.getMessage());
-                request.getRequestDispatcher("/register.jsp").forward(request, response);
-            }
+            userDao.insertUser(user);
+            
+            // Redirect with success message
+            response.sendRedirect("login.jsp?registered=true&message=Registration successful");
+            
+        } catch (IllegalArgumentException e) {
+            request.setAttribute("error", e.getMessage());
+            request.getRequestDispatcher("/register.jsp").forward(request, response);
+        } catch (SQLException e) {
+            request.setAttribute("error", "Database error: " + e.getMessage());
+            request.getRequestDispatcher("/register.jsp").forward(request, response);
         } catch (Exception e) {
-            e.printStackTrace();
             request.setAttribute("error", "Registration failed: " + e.getMessage());
             request.getRequestDispatcher("/register.jsp").forward(request, response);
         }

@@ -1,8 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>  <!-- Add this line -->
 <!DOCTYPE html>
 <html>
 <head>
+
+
+
     <meta charset="UTF-8">
     <title>Payment - Movie Ticket Booking</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -20,17 +24,17 @@
                             <h5 class="card-title border-bottom pb-2">Booking Summary</h5>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <p><strong>Movie:</strong> <c:out value="${sessionScope.movieTitle}" default="N/A"/></p>
-                                    <p><strong>Theatre:</strong> <c:out value="${sessionScope.theatreName}" default="N/A"/></p>
-                                    <p><strong>Date:</strong> <fmt:formatDate value="${sessionScope.bookingDate}" pattern="yyyy-MM-dd"/></p>
-                                    <p><strong>Time:</strong> <c:out value="${sessionScope.showtime}" default="N/A"/></p>
+                                    <p><strong>Movie:</strong> ${sessionScope.bookingMovieTitle}</p>
+                                    <p><strong>Theatre:</strong> ${sessionScope.bookingTheatreName}</p>
+                                    <p><strong>Date:</strong> <fmt:formatDate value="${sessionScope.bookingShowDate}" pattern="EEE, MMM dd, yyyy"/></p>
+                                    <p><strong>Time:</strong> <fmt:formatDate value="${sessionScope.show_time}" pattern="hh:mm a"/></p>
                                 </div>
                                 <div class="col-md-6">
-                                    <p><strong>Selected Seats:</strong> <span class="text-primary">${sessionScope.selectedSeats}</span></p>
-                                    <p><strong>Number of Seats:</strong> <span class="text-primary">${sessionScope.totalSeats}</span></p>
-                                    <p><strong>Price per Ticket:</strong> $${sessionScope.ticketPrice}</p>
+                                    <p><strong>Selected Seats:</strong> ${sessionScope.paymentSelectedSeats}</p>
+                                    <p><strong>Number of Seats:</strong> ${sessionScope.paymentTotalSeats}</p>
+                                    <p><strong>Price per Ticket:</strong> $${sessionScope.bookingTicketPrice}</p>
                                     <hr>
-                                    <p class="h5 text-primary"><strong>Total Amount:</strong> $${sessionScope.totalAmount}</p>
+                                    <p class="h5 text-primary"><strong>Total Amount:</strong> $${sessionScope.paymentTotalAmount}</p>
                                 </div>
                             </div>
                         </div>
@@ -42,7 +46,14 @@
                             </c:if>
                             <form action="${pageContext.request.contextPath}/processPayment" method="POST" 
                                   id="paymentForm" onsubmit="return validatePaymentForm()">
-                                <!-- Remove hidden fields as we'll use session attributes -->
+                                <!-- Add hidden fields for booking details -->
+                                <input type="hidden" name="showtimeId" value="${sessionScope.bookingShowtimeId}">
+                                <input type="hidden" name="userId" value="${sessionScope.user.user_id}">
+                                <input type="hidden" name="selectedSeats" value='${sessionScope.paymentSelectedSeats}'>
+                                <input type="hidden" name="totalSeats" value="${sessionScope.paymentTotalSeats}">
+                                <input type="hidden" name="totalAmount" value="${sessionScope.paymentTotalAmount}">
+                                <input type="hidden" name="theatreId" value="${sessionScope.bookingTheatreId}">
+                                
                                 <div class="form-group">
                                     <label>Card Number</label>
                                     <input type="text" class="form-control" name="cardNumber" id="cardNumber" 
@@ -65,7 +76,7 @@
                                 
                                 <div class="text-center mt-4">
                                     <button type="submit" class="btn btn-primary btn-lg btn-block" id="payButton">
-                                        Pay $${sessionScope.totalAmount}
+                                        Pay $${sessionScope.paymentTotalAmount}
                                     </button>
                                     <a href="javascript:history.back()" class="btn btn-secondary btn-block mt-2">
                                         Cancel Booking
@@ -83,37 +94,42 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function validatePaymentForm() {
-            const cardNumber = document.getElementById('cardNumber').value;
-            const expiryDate = document.getElementById('expiryDate').value;
-            const cvv = document.getElementById('cvv').value;
+            // Get the selected seats and format as JSON array
+            const selectedSeats = document.getElementsByName('selectedSeats')[0].value;
+            try {
+                // If seats are comma-separated, convert to JSON array
+                if (selectedSeats.includes(',')) {
+                    const seatsArray = selectedSeats.split(',').map(seat => seat.trim());
+                    document.getElementsByName('selectedSeats')[0].value = JSON.stringify(seatsArray);
+                } else {
+                    // If single seat, make it an array
+                    document.getElementsByName('selectedSeats')[0].value = JSON.stringify([selectedSeats]);
+                }
+                
+                // Regular validation
+                const cardNumber = document.getElementById('cardNumber').value;
+                const expiryDate = document.getElementById('expiryDate').value;
+                const cvv = document.getElementById('cvv').value;
 
-            // Card number validation
-            if (!/^\d{16}$/.test(cardNumber)) {
-                alert('Please enter a valid 16-digit card number');
+                if (!/^\d{16}$/.test(cardNumber)) {
+                    alert('Please enter a valid 16-digit card number');
+                    return false;
+                }
+                if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiryDate)) {
+                    alert('Please enter a valid expiry date (MM/YY)');
+                    return false;
+                }
+                if (!/^\d{3}$/.test(cvv)) {
+                    alert('Please enter a valid 3-digit CVV');
+                    return false;
+                }
+                
+                return true;
+            } catch (e) {
+                console.error('Error formatting seats:', e);
+                alert('Error processing seats selection');
                 return false;
             }
-
-            // Expiry date validation
-            if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiryDate)) {
-                alert('Please enter a valid expiry date (MM/YY)');
-                return false;
-            }
-
-            // CVV validation
-            if (!/^\d{3}$/.test(cvv)) {
-                alert('Please enter a valid 3-digit CVV');
-                return false;
-            }
-
-            // Log form submission
-            console.log('Form submitted:', {
-                cardNumber,
-                expiryDate,
-                cvv,
-                totalAmount: '${sessionScope.totalAmount}'
-            });
-
-            return true;
         }
 
         // Add input formatting for expiry date

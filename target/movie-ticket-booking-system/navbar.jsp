@@ -13,7 +13,7 @@
                     <a class="nav-link" href="index.jsp">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="showtime.jsp">Showtime</a>
+                    <a class="nav-link" href="${pageContext.request.contextPath}/showtime/list">Showtime</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="movies.jsp">Movies</a>
@@ -33,6 +33,21 @@
                         <li class="nav-item">
                             <span class="nav-link">Welcome, ${sessionScope.username}!</span>
                         </li>
+                        <!-- Add admin-specific navigation options -->
+                        <c:if test="${sessionScope.user.admin}">
+                            <li class="nav-item">
+                                <a class="nav-link" href="AdminServlet?action=showDashboard">
+                                    <i class="fas fa-cog"></i> Admin Dashboard
+                                </a>
+                            </li>
+                        </c:if>
+                        <!-- Add this to your navbar's user menu -->
+                        <form action="AdminServlet" method="post" style="display: inline;">
+                            <input type="hidden" name="action" value="logout">
+                            <button type="submit" class="dropdown-item">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </form>
                     </c:when>
                     <c:otherwise>
                         <li class="nav-item">

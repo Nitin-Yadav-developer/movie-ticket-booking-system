@@ -1,0 +1,25 @@
+.sidebar {
+    background-color: #343a40;
+    min-height: 100vh;
+    padding: 20px 0;
+}
+
+.sidebar .list-group-item {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+}
+
+.sidebar .list-group-item:hover,
+.sidebar .list-group-item.active {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.card {
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.table td, .table th {
+    vertical-align: middle;
+}

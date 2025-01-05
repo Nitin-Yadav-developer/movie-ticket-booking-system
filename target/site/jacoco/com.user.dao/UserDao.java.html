@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserDao.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">movie-ticket-booking-system Maven Webapp</a> &gt; <a href="index.source.html" class="el_package">com.user.dao</a> &gt; <span class="el_source">UserDao.java</span></div><h1>UserDao.java</h1><pre class="source lang-java linenums">package com.user.dao;
+
+import java.sql.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.util.Constants;
+import com.user.model.User;
+
+public class UserDao {
+	
+<span class="nc" id="L13">	private String URL = Constants.DB_URL;</span>
+<span class="nc" id="L14">	private String USERNAME = Constants.DB_USERNAME;</span>
+<span class="nc" id="L15">	private String PASSWORD = Constants.DB_PASSWORD;</span>
+    
+    private static final String INSERT_USER_SQL = 
+        &quot;INSERT INTO users (username, name, email, country, address, password, role) &quot; +
+        &quot;VALUES (?, ?, ?, ?, ?, ?, ?)&quot;;
+        
+    private static final String SELECT_USER_BY_ID = 
+        &quot;SELECT user_id, username, name, email, country, address, password, role, created_at &quot; +
+        &quot;FROM users WHERE user_id = ?&quot;;
+        
+    private static final String SELECT_USER_BY_EMAIL_AND_PASSWORD = 
+        &quot;SELECT user_id, username, name, email, country, address, password, role, created_at &quot; +
+        &quot;FROM users WHERE email = ? AND password = ?&quot;;
+        
+    private static final String UPDATE_USERS_SQL = 
+        &quot;UPDATE users SET name=?, email=?, country=?, address=? WHERE user_id=?&quot;;
+        
+    private static final String SELECT_ALL_USERS = &quot;SELECT user_id, username, name, email, country, address, password, role, created_at FROM users;&quot;;
+    private static final String DELETE_USER_SQL = &quot;DELETE FROM users WHERE user_id=?;&quot;;
+    
+	public UserDao() {
+<span class="nc" id="L36">		super();</span>
+		// TODO Auto-generated constructor stub
+<span class="nc" id="L38">	}</span>
+	
+    public Connection getConnection() {
+<span class="nc" id="L41">    	Connection  connection=null;</span>
+    	try {
+<span class="nc" id="L43">    		Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);</span>
+<span class="nc" id="L44">    		connection=DriverManager.getConnection(URL,USERNAME,PASSWORD);</span>
+    	}
+<span class="nc" id="L46">    	catch(SQLException | ClassNotFoundException e) {</span>
+<span class="nc" id="L47">    		e.printStackTrace();</span>
+    		
+    	}
+<span class="nc" id="L50">    	catch(Exception e ) {</span>
+<span class="nc" id="L51">    		e.printStackTrace();</span>
+    		
+<span class="nc" id="L53">    	}</span>
+<span class="nc" id="L54">    	return connection;</span>
+    }
+    
+    
+    public void insertUser(User user) throws SQLException {
+<span class="nc bnc" id="L59" title="All 4 branches missed.">        if (!user.isValidEmail() || !user.isValidPassword()) {</span>
+<span class="nc" id="L60">            throw new IllegalArgumentException(&quot;Invalid email or password&quot;);</span>
+        }
+        
+<span class="nc" id="L63">        try (Connection connection = getConnection();</span>
+<span class="nc" id="L64">             PreparedStatement stmt = connection.prepareStatement(INSERT_USER_SQL)) {</span>
+<span class="nc" id="L65">            stmt.setString(1, user.getUsername());</span>
+<span class="nc" id="L66">            stmt.setString(2, user.getName());</span>
+<span class="nc" id="L67">            stmt.setString(3, user.getEmail());</span>
+<span class="nc" id="L68">            stmt.setString(4, user.getCountry());</span>
+<span class="nc" id="L69">            stmt.setString(5, user.getAddress());</span>
+<span class="nc" id="L70">            stmt.setString(6, user.getPassword());</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">            stmt.setString(7, user.getRole() != null ? user.getRole() : &quot;USER&quot;);</span>
+            
+<span class="nc" id="L73">            stmt.executeUpdate();</span>
+        }
+<span class="nc" id="L75">    }</span>
+    
+    private User mapResultSetToUser(ResultSet rs) throws SQLException {
+<span class="nc" id="L78">        User user = new User(</span>
+<span class="nc" id="L79">            rs.getInt(&quot;user_id&quot;),</span>
+<span class="nc" id="L80">            rs.getString(&quot;username&quot;),</span>
+<span class="nc" id="L81">            rs.getString(&quot;name&quot;),</span>
+<span class="nc" id="L82">            rs.getString(&quot;email&quot;),</span>
+<span class="nc" id="L83">            rs.getString(&quot;country&quot;),</span>
+<span class="nc" id="L84">            rs.getString(&quot;address&quot;),</span>
+<span class="nc" id="L85">            rs.getString(&quot;password&quot;)</span>
+        );
+<span class="nc" id="L87">        user.setRole(rs.getString(&quot;role&quot;));</span>
+<span class="nc" id="L88">        user.setCreated_at(rs.getTimestamp(&quot;created_at&quot;));</span>
+<span class="nc" id="L89">        return user;</span>
+    }
+
+    public User selectuser(int userId) {
+<span class="nc" id="L93">        User user = null;</span>
+<span class="nc" id="L94">        try (Connection connection = getConnection();</span>
+<span class="nc" id="L95">             PreparedStatement stmt = connection.prepareStatement(SELECT_USER_BY_ID)) {</span>
+<span class="nc" id="L96">            stmt.setInt(1, userId);</span>
+<span class="nc" id="L97">            ResultSet rs = stmt.executeQuery();</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">            if (rs.next()) {</span>
+<span class="nc" id="L99">                user = mapResultSetToUser(rs);</span>
+            }
+<span class="nc" id="L101">        } catch (SQLException e) {</span>
+<span class="nc" id="L102">            e.printStackTrace();</span>
+<span class="nc" id="L103">        }</span>
+<span class="nc" id="L104">        return user;</span>
+    }
+    
+    public List&lt;User&gt; selectAllUsers() {
+<span class="nc" id="L108">        List&lt;User&gt; users = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L109">        try (Connection connection = getConnection();</span>
+<span class="nc" id="L110">             PreparedStatement stmt = connection.prepareStatement(SELECT_ALL_USERS)) {</span>
+<span class="nc" id="L111">            ResultSet rs = stmt.executeQuery();</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">            while (rs.next()) {</span>
+<span class="nc" id="L113">                users.add(mapResultSetToUser(rs));</span>
+            }
+<span class="nc" id="L115">        } catch (SQLException e) {</span>
+<span class="nc" id="L116">            e.printStackTrace();</span>
+<span class="nc" id="L117">        }</span>
+<span class="nc" id="L118">        return users;</span>
+    }
+    
+    public boolean deleteuser(int id)
+    {
+<span class="nc" id="L123">    	boolean status=false;</span>
+<span class="nc" id="L124">    	UserDao dao=new UserDao();</span>
+<span class="nc" id="L125">    	try (Connection connection=dao.getConnection()){</span>
+<span class="nc" id="L126">    		PreparedStatement preparedstatement=connection.prepareStatement(DELETE_USER_SQL);</span>
+<span class="nc" id="L127">    		preparedstatement.setInt(1,id);</span>
+    		
+<span class="nc" id="L129">    		status=preparedstatement.execute();</span>
+    		
+    		
+    	}
+<span class="nc" id="L133">    	catch(Exception e) {</span>
+<span class="nc" id="L134">    		e.printStackTrace();</span>
+    		
+<span class="nc" id="L136">    	}</span>
+<span class="nc" id="L137">    	return status;</span>
+    	
+    }
+    
+    public User selectUserByEmailAndPassword(String email, String password) {
+<span class="nc" id="L142">        User user = null;</span>
+<span class="nc" id="L143">        Connection connection = null;</span>
+<span class="nc" id="L144">        PreparedStatement preparedStatement = null;</span>
+<span class="nc" id="L145">        ResultSet resultSet = null;</span>
+
+        try {
+<span class="nc" id="L148">            connection = getConnection();</span>
+<span class="nc" id="L149">            preparedStatement = connection.prepareStatement(SELECT_USER_BY_EMAIL_AND_PASSWORD);</span>
+<span class="nc" id="L150">            preparedStatement.setString(1, email);</span>
+<span class="nc" id="L151">            preparedStatement.setString(2, password);</span>
+            
+<span class="nc" id="L153">            System.out.println(&quot;Executing query for email: &quot; + email); // Debug log</span>
+            
+<span class="nc" id="L155">            resultSet = preparedStatement.executeQuery();</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">            if (resultSet.next()) {</span>
+<span class="nc" id="L157">                user = mapResultSetToUser(resultSet);</span>
+<span class="nc" id="L158">                System.out.println(&quot;User found: &quot; + user.getUsername()); // Debug log</span>
+            }
+<span class="nc" id="L160">        } catch (SQLException e) {</span>
+<span class="nc" id="L161">            System.out.println(&quot;Database error: &quot; + e.getMessage()); // Debug log</span>
+<span class="nc" id="L162">            e.printStackTrace();</span>
+        } finally {
+            try {
+<span class="nc bnc" id="L165" title="All 2 branches missed.">                if (resultSet != null) resultSet.close();</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">                if (preparedStatement != null) preparedStatement.close();</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">                if (connection != null) connection.close();</span>
+<span class="nc" id="L168">            } catch (SQLException e) {</span>
+<span class="nc" id="L169">                e.printStackTrace();</span>
+<span class="nc" id="L170">            }</span>
+        }
+<span class="nc" id="L172">        return user;</span>
+    }
+    
+    public boolean updateUser(User user) throws SQLException {
+<span class="nc" id="L176">        try (Connection connection = getConnection();</span>
+<span class="nc" id="L177">             PreparedStatement stmt = connection.prepareStatement(UPDATE_USERS_SQL)) {</span>
+<span class="nc" id="L178">            stmt.setString(1, user.getName());</span>
+<span class="nc" id="L179">            stmt.setString(2, user.getEmail());</span>
+<span class="nc" id="L180">            stmt.setString(3, user.getCountry());</span>
+<span class="nc" id="L181">            stmt.setString(4, user.getAddress());</span>
+<span class="nc" id="L182">            stmt.setInt(5, user.getUser_id());</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">            return stmt.executeUpdate() &gt; 0;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

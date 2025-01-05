@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ShowtimeDao.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">movie-ticket-booking-system Maven Webapp</a> &gt; <a href="index.source.html" class="el_package">com.showtime.dao</a> &gt; <span class="el_source">ShowtimeDao.java</span></div><h1>ShowtimeDao.java</h1><pre class="source lang-java linenums">package com.showtime.dao;
+
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.sql.Time;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.showtime.model.Showtime;
+import com.util.DatabaseConnection;
+
+public class ShowtimeDao {
+    
+<span class="nc" id="L19">    public ShowtimeDao() {</span>
+        // No need for connection in constructor
+<span class="nc" id="L21">    }</span>
+
+    private Connection getConnection() throws SQLException {
+<span class="nc" id="L24">        return DatabaseConnection.getConnection();</span>
+    }
+
+    private static final String ADD_SHOWTIME = &quot;INSERT INTO showtimes (movie_id, theatre_id, show_date, show_time, price) VALUES (?, ?, ?, ?, ?)&quot;;
+    private static final String DELETE_SHOWTIME = &quot;DELETE FROM showtimes WHERE showtime_id=?&quot;;
+    private static final String INSERT_SHOWTIME = 
+        &quot;INSERT INTO showtimes (movie_id, theatre_id, show_date, show_time, &quot; +
+        &quot;price, available_seats, status) VALUES (?, ?, ?, ?, ?, ?, ?)&quot;;
+    private static final String SELECT_ALL_SHOWTIMES = 
+        &quot;SELECT s.*, m.title as movie_title, t.name as theatre_name, &quot; +
+        &quot;t.total_seats &quot; +
+        &quot;FROM showtimes s &quot; +
+        &quot;JOIN movies m ON s.movie_id = m.movie_id &quot; +
+        &quot;JOIN theatres t ON s.theatre_id = t.theatre_id &quot; +
+        &quot;WHERE (s.show_date &gt; CURRENT_DATE) OR &quot; +
+        &quot;(s.show_date = CURRENT_DATE AND s.show_time &gt; CURRENT_TIME) &quot; +
+        &quot;ORDER BY s.show_date ASC, s.show_time ASC&quot;;
+
+    public boolean addShowtime(Showtime showtime) throws SQLException {
+<span class="nc" id="L43">        try (Connection connection = getConnection();</span>
+<span class="nc" id="L44">             PreparedStatement stmt = connection.prepareStatement(INSERT_SHOWTIME)) {</span>
+<span class="nc" id="L45">            stmt.setInt(1, showtime.getMovie_id());</span>
+<span class="nc" id="L46">            stmt.setInt(2, showtime.getTheatre_id());</span>
+<span class="nc" id="L47">            stmt.setDate(3, showtime.getShow_date());</span>
+<span class="nc" id="L48">            stmt.setTime(4, showtime.getShow_time());</span>
+<span class="nc" id="L49">            stmt.setDouble(5, showtime.getPrice());</span>
+<span class="nc" id="L50">            stmt.setInt(6, showtime.getAvailable_seats());</span>
+<span class="nc" id="L51">            stmt.setString(7, showtime.getStatus());</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">            return stmt.executeUpdate() &gt; 0;</span>
+        }
+    }
+
+    public Showtime getShowtime(int id) throws SQLException {
+<span class="nc" id="L57">        String sql = &quot;SELECT s.*, m.title as movie_title, t.name as theatre_name, &quot; +</span>
+                    &quot;t.total_seats, &quot; +
+                    &quot;(t.total_seats - (SELECT COUNT(*) FROM bookings b WHERE b.showtime_id = s.showtime_id)) as available_seats, &quot; +
+                    &quot;s.ticket_price &quot; +
+                    &quot;FROM showtimes s &quot; +
+                    &quot;JOIN movies m ON s.movie_id = m.movie_id &quot; +
+                    &quot;JOIN theatres t ON s.theatre_id = t.theatre_id &quot; +
+                    &quot;WHERE s.showtime_id = ?&quot;;
+
+<span class="nc" id="L66">        try (Connection connection = getConnection();</span>
+<span class="nc" id="L67">             PreparedStatement stmt = connection.prepareStatement(sql)) {</span>
+<span class="nc" id="L68">            stmt.setInt(1, id);</span>
+<span class="nc" id="L69">            ResultSet rs = stmt.executeQuery();</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">            if (rs.next()) {</span>
+<span class="nc" id="L71">                return new Showtime(</span>
+<span class="nc" id="L72">                    rs.getInt(&quot;showtime_id&quot;),</span>
+<span class="nc" id="L73">                    rs.getInt(&quot;movie_id&quot;),</span>
+<span class="nc" id="L74">                    rs.getInt(&quot;theatre_id&quot;),</span>
+<span class="nc" id="L75">                    rs.getDate(&quot;showDate&quot;),</span>
+<span class="nc" id="L76">                    rs.getTimestamp(&quot;showtime&quot;),</span>
+<span class="nc" id="L77">                    rs.getString(&quot;movie_title&quot;),</span>
+<span class="nc" id="L78">                    rs.getString(&quot;theatre_name&quot;),</span>
+<span class="nc" id="L79">                    rs.getInt(&quot;total_seats&quot;),</span>
+<span class="nc" id="L80">                    rs.getInt(&quot;available_seats&quot;),</span>
+<span class="nc" id="L81">                    rs.getDouble(&quot;ticket_price&quot;)</span>
+                );
+            }
+<span class="nc bnc" id="L84" title="All 4 branches missed.">        }</span>
+<span class="nc" id="L85">        return null;</span>
+    }
+
+    public List&lt;Showtime&gt; getAllShowtimes() throws SQLException {
+<span class="nc" id="L89">        List&lt;Showtime&gt; showtimes = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L90">        String sql = &quot;SELECT s.*, m.title as movie_title, t.name as theatre_name, t.total_seats &quot; +</span>
+                    &quot;FROM showtimes s &quot; +
+                    &quot;JOIN movies m ON s.movie_id = m.movie_id &quot; +
+                    &quot;JOIN theatres t ON s.theatre_id = t.theatre_id &quot; +
+                    &quot;WHERE (s.show_date &gt; CURRENT_DATE) OR &quot; +
+                    &quot;(s.show_date = CURRENT_DATE AND s.show_time &gt; CURRENT_TIME) &quot; +
+                    &quot;ORDER BY s.show_date ASC, s.show_time ASC&quot;;
+        
+<span class="nc" id="L98">        try (Connection connection = getConnection();</span>
+<span class="nc" id="L99">             PreparedStatement stmt = connection.prepareStatement(sql);</span>
+<span class="nc" id="L100">             ResultSet rs = stmt.executeQuery()) {</span>
+                
+<span class="nc bnc" id="L102" title="All 2 branches missed.">            while (rs.next()) {</span>
+<span class="nc" id="L103">                Showtime showtime = new Showtime();</span>
+<span class="nc" id="L104">                showtime.setShowtime_id(rs.getInt(&quot;showtime_id&quot;));</span>
+<span class="nc" id="L105">                showtime.setMovie_id(rs.getInt(&quot;movie_id&quot;));</span>
+<span class="nc" id="L106">                showtime.setTheatre_id(rs.getInt(&quot;theatre_id&quot;));</span>
+<span class="nc" id="L107">                showtime.setShow_date(rs.getDate(&quot;show_date&quot;));</span>
+<span class="nc" id="L108">                showtime.setShow_time(rs.getTime(&quot;show_time&quot;));</span>
+<span class="nc" id="L109">                showtime.setPrice(rs.getDouble(&quot;price&quot;));</span>
+<span class="nc" id="L110">                showtime.setAvailable_seats(rs.getInt(&quot;available_seats&quot;));</span>
+<span class="nc" id="L111">                showtime.setStatus(rs.getString(&quot;status&quot;));</span>
+<span class="nc" id="L112">                showtime.setMovieTitle(rs.getString(&quot;movie_title&quot;));</span>
+<span class="nc" id="L113">                showtime.setTheatreName(rs.getString(&quot;theatre_name&quot;));</span>
+<span class="nc" id="L114">                showtime.setTotalSeats(rs.getInt(&quot;total_seats&quot;));</span>
+<span class="nc" id="L115">                showtimes.add(showtime);</span>
+<span class="nc" id="L116">            }</span>
+        }
+<span class="nc" id="L118">        return showtimes;</span>
+    }
+
+    public List&lt;Showtime&gt; getShowtimesByMovie(int movieId) throws SQLException {
+<span class="nc" id="L122">        List&lt;Showtime&gt; showtimes = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L123">        String sql = &quot;SELECT s.*, m.title as movie_title, t.name as theatre_name, &quot; +</span>
+                    &quot;t.total_seats &quot; +
+                    &quot;FROM showtimes s &quot; +
+                    &quot;JOIN movies m ON s.movie_id = m.movie_id &quot; +
+                    &quot;JOIN theatres t ON s.theatre_id = t.theatre_id &quot; +
+                    &quot;WHERE s.movie_id = ? AND &quot; +
+                    &quot;(s.show_date &gt; CURRENT_DATE OR &quot; +
+                    &quot;(s.show_date = CURRENT_DATE AND s.show_time &gt; CURRENT_TIME)) &quot; +
+                    &quot;ORDER BY s.show_date ASC, s.show_time ASC&quot;;
+
+<span class="nc" id="L133">        try (Connection connection = getConnection();</span>
+<span class="nc" id="L134">             PreparedStatement stmt = connection.prepareStatement(sql)) {</span>
+<span class="nc" id="L135">            stmt.setInt(1, movieId);</span>
+<span class="nc" id="L136">            try (ResultSet rs = stmt.executeQuery()) {</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">                while (rs.next()) {</span>
+<span class="nc" id="L138">                    Showtime showtime = new Showtime();</span>
+<span class="nc" id="L139">                    showtime.setShowtime_id(rs.getInt(&quot;showtime_id&quot;));</span>
+<span class="nc" id="L140">                    showtime.setMovie_id(rs.getInt(&quot;movie_id&quot;));</span>
+<span class="nc" id="L141">                    showtime.setTheatre_id(rs.getInt(&quot;theatre_id&quot;));</span>
+<span class="nc" id="L142">                    showtime.setShow_date(rs.getDate(&quot;show_date&quot;));</span>
+<span class="nc" id="L143">                    showtime.setShow_time(rs.getTime(&quot;show_time&quot;));</span>
+<span class="nc" id="L144">                    showtime.setPrice(rs.getDouble(&quot;price&quot;));</span>
+<span class="nc" id="L145">                    showtime.setAvailable_seats(rs.getInt(&quot;available_seats&quot;));</span>
+<span class="nc" id="L146">                    showtime.setStatus(rs.getString(&quot;status&quot;));</span>
+<span class="nc" id="L147">                    showtime.setMovieTitle(rs.getString(&quot;movie_title&quot;));</span>
+<span class="nc" id="L148">                    showtime.setTheatreName(rs.getString(&quot;theatre_name&quot;));</span>
+<span class="nc" id="L149">                    showtime.setTotalSeats(rs.getInt(&quot;total_seats&quot;));</span>
+<span class="nc" id="L150">                    showtimes.add(showtime);</span>
+<span class="nc" id="L151">                }</span>
+            }
+        }
+<span class="nc" id="L154">        return showtimes;</span>
+    }
+
+    public boolean updateShowtime(Showtime showtime) throws SQLException {
+<span class="nc" id="L158">        String sql = &quot;UPDATE showtimes SET movie_id = ?, theatre_id = ?, showDate = ?, showtime = ? WHERE showtime_id = ?&quot;;</span>
+<span class="nc" id="L159">        try (Connection connection = getConnection();</span>
+<span class="nc" id="L160">             PreparedStatement stmt = connection.prepareStatement(sql)) {</span>
+<span class="nc" id="L161">            stmt.setInt(1, showtime.getMovie_id());</span>
+<span class="nc" id="L162">            stmt.setInt(2, showtime.getTheatre_id());</span>
+<span class="nc" id="L163">            stmt.setDate(3, (Date) showtime.getShow_date());</span>
+<span class="nc" id="L164">            stmt.setTime(4, (Time) showtime.getShow_time());</span>
+<span class="nc" id="L165">            stmt.setInt(5, showtime.getShowtime_id());</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">            return stmt.executeUpdate() &gt; 0;</span>
+        }
+    }
+
+    public boolean deleteShowtime1(int id) throws SQLException {
+<span class="nc" id="L171">        String sql = &quot;DELETE FROM showtimes WHERE showtime_id = ?&quot;;</span>
+<span class="nc" id="L172">        try (Connection connection = getConnection();</span>
+<span class="nc" id="L173">             PreparedStatement stmt = connection.prepareStatement(sql)) {</span>
+<span class="nc" id="L174">            stmt.setInt(1, id);</span>
+<span class="nc bnc" id="L175" title="All 2 branches missed.">            return stmt.executeUpdate() &gt; 0;</span>
+        }
+    }
+
+    public boolean deleteShowtime(int showtimeId) throws SQLException {
+<span class="nc" id="L180">        try (Connection connection = getConnection();</span>
+<span class="nc" id="L181">             PreparedStatement stmt = connection.prepareStatement(DELETE_SHOWTIME)) {</span>
+<span class="nc" id="L182">            stmt.setInt(1, showtimeId);</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">            return stmt.executeUpdate() &gt; 0;</span>
+        }
+    }
+}
+
+
+
+
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

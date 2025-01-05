@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdminServlet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">movie-ticket-booking-system Maven Webapp</a> &gt; <a href="index.source.html" class="el_package">com.controller</a> &gt; <span class="el_source">AdminServlet.java</span></div><h1>AdminServlet.java</h1><pre class="source lang-java linenums">package com.controller;
+
+import jakarta.servlet.ServletException;
+
+
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+import com.user.dao.UserDao;
+import com.user.model.User;
+import com.movie.dao.MovieDao;
+import com.movie.model.Movie;
+import com.showtime.dao.ShowtimeDao;
+import com.showtime.model.Showtime;
+import com.theatre.dao.TheatreDao;
+import com.theatre.model.Theatre;
+import com.booking.dao.BookingDao;
+import com.booking.model.Booking;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.util.List;
+import java.sql.Connection;
+import com.util.DatabaseConnection;
+import java.util.ArrayList;
+import java.sql.Date;
+
+@WebServlet(&quot;/AdminServlet&quot;)
+<span class="nc" id="L33">public class AdminServlet extends HttpServlet {</span>
+    private UserDao userDao;
+    private MovieDao movieDao;
+    private TheatreDao theatreDao;
+    private ShowtimeDao showtimeDao;
+    private BookingDao bookingDao;
+    private Connection connection;
+    
+    @Override
+    public void init() throws ServletException {
+        try {
+<span class="nc" id="L44">            initializeConnections();</span>
+<span class="nc" id="L45">        } catch (SQLException e) {</span>
+<span class="nc" id="L46">            throw new ServletException(&quot;Error initializing DAOs&quot;, e);</span>
+<span class="nc" id="L47">        }</span>
+<span class="nc" id="L48">    }</span>
+
+    private void initializeConnections() throws SQLException {
+        // Create single connection instance for the servlet
+<span class="nc" id="L52">        connection = DatabaseConnection.getConnection();</span>
+<span class="nc" id="L53">        System.out.println(&quot;Database connection established&quot;);</span>
+        
+        // Initialize DAOs with the connection
+<span class="nc" id="L56">        userDao = new UserDao();</span>
+<span class="nc" id="L57">        movieDao = new MovieDao();</span>
+<span class="nc" id="L58">        theatreDao = new TheatreDao(connection);</span>
+<span class="nc" id="L59">        showtimeDao = new ShowtimeDao();</span>
+<span class="nc" id="L60">        bookingDao = new BookingDao(connection);</span>
+        
+<span class="nc" id="L62">        System.out.println(&quot;All DAOs initialized successfully&quot;);</span>
+<span class="nc" id="L63">    }</span>
+
+    private void checkAndRefreshConnection() throws SQLException {
+<span class="nc bnc" id="L66" title="All 4 branches missed.">        if (connection == null || connection.isClosed()) {</span>
+<span class="nc" id="L67">            System.out.println(&quot;Refreshing database connection&quot;);</span>
+<span class="nc" id="L68">            initializeConnections();</span>
+        }
+<span class="nc" id="L70">    }</span>
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        try {
+<span class="nc" id="L76">            String action = request.getParameter(&quot;action&quot;);</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">            if (action == null) {</span>
+<span class="nc" id="L78">                action = &quot;showDashboard&quot;;</span>
+            }
+            
+<span class="nc" id="L81">            HttpSession session = request.getSession();</span>
+<span class="nc" id="L82">            User user = (User) session.getAttribute(&quot;user&quot;);</span>
+
+<span class="nc bnc" id="L84" title="All 4 branches missed.">            if (user == null || !user.isAdmin()) {</span>
+<span class="nc" id="L85">                response.sendRedirect(&quot;login.jsp&quot;);</span>
+<span class="nc" id="L86">                return;</span>
+            }
+
+<span class="nc bnc" id="L89" title="All 7 branches missed.">            switch (action) {</span>
+                case &quot;showDashboard&quot;:
+<span class="nc" id="L91">                    showDashboard(request, response);</span>
+<span class="nc" id="L92">                    break;</span>
+                case &quot;listMovies&quot;:
+<span class="nc" id="L94">                    listMovies(request, response);</span>
+<span class="nc" id="L95">                    break;</span>
+                case &quot;listShows&quot;:
+<span class="nc" id="L97">                    listShows(request, response);</span>
+<span class="nc" id="L98">                    break;</span>
+                case &quot;listBookings&quot;:
+<span class="nc" id="L100">                    listBookings(request, response);</span>
+<span class="nc" id="L101">                    break;</span>
+                case &quot;listUsers&quot;:
+<span class="nc" id="L103">                    listUsers(request, response);</span>
+<span class="nc" id="L104">                    break;</span>
+                case &quot;listTheaters&quot;:
+<span class="nc" id="L106">                    listTheaters(request, response);</span>
+<span class="nc" id="L107">                    break;</span>
+                default:
+<span class="nc" id="L109">                    showDashboard(request, response);</span>
+            }
+<span class="nc" id="L111">        } catch (Exception e) {</span>
+<span class="nc" id="L112">            System.err.println(&quot;Error in doGet: &quot; + e.getMessage());</span>
+<span class="nc" id="L113">            e.printStackTrace();</span>
+<span class="nc" id="L114">            request.setAttribute(&quot;error&quot;, &quot;System error: &quot; + e.getMessage());</span>
+<span class="nc" id="L115">            request.getRequestDispatcher(&quot;/admin_dashboard.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L116">        }</span>
+<span class="nc" id="L117">    }</span>
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+<span class="nc" id="L122">        String action = request.getParameter(&quot;action&quot;);</span>
+<span class="nc" id="L123">        HttpSession session = request.getSession();</span>
+<span class="nc" id="L124">        User user = (User) session.getAttribute(&quot;user&quot;);</span>
+
+<span class="nc bnc" id="L126" title="All 4 branches missed.">        if (user == null || !user.isAdmin()) {</span>
+<span class="nc" id="L127">            response.sendRedirect(&quot;login.jsp&quot;);</span>
+<span class="nc" id="L128">            return;</span>
+        }
+
+<span class="nc bnc" id="L131" title="All 7 branches missed.">        switch (action) {</span>
+            case &quot;addMovie&quot;:
+<span class="nc" id="L133">                addMovie(request, response);</span>
+<span class="nc" id="L134">                break;</span>
+            case &quot;updateMovie&quot;:
+<span class="nc" id="L136">                updateMovie(request, response);</span>
+<span class="nc" id="L137">                break;</span>
+            case &quot;deleteMovie&quot;:
+<span class="nc" id="L139">                deleteMovie(request, response);</span>
+<span class="nc" id="L140">                break;</span>
+            case &quot;addShow&quot;:
+<span class="nc" id="L142">                addShow(request, response);</span>
+<span class="nc" id="L143">                break;</span>
+            case &quot;updateBooking&quot;:
+<span class="nc" id="L145">                updateBooking(request, response);</span>
+<span class="nc" id="L146">                break;</span>
+            case &quot;logout&quot;:
+<span class="nc" id="L148">                handleLogout(request, response);</span>
+<span class="nc" id="L149">                break;</span>
+            default:
+<span class="nc" id="L151">                showDashboard(request, response);</span>
+        }
+<span class="nc" id="L153">    }</span>
+
+    private void updateMovie(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        try {
+<span class="nc" id="L158">            int movieId = Integer.parseInt(request.getParameter(&quot;movieId&quot;));</span>
+<span class="nc" id="L159">            String title = request.getParameter(&quot;title&quot;);</span>
+<span class="nc" id="L160">            String genre = request.getParameter(&quot;genre&quot;);</span>
+<span class="nc" id="L161">            String duration = request.getParameter(&quot;duration&quot;);</span>
+            // Convert String date to SQL Date
+<span class="nc" id="L163">            Date releaseDate = Date.valueOf(request.getParameter(&quot;releaseDate&quot;));</span>
+<span class="nc" id="L164">            String description = request.getParameter(&quot;description&quot;);</span>
+<span class="nc" id="L165">            double price = Double.parseDouble(request.getParameter(&quot;price&quot;));</span>
+<span class="nc" id="L166">            String status = request.getParameter(&quot;status&quot;);</span>
+            
+<span class="nc" id="L168">            Movie movie = new Movie();</span>
+<span class="nc" id="L169">            movie.setMovieId(movieId);</span>
+<span class="nc" id="L170">            movie.setTitle(title);</span>
+<span class="nc" id="L171">            movie.setGenre(genre);</span>
+<span class="nc" id="L172">            movie.setDuration(duration);</span>
+<span class="nc" id="L173">            movie.setReleaseDate(releaseDate); // Now using proper SQL Date</span>
+<span class="nc" id="L174">            movie.setDescription(description);</span>
+<span class="nc" id="L175">            movie.setPrice(price);</span>
+<span class="nc" id="L176">            movie.setStatus(status);</span>
+            
+<span class="nc" id="L178">            movieDao.updateMovie(movie);</span>
+<span class="nc" id="L179">            response.sendRedirect(&quot;AdminServlet?action=listMovies&amp;success=true&quot;);</span>
+<span class="nc" id="L180">        } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L181">            request.setAttribute(&quot;error&quot;, &quot;Invalid date format. Please use YYYY-MM-DD format.&quot;);</span>
+<span class="nc" id="L182">            request.getRequestDispatcher(&quot;/admin_dashboard.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L183">        } catch (Exception e) {</span>
+<span class="nc" id="L184">            request.setAttribute(&quot;error&quot;, &quot;Error updating movie: &quot; + e.getMessage());</span>
+<span class="nc" id="L185">            request.getRequestDispatcher(&quot;/admin_dashboard.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L186">        }</span>
+<span class="nc" id="L187">    }</span>
+
+    private void deleteMovie(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        try {
+<span class="nc" id="L192">            int movieId = Integer.parseInt(request.getParameter(&quot;movieId&quot;));</span>
+<span class="nc" id="L193">            movieDao.deleteMovie(movieId);</span>
+<span class="nc" id="L194">            response.sendRedirect(&quot;AdminServlet?action=listMovies&amp;success=true&quot;);</span>
+<span class="nc" id="L195">        } catch (Exception e) {</span>
+<span class="nc" id="L196">            request.setAttribute(&quot;error&quot;, &quot;Error deleting movie: &quot; + e.getMessage());</span>
+<span class="nc" id="L197">            request.getRequestDispatcher(&quot;/admin_dashboard.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L198">        }</span>
+<span class="nc" id="L199">    }</span>
+
+private void showDashboard(HttpServletRequest request, HttpServletResponse response) 
+        throws ServletException, IOException {
+    try {
+<span class="nc" id="L204">        System.out.println(&quot;Fetching dashboard data...&quot;);</span>
+<span class="nc" id="L205">        checkAndRefreshConnection(); // Add this line</span>
+
+        // Use single queries with proper connection handling
+        List&lt;Movie&gt; movies;
+        List&lt;Theatre&gt; theaters;
+        List&lt;Showtime&gt; shows;
+        List&lt;User&gt; users;
+        int totalBookings;
+        double totalRevenue;
+
+        // Get all data in try-with-resources blocks
+        try {
+<span class="nc" id="L217">            movies = movieDao.getAllMovies();</span>
+<span class="nc" id="L218">            theaters = theatreDao.getAllTheatres();</span>
+<span class="nc" id="L219">            shows = showtimeDao.getAllShowtimes();</span>
+<span class="nc" id="L220">            users = userDao.selectAllUsers();</span>
+<span class="nc" id="L221">            totalBookings = bookingDao.getTotalBookings();</span>
+<span class="nc" id="L222">            totalRevenue = bookingDao.getTotalRevenue();</span>
+
+            // Add bookings loading
+<span class="nc" id="L225">            List&lt;Booking&gt; bookings = bookingDao.getAllBookings();</span>
+<span class="nc bnc" id="L226" title="All 2 branches missed.">            System.out.println(&quot;Loaded bookings: &quot; + (bookings != null ? bookings.size() : 0));</span>
+
+            // Set attributes
+<span class="nc" id="L229">            request.setAttribute(&quot;movies&quot;, movies);</span>
+<span class="nc" id="L230">            request.setAttribute(&quot;theaters&quot;, theaters);</span>
+<span class="nc" id="L231">            request.setAttribute(&quot;shows&quot;, shows);</span>
+<span class="nc" id="L232">            request.setAttribute(&quot;users&quot;, users);</span>
+<span class="nc" id="L233">            request.setAttribute(&quot;bookings&quot;, bookings);  // Add this line</span>
+<span class="nc" id="L234">            request.setAttribute(&quot;totalBookings&quot;, totalBookings);</span>
+<span class="nc" id="L235">            request.setAttribute(&quot;totalRevenue&quot;, totalRevenue);</span>
+
+            // Debug logs
+<span class="nc" id="L238">            System.out.println(&quot;Dashboard data loaded successfully&quot;);</span>
+<span class="nc bnc" id="L239" title="All 2 branches missed.">            System.out.println(&quot;Movies: &quot; + (movies != null ? movies.size() : 0));</span>
+<span class="nc bnc" id="L240" title="All 2 branches missed.">            System.out.println(&quot;Theaters: &quot; + (theaters != null ? theaters.size() : 0));</span>
+<span class="nc bnc" id="L241" title="All 2 branches missed.">            System.out.println(&quot;Shows: &quot; + (shows != null ? shows.size() : 0));</span>
+<span class="nc" id="L242">        } catch (SQLException e) {</span>
+<span class="nc" id="L243">            throw new ServletException(&quot;Error fetching dashboard data&quot;, e);</span>
+<span class="nc" id="L244">        }</span>
+
+        // Forward to dashboard
+<span class="nc" id="L247">        request.getRequestDispatcher(&quot;/admin_dashboard.jsp&quot;).forward(request, response);</span>
+        
+<span class="nc" id="L249">    } catch (Exception e) {</span>
+<span class="nc" id="L250">        System.err.println(&quot;Error loading dashboard: &quot; + e.getMessage());</span>
+<span class="nc" id="L251">        e.printStackTrace();</span>
+<span class="nc" id="L252">        request.setAttribute(&quot;error&quot;, &quot;Error loading dashboard: &quot; + e.getMessage());</span>
+<span class="nc" id="L253">        request.getRequestDispatcher(&quot;/admin_dashboard.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L254">    }</span>
+<span class="nc" id="L255">}</span>
+
+    private void addMovie(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        try {
+<span class="nc" id="L260">            String title = request.getParameter(&quot;title&quot;);</span>
+<span class="nc" id="L261">            String genre = request.getParameter(&quot;genre&quot;);</span>
+<span class="nc" id="L262">            String duration = request.getParameter(&quot;duration&quot;);</span>
+            // Convert String date to SQL Date
+<span class="nc" id="L264">            Date releaseDate = Date.valueOf(request.getParameter(&quot;releaseDate&quot;));</span>
+<span class="nc" id="L265">            String description = request.getParameter(&quot;description&quot;);</span>
+<span class="nc" id="L266">            double price = Double.parseDouble(request.getParameter(&quot;price&quot;));</span>
+            
+<span class="nc" id="L268">            Movie movie = new Movie();</span>
+<span class="nc" id="L269">            movie.setTitle(title);</span>
+<span class="nc" id="L270">            movie.setGenre(genre);</span>
+<span class="nc" id="L271">            movie.setDuration(duration);</span>
+<span class="nc" id="L272">            movie.setReleaseDate(releaseDate); // Now using proper SQL Date</span>
+<span class="nc" id="L273">            movie.setDescription(description);</span>
+<span class="nc" id="L274">            movie.setPrice(price);</span>
+<span class="nc" id="L275">            movie.setStatus(&quot;ACTIVE&quot;); // Set default status</span>
+            
+            // Fix: Use movieDao instead of userDao
+<span class="nc" id="L278">            movieDao.addMovie(movie);</span>
+            
+<span class="nc" id="L280">            response.sendRedirect(&quot;AdminServlet?action=listMovies&amp;success=true&quot;);</span>
+<span class="nc" id="L281">        } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L282">            request.setAttribute(&quot;error&quot;, &quot;Invalid date format. Please use YYYY-MM-DD format.&quot;);</span>
+<span class="nc" id="L283">            request.getRequestDispatcher(&quot;/admin_dashboard.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L284">        } catch (Exception e) {</span>
+<span class="nc" id="L285">            request.setAttribute(&quot;error&quot;, &quot;Error adding movie: &quot; + e.getMessage());</span>
+<span class="nc" id="L286">            request.getRequestDispatcher(&quot;/admin_dashboard.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L287">        }</span>
+<span class="nc" id="L288">    }</span>
+
+    private void listMovies(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        try {
+            // Get movies from database
+<span class="nc" id="L294">            List&lt;Movie&gt; movies = movieDao.getAllMovies();</span>
+            
+            // Debug logging
+<span class="nc bnc" id="L297" title="All 2 branches missed.">            System.out.println(&quot;Fetched movies: &quot; + (movies != null ? movies.size() : 0));</span>
+<span class="nc bnc" id="L298" title="All 4 branches missed.">            if (movies != null &amp;&amp; !movies.isEmpty()) {</span>
+<span class="nc" id="L299">                System.out.println(&quot;First movie: &quot; + movies.get(0).getTitle());</span>
+            }
+            
+            // Set the movies attribute
+<span class="nc" id="L303">            request.setAttribute(&quot;movies&quot;, movies);</span>
+            
+            // Check if it's an AJAX request
+<span class="nc" id="L306">            String isAjax = request.getHeader(&quot;X-Requested-With&quot;);</span>
+<span class="nc bnc" id="L307" title="All 2 branches missed.">            if (&quot;XMLHttpRequest&quot;.equals(isAjax)) {</span>
+                // If AJAX, forward to movies section only
+<span class="nc" id="L309">                request.getRequestDispatcher(&quot;/WEB-INF/partials/movies-table.jsp&quot;).forward(request, response);</span>
+            } else {
+                // If not AJAX, forward to full dashboard
+<span class="nc" id="L312">                request.getRequestDispatcher(&quot;/admin_dashboard.jsp&quot;).forward(request, response);</span>
+            }
+<span class="nc" id="L314">        } catch (Exception e) {</span>
+<span class="nc" id="L315">            System.err.println(&quot;Error in listMovies: &quot; + e.getMessage());</span>
+<span class="nc" id="L316">            e.printStackTrace();</span>
+<span class="nc" id="L317">            request.setAttribute(&quot;error&quot;, &quot;Error loading movies: &quot; + e.getMessage());</span>
+<span class="nc" id="L318">            request.getRequestDispatcher(&quot;/admin_dashboard.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L319">        }</span>
+<span class="nc" id="L320">    }</span>
+
+    private void listUsers(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+<span class="nc" id="L324">        List&lt;User&gt; users = userDao.selectAllUsers();</span>
+<span class="nc" id="L325">        request.setAttribute(&quot;users&quot;, users);</span>
+<span class="nc" id="L326">        request.getRequestDispatcher(&quot;/admin_dashboard.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L327">    }</span>
+
+    private void listTheaters(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException, SQLException {
+<span class="nc" id="L331">        List&lt;Theatre&gt; theaters = theatreDao.getAllTheatres();</span>
+<span class="nc" id="L332">        request.setAttribute(&quot;theaters&quot;, theaters);</span>
+<span class="nc" id="L333">        request.getRequestDispatcher(&quot;/admin_dashboard.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L334">    }</span>
+
+    private void addTheater(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException, SQLException {
+<span class="nc" id="L338">        String name = request.getParameter(&quot;theaterName&quot;);</span>
+<span class="nc" id="L339">        String location = request.getParameter(&quot;location&quot;);</span>
+<span class="nc" id="L340">        int totalSeats = Integer.parseInt(request.getParameter(&quot;totalSeats&quot;));</span>
+        
+<span class="nc" id="L342">        Theatre theatre = new Theatre(0, name, location, totalSeats);</span>
+<span class="nc" id="L343">        theatreDao.addTheatre(theatre);</span>
+        
+<span class="nc" id="L345">        response.sendRedirect(&quot;AdminServlet?action=listTheaters&quot;);</span>
+<span class="nc" id="L346">    }</span>
+
+    private void addShow(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        try {
+<span class="nc" id="L351">            int movieId = Integer.parseInt(request.getParameter(&quot;movieId&quot;));</span>
+<span class="nc" id="L352">            int theaterId = Integer.parseInt(request.getParameter(&quot;theaterId&quot;));</span>
+<span class="nc" id="L353">            String showDateStr = request.getParameter(&quot;showDate&quot;);</span>
+<span class="nc" id="L354">            String showTimeStr = request.getParameter(&quot;showTime&quot;);</span>
+<span class="nc" id="L355">            Double ticketPrice = Double.parseDouble(request.getParameter(&quot;ticketPrice&quot;));</span>
+            
+            // Convert String dates to SQL Date
+<span class="nc" id="L358">            Date showDate = Date.valueOf(showDateStr);</span>
+<span class="nc" id="L359">            Time showTime = Time.valueOf(showTimeStr);</span>
+            
+<span class="nc" id="L361">            Showtime show = new Showtime();</span>
+<span class="nc" id="L362">            show.setMovie_id(movieId);</span>
+<span class="nc" id="L363">            show.setTheatre_id(theaterId);</span>
+<span class="nc" id="L364">            show.setShow_date(showDate);</span>
+<span class="nc" id="L365">            show.setShow_time(showTime);</span>
+<span class="nc" id="L366">            show.setPrice(ticketPrice);</span>
+            
+<span class="nc" id="L368">            showtimeDao.addShowtime(show);</span>
+            
+<span class="nc" id="L370">            response.sendRedirect(&quot;AdminServlet?action=listShows&quot;);</span>
+<span class="nc" id="L371">        } catch (Exception e) {</span>
+<span class="nc" id="L372">            request.setAttribute(&quot;error&quot;, &quot;Error adding show: &quot; + e.getMessage());</span>
+<span class="nc" id="L373">            request.getRequestDispatcher(&quot;/admin_dashboard.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L374">        }</span>
+<span class="nc" id="L375">    }</span>
+
+    private void listShows(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException, SQLException {
+<span class="nc" id="L379">        List&lt;Showtime&gt; shows = showtimeDao.getAllShowtimes();</span>
+<span class="nc" id="L380">        request.setAttribute(&quot;shows&quot;, shows);</span>
+<span class="nc" id="L381">        request.getRequestDispatcher(&quot;/admin_dashboard.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L382">    }</span>
+
+    private void updateBooking(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        try {
+<span class="nc" id="L387">            int bookingId = Integer.parseInt(request.getParameter(&quot;bookingId&quot;));</span>
+<span class="nc" id="L388">            String bookingStatus = request.getParameter(&quot;status&quot;);</span>
+            
+<span class="nc" id="L390">            Booking booking = bookingDao.getBookingById(bookingId);</span>
+<span class="nc bnc" id="L391" title="All 2 branches missed.">            if (booking != null) {</span>
+                // Update booking status using proper method
+<span class="nc" id="L393">                booking.setBooking_status(bookingStatus); // Make sure this method exists in Booking class</span>
+<span class="nc" id="L394">                bookingDao.updateBooking(booking);</span>
+            }
+            
+<span class="nc" id="L397">            response.sendRedirect(&quot;AdminServlet?action=listBookings&quot;);</span>
+<span class="nc" id="L398">        } catch (Exception e) {</span>
+<span class="nc" id="L399">            request.setAttribute(&quot;error&quot;, &quot;Error updating booking: &quot; + e.getMessage());</span>
+<span class="nc" id="L400">            request.getRequestDispatcher(&quot;/admin_dashboard.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L401">        }</span>
+<span class="nc" id="L402">    }</span>
+
+    private void listBookings(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException, SQLException {
+    try {
+<span class="nc" id="L407">        List&lt;Booking&gt; bookings = bookingDao.getAllBookings();</span>
+<span class="nc" id="L408">        System.out.println(&quot;Retrieved &quot; + bookings.size() + &quot; bookings&quot;); // Debug log</span>
+        
+<span class="nc bnc" id="L410" title="All 4 branches missed.">        if (bookings != null &amp;&amp; !bookings.isEmpty()) {</span>
+<span class="nc" id="L411">            System.out.println(&quot;First booking: &quot; + bookings.get(0).toString()); // Debug log</span>
+        }
+        
+<span class="nc" id="L414">        request.setAttribute(&quot;bookings&quot;, bookings);</span>
+<span class="nc" id="L415">        request.getRequestDispatcher(&quot;/admin_dashboard.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L416">    } catch (Exception e) {</span>
+<span class="nc" id="L417">        System.err.println(&quot;Error loading bookings: &quot; + e.getMessage());</span>
+<span class="nc" id="L418">        e.printStackTrace();</span>
+<span class="nc" id="L419">        request.setAttribute(&quot;error&quot;, &quot;Error loading bookings: &quot; + e.getMessage());</span>
+<span class="nc" id="L420">        request.getRequestDispatcher(&quot;/admin_dashboard.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L421">    }</span>
+<span class="nc" id="L422">}</span>
+
+    private void handleLogout(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        try {
+            // Invalidate session first
+<span class="nc" id="L428">            HttpSession session = request.getSession(false);</span>
+<span class="nc bnc" id="L429" title="All 2 branches missed.">            if (session != null) {</span>
+<span class="nc" id="L430">                session.invalidate();</span>
+            }
+
+            // Then close the connection
+<span class="nc bnc" id="L434" title="All 4 branches missed.">            if (connection != null &amp;&amp; !connection.isClosed()) {</span>
+<span class="nc" id="L435">                connection.close();</span>
+            }
+            
+            // Clean up resources
+<span class="nc" id="L439">            userDao = null;</span>
+<span class="nc" id="L440">            movieDao = null;</span>
+<span class="nc" id="L441">            theatreDao = null;</span>
+<span class="nc" id="L442">            showtimeDao = null;</span>
+<span class="nc" id="L443">            bookingDao = null;</span>
+<span class="nc" id="L444">            connection = null;</span>
+            
+            // Redirect to login page
+<span class="nc" id="L447">            response.sendRedirect(&quot;login.jsp&quot;);</span>
+<span class="nc" id="L448">        } catch (SQLException e) {</span>
+<span class="nc" id="L449">            System.err.println(&quot;Error during logout: &quot; + e.getMessage());</span>
+<span class="nc" id="L450">            request.setAttribute(&quot;error&quot;, &quot;Error during logout&quot;);</span>
+<span class="nc" id="L451">            request.getRequestDispatcher(&quot;/admin_dashboard.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L452">        }</span>
+<span class="nc" id="L453">    }</span>
+
+    @Override
+    public void destroy() {
+        // Only clean up non-connection resources
+<span class="nc" id="L458">        userDao = null;</span>
+<span class="nc" id="L459">        movieDao = null;</span>
+<span class="nc" id="L460">        theatreDao = null;</span>
+<span class="nc" id="L461">        showtimeDao = null;</span>
+<span class="nc" id="L462">        bookingDao = null;</span>
+<span class="nc" id="L463">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

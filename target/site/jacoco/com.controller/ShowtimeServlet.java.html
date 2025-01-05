@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ShowtimeServlet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">movie-ticket-booking-system Maven Webapp</a> &gt; <a href="index.source.html" class="el_package">com.controller</a> &gt; <span class="el_source">ShowtimeServlet.java</span></div><h1>ShowtimeServlet.java</h1><pre class="source lang-java linenums">package com.controller;
+
+import com.showtime.dao.ShowtimeDao;
+import com.showtime.model.Showtime;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
+
+@WebServlet(urlPatterns = {&quot;/showtime&quot;, &quot;/showtime/*&quot;})
+<span class="nc" id="L17">public class ShowtimeServlet extends HttpServlet {</span>
+    private ShowtimeDao showtimeDao;
+
+    @Override
+    public void init() throws ServletException {
+        // Initialize DAO without passing connection
+<span class="nc" id="L23">        showtimeDao = new ShowtimeDao();</span>
+<span class="nc" id="L24">    }</span>
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        try {
+<span class="nc" id="L30">            String pathInfo = request.getPathInfo();</span>
+<span class="nc bnc" id="L31" title="All 4 branches missed.">            if (pathInfo == null || pathInfo.equals(&quot;/&quot;)) {</span>
+<span class="nc" id="L32">                listShowtimes(request, response);</span>
+<span class="nc" id="L33">                return;</span>
+            }
+
+<span class="nc bnc" id="L36" title="All 4 branches missed.">            switch (pathInfo) {</span>
+                case &quot;/list&quot;:
+<span class="nc" id="L38">                    listShowtimes(request, response);</span>
+<span class="nc" id="L39">                    break;</span>
+                case &quot;/view&quot;:
+<span class="nc" id="L41">                    viewShowtime(request, response);</span>
+<span class="nc" id="L42">                    break;</span>
+                case &quot;/movie&quot;:
+<span class="nc" id="L44">                    listMovieShowtimes(request, response);</span>
+<span class="nc" id="L45">                    break;</span>
+                default:
+<span class="nc" id="L47">                    response.sendError(HttpServletResponse.SC_NOT_FOUND);</span>
+                    break;
+            }
+<span class="nc" id="L50">        } catch (SQLException ex) {</span>
+<span class="nc" id="L51">            request.setAttribute(&quot;error&quot;, &quot;Database error: &quot; + ex.getMessage());</span>
+<span class="nc" id="L52">            request.getRequestDispatcher(&quot;/error.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L53">        } catch (Exception ex) {</span>
+<span class="nc" id="L54">            request.setAttribute(&quot;error&quot;, &quot;Server error: &quot; + ex.getMessage());</span>
+<span class="nc" id="L55">            request.getRequestDispatcher(&quot;/error.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L56">        }</span>
+<span class="nc" id="L57">    }</span>
+
+    private void listShowtimes(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        try {
+            List&lt;Showtime&gt; showtimes;
+<span class="nc" id="L63">            String movieId = request.getParameter(&quot;movieId&quot;);</span>
+            
+<span class="nc bnc" id="L65" title="All 4 branches missed.">            if (movieId != null &amp;&amp; !movieId.trim().isEmpty()) {</span>
+                // If movieId is provided, get showtimes for that movie
+<span class="nc" id="L67">                showtimes = showtimeDao.getShowtimesByMovie(Integer.parseInt(movieId));</span>
+            } else {
+                // Otherwise get all showtimes
+<span class="nc" id="L70">                showtimes = showtimeDao.getAllShowtimes();</span>
+            }
+            
+<span class="nc bnc" id="L73" title="All 2 branches missed.">            System.out.println(&quot;Number of showtimes retrieved: &quot; + (showtimes != null ? showtimes.size() : 0));</span>
+            
+<span class="nc bnc" id="L75" title="All 4 branches missed.">            if (showtimes != null &amp;&amp; !showtimes.isEmpty()) {</span>
+<span class="nc" id="L76">                System.out.println(&quot;First showtime: &quot; + showtimes.get(0).toString());</span>
+            }
+            
+<span class="nc" id="L79">            String sortBy = request.getParameter(&quot;sort&quot;);</span>
+            
+<span class="nc bnc" id="L81" title="All 6 branches missed.">            if (showtimes != null &amp;&amp; !showtimes.isEmpty() &amp;&amp; sortBy != null) {</span>
+<span class="nc bnc" id="L82" title="All 3 branches missed.">                switch (sortBy) {</span>
+                    case &quot;movie&quot;:
+<span class="nc" id="L84">                        showtimes.sort((s1, s2) -&gt; s1.getMovieTitle().compareTo(s2.getMovieTitle()));</span>
+<span class="nc" id="L85">                        break;</span>
+                    case &quot;theatre&quot;:
+<span class="nc" id="L87">                        showtimes.sort((s1, s2) -&gt; s1.getTheatreName().compareTo(s2.getTheatreName()));</span>
+<span class="nc" id="L88">                        break;</span>
+                    case &quot;date&quot;:
+                        // Default sorting by date is already handled by SQL query
+                        break;
+                }
+            }
+
+<span class="nc" id="L95">            request.setAttribute(&quot;showtimes&quot;, showtimes);</span>
+<span class="nc bnc" id="L96" title="All 4 branches missed.">            if (showtimes == null || showtimes.isEmpty()) {</span>
+<span class="nc" id="L97">                request.setAttribute(&quot;message&quot;, &quot;No upcoming showtimes available.&quot;);</span>
+            }
+<span class="nc" id="L99">        } catch (SQLException e) {</span>
+<span class="nc" id="L100">            System.err.println(&quot;Database error in listShowtimes: &quot; + e.getMessage());</span>
+<span class="nc" id="L101">            e.printStackTrace();</span>
+<span class="nc" id="L102">            request.setAttribute(&quot;error&quot;, &quot;Database error: Please ensure all required tables are properly set up.&quot;);</span>
+<span class="nc" id="L103">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L104">            System.err.println(&quot;Invalid movie ID: &quot; + e.getMessage());</span>
+<span class="nc" id="L105">            request.setAttribute(&quot;error&quot;, &quot;Invalid movie ID provided&quot;);</span>
+<span class="nc" id="L106">        }</span>
+<span class="nc" id="L107">        request.getRequestDispatcher(&quot;/showtime.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L108">    }</span>
+
+    private void viewShowtime(HttpServletRequest request, HttpServletResponse response) 
+            throws SQLException, ServletException, IOException {
+        try {
+<span class="nc" id="L113">            int id = Integer.parseInt(request.getParameter(&quot;id&quot;));</span>
+<span class="nc" id="L114">            Showtime showtime = showtimeDao.getShowtime(id);</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">            if (showtime == null) {</span>
+<span class="nc" id="L116">                request.setAttribute(&quot;error&quot;, &quot;Showtime not found&quot;);</span>
+<span class="nc" id="L117">                request.getRequestDispatcher(&quot;/showtime.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L118">                return;</span>
+            }
+<span class="nc" id="L120">            request.setAttribute(&quot;showtime&quot;, showtime);</span>
+<span class="nc" id="L121">            request.getRequestDispatcher(&quot;/showtime-detail.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L122">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L123">            request.setAttribute(&quot;error&quot;, &quot;Invalid showtime ID&quot;);</span>
+<span class="nc" id="L124">            request.getRequestDispatcher(&quot;/showtime.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L125">        }</span>
+<span class="nc" id="L126">    }</span>
+
+    private void listMovieShowtimes(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException, SQLException {
+<span class="nc" id="L130">        String movieId = request.getParameter(&quot;id&quot;);</span>
+<span class="nc bnc" id="L131" title="All 4 branches missed.">        if (movieId != null &amp;&amp; !movieId.trim().isEmpty()) {</span>
+            try {
+<span class="nc" id="L133">                List&lt;Showtime&gt; showtimes = showtimeDao.getShowtimesByMovie(Integer.parseInt(movieId));</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">                if (showtimes.isEmpty()) {</span>
+<span class="nc" id="L135">                    request.setAttribute(&quot;message&quot;, &quot;No upcoming showtimes available for this movie.&quot;);</span>
+                }
+<span class="nc" id="L137">                request.setAttribute(&quot;showtimes&quot;, showtimes);</span>
+<span class="nc" id="L138">                request.getRequestDispatcher(&quot;/showtime.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L139">            } catch (NumberFormatException e) {</span>
+<span class="nc" id="L140">                request.setAttribute(&quot;error&quot;, &quot;Invalid movie ID&quot;);</span>
+<span class="nc" id="L141">                request.getRequestDispatcher(&quot;/movies.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L142">            }</span>
+        } else {
+<span class="nc" id="L144">            response.sendRedirect(request.getContextPath() + &quot;/movies.jsp&quot;);</span>
+        }
+<span class="nc" id="L146">    }</span>
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+<span class="nc" id="L151">        String action = request.getPathInfo();</span>
+        
+        try {
+<span class="nc bnc" id="L154" title="All 4 branches missed.">            switch (action) {</span>
+                case &quot;/add&quot;:
+<span class="nc" id="L156">                    addShowtime(request, response);</span>
+<span class="nc" id="L157">                    break;</span>
+                case &quot;/update&quot;:
+<span class="nc" id="L159">                    updateShowtime(request, response);</span>
+<span class="nc" id="L160">                    break;</span>
+                case &quot;/delete&quot;:
+<span class="nc" id="L162">                    deleteShowtime(request, response);</span>
+<span class="nc" id="L163">                    break;</span>
+                default:
+<span class="nc" id="L165">                    response.sendRedirect(request.getContextPath() + &quot;/showtime/list&quot;);</span>
+                    break;
+            }
+<span class="nc" id="L168">        } catch (SQLException ex) {</span>
+<span class="nc" id="L169">            throw new ServletException(ex);</span>
+<span class="nc" id="L170">        }</span>
+<span class="nc" id="L171">    }</span>
+
+    private void addShowtime(HttpServletRequest request, HttpServletResponse response) 
+            throws SQLException, IOException {
+        // Add implementation
+<span class="nc" id="L176">        response.sendRedirect(request.getContextPath() + &quot;/showtime/list&quot;);</span>
+<span class="nc" id="L177">    }</span>
+
+    private void updateShowtime(HttpServletRequest request, HttpServletResponse response) 
+            throws SQLException, IOException {
+        // Update implementation
+<span class="nc" id="L182">        response.sendRedirect(request.getContextPath() + &quot;/showtime/list&quot;);</span>
+<span class="nc" id="L183">    }</span>
+
+    private void deleteShowtime(HttpServletRequest request, HttpServletResponse response) 
+            throws SQLException, IOException {
+<span class="nc" id="L187">        int id = Integer.parseInt(request.getParameter(&quot;id&quot;));</span>
+<span class="nc" id="L188">        showtimeDao.deleteShowtime(id);</span>
+<span class="nc" id="L189">        response.sendRedirect(request.getContextPath() + &quot;/showtime/list&quot;);</span>
+<span class="nc" id="L190">    }</span>
+
+    @Override
+    public void destroy() {
+        // Clean up resources if needed
+<span class="nc" id="L195">        showtimeDao = null;</span>
+<span class="nc" id="L196">    }</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

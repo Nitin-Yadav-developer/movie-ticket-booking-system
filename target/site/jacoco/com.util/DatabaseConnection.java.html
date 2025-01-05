@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DatabaseConnection.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">movie-ticket-booking-system Maven Webapp</a> &gt; <a href="index.source.html" class="el_package">com.util</a> &gt; <span class="el_source">DatabaseConnection.java</span></div><h1>DatabaseConnection.java</h1><pre class="source lang-java linenums">package com.util;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+<span class="nc" id="L7">public class DatabaseConnection {</span>
+<span class="nc" id="L8">    private static Connection connection = null;</span>
+
+    public static Connection getConnection() throws SQLException {
+        try {
+<span class="nc bnc" id="L12" title="All 4 branches missed.">            if (connection == null || connection.isClosed()) {</span>
+<span class="nc" id="L13">                Class.forName(Constants.DB_DRIVER);</span>
+<span class="nc" id="L14">                connection = DriverManager.getConnection(</span>
+                    Constants.DB_URL, 
+                    Constants.DB_USERNAME, 
+                    Constants.DB_PASSWORD
+                );
+<span class="nc bnc" id="L19" title="All 2 branches missed.">                if (connection != null) {</span>
+<span class="nc" id="L20">                    System.out.println(&quot;Database connection successful!&quot;);</span>
+                } else {
+<span class="nc" id="L22">                    throw new SQLException(Constants.ERROR_DB_CONNECTION);</span>
+                }
+            }
+<span class="nc" id="L25">            return connection;</span>
+<span class="nc" id="L26">        } catch (ClassNotFoundException e) {</span>
+<span class="nc" id="L27">            throw new SQLException(&quot;Database driver not found&quot;, e);</span>
+<span class="nc" id="L28">        } catch (SQLException e) {</span>
+<span class="nc" id="L29">            System.err.println(&quot;Database connection error: &quot; + e.getMessage());</span>
+<span class="nc" id="L30">            throw e;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

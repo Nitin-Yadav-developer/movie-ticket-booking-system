@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PaymentServlet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">movie-ticket-booking-system Maven Webapp</a> &gt; <a href="index.source.html" class="el_package">com.controller</a> &gt; <span class="el_source">PaymentServlet.java</span></div><h1>PaymentServlet.java</h1><pre class="source lang-java linenums">package com.controller;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.io.IOException;
+import java.sql.Timestamp;
+
+@WebServlet(&quot;/payment&quot;)
+<span class="nc" id="L13">public class PaymentServlet extends HttpServlet {</span>
+    
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        try {
+<span class="nc" id="L19">            HttpSession session = request.getSession();</span>
+<span class="nc bnc" id="L20" title="All 2 branches missed.">            if (session.getAttribute(&quot;user&quot;) == null) {</span>
+<span class="nc" id="L21">                response.sendRedirect(request.getContextPath() + &quot;/login.jsp&quot;);</span>
+<span class="nc" id="L22">                return;</span>
+            }
+
+            // Get parameters and verify
+<span class="nc" id="L26">            System.out.println(&quot;Session Attributes Before Processing:&quot;);</span>
+<span class="nc" id="L27">            System.out.println(&quot;Show Date: &quot; + session.getAttribute(&quot;bookingShowDate&quot;));</span>
+<span class="nc" id="L28">            System.out.println(&quot;Show Time: &quot; + session.getAttribute(&quot;show_time&quot;));</span>
+<span class="nc" id="L29">            System.out.println(&quot;Movie Title: &quot; + session.getAttribute(&quot;bookingMovieTitle&quot;));</span>
+<span class="nc" id="L30">            System.out.println(&quot;Theatre Name: &quot; + session.getAttribute(&quot;bookingTheatreName&quot;));</span>
+
+            // Process form data
+<span class="nc" id="L33">            String selectedSeats = request.getParameter(&quot;selectedSeats&quot;);</span>
+<span class="nc" id="L34">            int totalSeats = Integer.parseInt(request.getParameter(&quot;totalSeats&quot;));</span>
+<span class="nc" id="L35">            double totalAmount = Double.parseDouble(request.getParameter(&quot;totalAmount&quot;));</span>
+
+            // Store payment details in session
+<span class="nc" id="L38">            session.setAttribute(&quot;paymentSelectedSeats&quot;, selectedSeats);</span>
+<span class="nc" id="L39">            session.setAttribute(&quot;paymentTotalSeats&quot;, totalSeats);</span>
+<span class="nc" id="L40">            session.setAttribute(&quot;paymentTotalAmount&quot;, totalAmount);</span>
+
+            // Verify final session state
+<span class="nc" id="L43">            System.out.println(&quot;Final Session State:&quot;);</span>
+<span class="nc" id="L44">            System.out.println(&quot;Selected Seats: &quot; + selectedSeats);</span>
+<span class="nc" id="L45">            System.out.println(&quot;Total Amount: &quot; + totalAmount);</span>
+<span class="nc" id="L46">            System.out.println(&quot;Show Date: &quot; + session.getAttribute(&quot;bookingShowDate&quot;));</span>
+<span class="nc" id="L47">            System.out.println(&quot;Show Time: &quot; + session.getAttribute(&quot;show_time&quot;));</span>
+
+<span class="nc" id="L49">            request.getRequestDispatcher(&quot;/payment.jsp&quot;).forward(request, response);</span>
+            
+<span class="nc" id="L51">        } catch (Exception e) {</span>
+<span class="nc" id="L52">            System.err.println(&quot;Error in PaymentServlet: &quot; + e.getMessage());</span>
+<span class="nc" id="L53">            e.printStackTrace();</span>
+<span class="nc" id="L54">            request.setAttribute(&quot;error&quot;, &quot;Error processing payment: &quot; + e.getMessage());</span>
+<span class="nc" id="L55">            request.getRequestDispatcher(&quot;/error.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L56">        }</span>
+<span class="nc" id="L57">    }</span>
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        // Redirect GET requests back to booking
+<span class="nc" id="L63">        response.sendRedirect(request.getContextPath() + &quot;/booking.jsp&quot;);</span>
+<span class="nc" id="L64">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BookingDao.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">movie-ticket-booking-system Maven Webapp</a> &gt; <a href="index.source.html" class="el_package">com.booking.dao</a> &gt; <span class="el_source">BookingDao.java</span></div><h1>BookingDao.java</h1><pre class="source lang-java linenums">package com.booking.dao;
+import java.sql.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import com.booking.model.Booking;
+import com.util.DatabaseConnection;
+
+public class BookingDao {
+    private Connection connection;
+
+<span class="nc" id="L12">    public BookingDao(Connection connection) {</span>
+<span class="nc" id="L13">        this.connection = connection;</span>
+<span class="nc" id="L14">    }</span>
+
+    // Add method to get connection if not exists
+    private Connection getConnection() throws SQLException {
+<span class="nc bnc" id="L18" title="All 4 branches missed.">        if (connection == null || connection.isClosed()) {</span>
+<span class="nc" id="L19">            connection = DatabaseConnection.getConnection();</span>
+        }
+<span class="nc" id="L21">        return connection;</span>
+    }
+
+    private static final String GET_TOTAL_BOOKINGS = &quot;SELECT COUNT(*) FROM bookings&quot;;
+    private static final String GET_TOTAL_REVENUE = &quot;SELECT SUM(total_amount) FROM bookings&quot;;
+    private static final String INSERT_BOOKING = 
+        &quot;INSERT INTO bookings (user_id, showtime_id, theatre_id, seats_booked, total_seats, &quot; +
+        &quot;total_amount, booking_status) VALUES (?, ?, ?, CAST(? AS JSON), ?, ?, ?)&quot;;
+
+    public boolean addBooking(Booking booking) throws SQLException {
+<span class="nc" id="L31">        String sql = &quot;INSERT INTO bookings (user_id, showtime_id, theatre_id, seats_booked, total_seats, &quot; +</span>
+                    &quot;total_amount, booking_status) VALUES (?, ?, ?, CAST(? AS JSON), ?, ?, ?)&quot;;
+<span class="nc" id="L33">        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {</span>
+<span class="nc" id="L34">            stmt.setInt(1, booking.getUserId());</span>
+<span class="nc" id="L35">            stmt.setInt(2, booking.getShowtimeId());</span>
+<span class="nc" id="L36">            stmt.setInt(3, booking.getTheatreId());</span>
+<span class="nc" id="L37">            stmt.setString(4, booking.getSeatsBooked()); // JSON string</span>
+<span class="nc" id="L38">            stmt.setInt(5, booking.getTotalSeats());</span>
+<span class="nc" id="L39">            stmt.setDouble(6, booking.getTotalAmount());</span>
+<span class="nc" id="L40">            stmt.setString(7, booking.getBooking_status());</span>
+<span class="nc" id="L41">            int affectedRows = stmt.executeUpdate();</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">            if (affectedRows &gt; 0) {</span>
+<span class="nc" id="L43">                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">                    if (generatedKeys.next()) {</span>
+<span class="nc" id="L45">                        booking.setBookingId(generatedKeys.getInt(1));</span>
+<span class="nc" id="L46">                        return true;</span>
+                    }
+<span class="nc bnc" id="L48" title="All 2 branches missed.">                }</span>
+            }
+<span class="nc" id="L50">            return false;</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">        }</span>
+    }
+
+    public Booking getBooking(int bookingId) throws SQLException {
+<span class="nc" id="L55">        String sql = &quot;SELECT b.*, m.title, t.name as theatre_name, t.location as theatre_location, &quot; + // Added t.location</span>
+                    &quot;b.total_amount, b.booking_date, b.seats_booked &quot; +
+                    &quot;FROM bookings b &quot; +
+                    &quot;JOIN showtimes s ON b.showtime_id = s.showtime_id &quot; +
+                    &quot;JOIN movies m ON s.movie_id = m.movie_id &quot; +
+                    &quot;JOIN theatres t ON b.theatre_id = t.theatre_id &quot; +
+                    &quot;WHERE b.booking_id = ?&quot;;
+                    
+<span class="nc" id="L63">        try (PreparedStatement stmt = connection.prepareStatement(sql)) {</span>
+<span class="nc" id="L64">            stmt.setInt(1, bookingId);</span>
+<span class="nc" id="L65">            ResultSet rs = stmt.executeQuery();</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">            if (rs.next()) {</span>
+<span class="nc" id="L67">                Booking booking = new Booking();</span>
+<span class="nc" id="L68">                booking.setBookingId(rs.getInt(&quot;booking_id&quot;));</span>
+<span class="nc" id="L69">                booking.setShowtimeId(rs.getInt(&quot;showtime_id&quot;));</span>
+<span class="nc" id="L70">                booking.setUserId(rs.getInt(&quot;user_id&quot;));</span>
+<span class="nc" id="L71">                booking.setSeatsBooked(rs.getString(&quot;seats_booked&quot;));</span>
+<span class="nc" id="L72">                booking.setBookingDate(rs.getTimestamp(&quot;booking_date&quot;));</span>
+<span class="nc" id="L73">                booking.setTheatreId(rs.getInt(&quot;theatre_id&quot;));</span>
+<span class="nc" id="L74">                booking.setTotalSeats(rs.getInt(&quot;total_seats&quot;));</span>
+<span class="nc" id="L75">                booking.setMovieTitle(rs.getString(&quot;title&quot;));</span>
+<span class="nc" id="L76">                booking.setTheatreName(rs.getString(&quot;theatre_name&quot;));</span>
+<span class="nc" id="L77">                booking.setTheatreLocation(rs.getString(&quot;theatre_location&quot;)); // Add this line</span>
+<span class="nc" id="L78">                booking.setTotalAmount(rs.getDouble(&quot;total_amount&quot;));</span>
+<span class="nc" id="L79">                booking.setBooking_status(rs.getString(&quot;booking_status&quot;));</span>
+<span class="nc" id="L80">                return booking;</span>
+            }
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        }</span>
+<span class="nc" id="L83">        return null;</span>
+    }
+
+    public List&lt;Booking&gt; getBookingsByUserId(int userId) throws SQLException {
+<span class="nc" id="L87">        String sql = &quot;SELECT b.*, m.title as movie_title, t.name as theatre_name, s.show_date, s.show_time, &quot; +</span>
+                    &quot;b.total_amount, b.booking_status &quot; +
+                    &quot;FROM bookings b &quot; +
+                    &quot;JOIN showtimes s ON b.showtime_id = s.showtime_id &quot; +
+                    &quot;JOIN movies m ON s.movie_id = m.movie_id &quot; +
+                    &quot;JOIN theatres t ON b.theatre_id = t.theatre_id &quot; +
+                    &quot;WHERE b.user_id = ? &quot; +
+                    &quot;ORDER BY b.booking_date DESC&quot;;
+                    
+<span class="nc" id="L96">        List&lt;Booking&gt; bookings = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L97">        try (PreparedStatement stmt = connection.prepareStatement(sql)) {</span>
+<span class="nc" id="L98">            stmt.setInt(1, userId);</span>
+<span class="nc" id="L99">            ResultSet rs = stmt.executeQuery();</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">            while (rs.next()) {</span>
+<span class="nc" id="L101">                Booking booking = new Booking();</span>
+<span class="nc" id="L102">                booking.setBookingId(rs.getInt(&quot;booking_id&quot;));</span>
+<span class="nc" id="L103">                booking.setShowtimeId(rs.getInt(&quot;showtime_id&quot;));</span>
+<span class="nc" id="L104">                booking.setUserId(rs.getInt(&quot;user_id&quot;));</span>
+<span class="nc" id="L105">                booking.setSeatsBooked(rs.getString(&quot;seats_booked&quot;));</span>
+<span class="nc" id="L106">                booking.setBookingDate(rs.getTimestamp(&quot;booking_date&quot;));</span>
+<span class="nc" id="L107">                booking.setTheatreId(rs.getInt(&quot;theatre_id&quot;));</span>
+<span class="nc" id="L108">                booking.setTotalSeats(rs.getInt(&quot;total_seats&quot;));</span>
+<span class="nc" id="L109">                booking.setMovieTitle(rs.getString(&quot;movie_title&quot;));</span>
+<span class="nc" id="L110">                booking.setTheatreName(rs.getString(&quot;theatre_name&quot;));</span>
+<span class="nc" id="L111">                booking.setTotalAmount(rs.getDouble(&quot;total_amount&quot;));</span>
+<span class="nc" id="L112">                booking.setBooking_status(rs.getString(&quot;booking_status&quot;));</span>
+                
+<span class="nc" id="L114">                bookings.add(booking);</span>
+<span class="nc" id="L115">            }</span>
+        }
+<span class="nc" id="L117">        return bookings;</span>
+    }
+
+    public List&lt;Booking&gt; getAllBookings() throws SQLException {
+<span class="nc" id="L121">        List&lt;Booking&gt; bookings = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L122">        String sql = &quot;SELECT b.*, m.title, t.name as theatre_name, &quot; +</span>
+                    &quot;s.show_date, s.show_time &quot; +
+                    &quot;FROM bookings b &quot; +
+                    &quot;LEFT JOIN showtimes s ON b.showtime_id = s.showtime_id &quot; +
+                    &quot;LEFT JOIN movies m ON s.movie_id = m.movie_id &quot; +
+                    &quot;LEFT JOIN theatres t ON b.theatre_id = t.theatre_id &quot; +
+                    &quot;ORDER BY b.booking_date DESC&quot;;
+
+<span class="nc" id="L130">        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {</span>
+<span class="nc" id="L131">            ResultSet rs = stmt.executeQuery();</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">            while (rs.next()) {</span>
+<span class="nc" id="L133">                Booking booking = new Booking();</span>
+<span class="nc" id="L134">                booking.setBookingId(rs.getInt(&quot;booking_id&quot;));</span>
+<span class="nc" id="L135">                booking.setShowtimeId(rs.getInt(&quot;showtime_id&quot;));</span>
+<span class="nc" id="L136">                booking.setUserId(rs.getInt(&quot;user_id&quot;));</span>
+<span class="nc" id="L137">                booking.setSeatsBooked(rs.getString(&quot;seats_booked&quot;));</span>
+<span class="nc" id="L138">                booking.setBookingDate(rs.getTimestamp(&quot;booking_date&quot;));</span>
+<span class="nc" id="L139">                booking.setTheatreId(rs.getInt(&quot;theatre_id&quot;));</span>
+<span class="nc" id="L140">                booking.setTotalSeats(rs.getInt(&quot;total_seats&quot;));</span>
+<span class="nc" id="L141">                booking.setMovieTitle(rs.getString(&quot;title&quot;));</span>
+<span class="nc" id="L142">                booking.setTheatreName(rs.getString(&quot;theatre_name&quot;));</span>
+<span class="nc" id="L143">                booking.setTotalAmount(rs.getDouble(&quot;total_amount&quot;));</span>
+<span class="nc" id="L144">                booking.setBooking_status(rs.getString(&quot;booking_status&quot;));</span>
+<span class="nc" id="L145">                bookings.add(booking);</span>
+<span class="nc" id="L146">            }</span>
+        }
+<span class="nc" id="L148">        return bookings;</span>
+    }
+
+    private Booking extractBookingFromResultSet(ResultSet rs) throws SQLException {
+<span class="nc" id="L152">        Booking booking = new Booking();</span>
+<span class="nc" id="L153">        booking.setBookingId(rs.getInt(&quot;booking_id&quot;));</span>
+<span class="nc" id="L154">        booking.setShowtimeId(rs.getInt(&quot;showtime_id&quot;));</span>
+<span class="nc" id="L155">        booking.setUserId(rs.getObject(&quot;user_id&quot;, Integer.class));</span>
+<span class="nc" id="L156">        booking.setSeatsBooked(rs.getString(&quot;seats_booked&quot;));</span>
+<span class="nc" id="L157">        booking.setBookingDate(rs.getTimestamp(&quot;booking_date&quot;));</span>
+<span class="nc" id="L158">        booking.setTheatreId(rs.getInt(&quot;theatre_id&quot;));</span>
+<span class="nc" id="L159">        booking.setTotalSeats(rs.getInt(&quot;total_seats&quot;));</span>
+        
+        // Handle nullable columns
+        try {
+<span class="nc" id="L163">            booking.setMovieTitle(rs.getString(&quot;title&quot;));</span>
+<span class="nc" id="L164">            booking.setTheatreName(rs.getString(&quot;theatre_name&quot;));</span>
+<span class="nc" id="L165">        } catch (SQLException e) {</span>
+            // If these columns don't exist, set default values
+<span class="nc" id="L167">            booking.setMovieTitle(&quot;N/A&quot;);</span>
+<span class="nc" id="L168">            booking.setTheatreName(&quot;N/A&quot;);</span>
+<span class="nc" id="L169">        }</span>
+        
+<span class="nc" id="L171">        booking.setTotalAmount(rs.getDouble(&quot;total_amount&quot;));</span>
+<span class="nc" id="L172">        booking.setBooking_status(rs.getString(&quot;booking_status&quot;));</span>
+<span class="nc" id="L173">        return booking;</span>
+    }
+
+    public boolean updateBooking(Booking booking) throws SQLException {
+<span class="nc" id="L177">        String sql = &quot;UPDATE bookings SET seats_booked = ? WHERE booking_id = ? AND user_id = ?&quot;;</span>
+<span class="nc" id="L178">        try (PreparedStatement stmt = connection.prepareStatement(sql)) {</span>
+<span class="nc" id="L179">            stmt.setString(1, booking.getSeatsBooked());</span>
+<span class="nc" id="L180">            stmt.setInt(2, booking.getBookingId());</span>
+<span class="nc" id="L181">            stmt.setInt(3, booking.getUserId());</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">            return stmt.executeUpdate() &gt; 0;</span>
+        }
+    }
+
+    public boolean deleteBooking(int bookingId) throws SQLException {
+<span class="nc" id="L187">        String sql = &quot;DELETE FROM bookings WHERE booking_id = ?&quot;;</span>
+<span class="nc" id="L188">        try (PreparedStatement stmt = connection.prepareStatement(sql)) {</span>
+<span class="nc" id="L189">            stmt.setInt(1, bookingId);</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">            return stmt.executeUpdate() &gt; 0;</span>
+        }
+    }
+
+    public int getTotalBookings() throws SQLException {
+<span class="nc" id="L195">        String sql = &quot;SELECT COUNT(*) FROM bookings&quot;;</span>
+<span class="nc" id="L196">        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {</span>
+<span class="nc" id="L197">            ResultSet rs = stmt.executeQuery();</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">            return rs.next() ? rs.getInt(1) : 0;</span>
+        }
+    }
+
+    public double getTotalRevenue() throws SQLException {
+<span class="nc" id="L203">        String sql = &quot;SELECT COALESCE(SUM(total_amount), 0) FROM bookings&quot;;</span>
+<span class="nc" id="L204">        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {</span>
+<span class="nc" id="L205">            ResultSet rs = stmt.executeQuery();</span>
+<span class="nc bnc" id="L206" title="All 2 branches missed.">            return rs.next() ? rs.getDouble(1) : 0.0;</span>
+        }
+    }
+
+    public Booking getBookingById(int bookingId) throws SQLException {
+<span class="nc" id="L211">        String sql = &quot;SELECT * FROM bookings WHERE booking_id = ?&quot;;</span>
+<span class="nc" id="L212">        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {</span>
+<span class="nc" id="L213">            stmt.setInt(1, bookingId);</span>
+<span class="nc" id="L214">            ResultSet rs = stmt.executeQuery();</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">            if (rs.next()) {</span>
+<span class="nc" id="L216">                return extractBookingFromResultSet(rs);</span>
+            }
+<span class="nc bnc" id="L218" title="All 2 branches missed.">        }</span>
+<span class="nc" id="L219">        return null;</span>
+    }
+
+  
+    public int getLastGeneratedBookingId() throws SQLException {
+<span class="nc" id="L224">        String sql = &quot;SELECT LAST_INSERT_ID()&quot;;</span>
+<span class="nc" id="L225">        try (PreparedStatement stmt = connection.prepareStatement(sql)) {</span>
+<span class="nc" id="L226">            ResultSet rs = stmt.executeQuery();</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">            if (rs.next()) {</span>
+<span class="nc" id="L228">                return rs.getInt(1);</span>
+            }
+<span class="nc" id="L230">            throw new SQLException(&quot;Could not get generated booking ID&quot;);</span>
+        }
+    }
+}
+
+
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

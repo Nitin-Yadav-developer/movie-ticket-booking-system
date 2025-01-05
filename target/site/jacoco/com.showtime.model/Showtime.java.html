@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Showtime.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">movie-ticket-booking-system Maven Webapp</a> &gt; <a href="index.source.html" class="el_package">com.showtime.model</a> &gt; <span class="el_source">Showtime.java</span></div><h1>Showtime.java</h1><pre class="source lang-java linenums">package com.showtime.model;
+
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
+
+public class Showtime {
+    // Match exact database column names
+    private int showtime_id;
+    private int movie_id;
+    private int theatre_id;
+    private Date show_date;
+    private Time show_time;
+    private Double price;
+    private int available_seats;
+    private String status;
+    private Timestamp created_at;
+
+    // Display fields (not in database)
+    private String movieTitle;
+    private String theatreName;
+    private int totalSeats;
+
+    // Constructor for creating new showtime
+<span class="nc" id="L26">    public Showtime(int i, int j, int k, Date date, Timestamp timestamp, String string, String string2, int l, int m, double d) {</span>
+<span class="nc" id="L27">        this.status = &quot;ACTIVE&quot;; // Set default status</span>
+<span class="nc" id="L28">    }</span>
+
+    
+    
+	public Showtime() {
+<span class="nc" id="L33">		super();</span>
+<span class="nc" id="L34">		this.showtime_id = showtime_id;</span>
+<span class="nc" id="L35">		this.movie_id = movie_id;</span>
+<span class="nc" id="L36">		this.theatre_id = theatre_id;</span>
+<span class="nc" id="L37">		this.show_date = show_date;</span>
+<span class="nc" id="L38">		this.show_time = show_time;</span>
+<span class="nc" id="L39">		this.price = price;</span>
+<span class="nc" id="L40">		this.available_seats = available_seats;</span>
+<span class="nc" id="L41">		this.status = status;</span>
+<span class="nc" id="L42">		this.created_at = created_at;</span>
+<span class="nc" id="L43">		this.movieTitle = movieTitle;</span>
+<span class="nc" id="L44">		this.theatreName = theatreName;</span>
+<span class="nc" id="L45">		this.totalSeats = totalSeats;</span>
+<span class="nc" id="L46">	}</span>
+
+
+
+	public int getShowtime_id() {
+<span class="nc" id="L51">		return showtime_id;</span>
+	}
+
+	public void setShowtime_id(int showtime_id) {
+<span class="nc" id="L55">		this.showtime_id = showtime_id;</span>
+<span class="nc" id="L56">	}</span>
+
+	public int getMovie_id() {
+<span class="nc" id="L59">		return movie_id;</span>
+	}
+
+	public void setMovie_id(int movie_id) {
+<span class="nc" id="L63">		this.movie_id = movie_id;</span>
+<span class="nc" id="L64">	}</span>
+
+	public int getTheatre_id() {
+<span class="nc" id="L67">		return theatre_id;</span>
+	}
+
+	public void setTheatre_id(int theatre_id) {
+<span class="nc" id="L71">		this.theatre_id = theatre_id;</span>
+<span class="nc" id="L72">	}</span>
+
+	public Date getShow_date() {
+<span class="nc" id="L75">		return show_date;</span>
+	}
+
+	public void setShow_date(Date date) {
+<span class="nc" id="L79">		this.show_date = date;</span>
+<span class="nc" id="L80">	}</span>
+
+	public Time getShow_time() {
+<span class="nc" id="L83">		return show_time;</span>
+	}
+
+	public void setShow_time(Time show_time) {
+<span class="nc" id="L87">		this.show_time = show_time;</span>
+<span class="nc" id="L88">	}</span>
+
+	public double getPrice() {
+<span class="nc" id="L91">		return price;</span>
+	}
+
+	public void setPrice(Double price) {
+<span class="nc" id="L95">		this.price = price;</span>
+<span class="nc" id="L96">	}</span>
+
+	public int getAvailable_seats() {
+<span class="nc" id="L99">		return available_seats;</span>
+	}
+
+	public void setAvailable_seats(int available_seats) {
+<span class="nc" id="L103">		this.available_seats = available_seats;</span>
+<span class="nc" id="L104">	}</span>
+
+	public String getStatus() {
+<span class="nc" id="L107">		return status;</span>
+	}
+
+	public void setStatus(String status) {
+<span class="nc" id="L111">		this.status = status;</span>
+<span class="nc" id="L112">	}</span>
+
+	public Timestamp getCreated_at() {
+<span class="nc" id="L115">		return created_at;</span>
+	}
+
+	public void setCreated_at(Timestamp created_at) {
+<span class="nc" id="L119">		this.created_at = created_at;</span>
+<span class="nc" id="L120">	}</span>
+
+	public String getMovieTitle() {
+<span class="nc" id="L123">		return movieTitle;</span>
+	}
+
+	public void setMovieTitle(String movieTitle) {
+<span class="nc" id="L127">		this.movieTitle = movieTitle;</span>
+<span class="nc" id="L128">	}</span>
+
+	public String getTheatreName() {
+<span class="nc" id="L131">		return theatreName;</span>
+	}
+
+	public void setTheatreName(String theatreName) {
+<span class="nc" id="L135">		this.theatreName = theatreName;</span>
+<span class="nc" id="L136">	}</span>
+
+	public int getTotalSeats() {
+<span class="nc" id="L139">		return totalSeats;</span>
+	}
+
+	public void setTotalSeats(int totalSeats) {
+<span class="nc" id="L143">		this.totalSeats = totalSeats;</span>
+<span class="nc" id="L144">	}</span>
+
+
+
+	@Override
+	public String toString() {
+<span class="nc" id="L150">		return &quot;Showtime [showtime_id=&quot; + showtime_id + &quot;, movie_id=&quot; + movie_id + &quot;, theatre_id=&quot; + theatre_id</span>
+				+ &quot;, show_date=&quot; + show_date + &quot;, show_time=&quot; + show_time + &quot;, price=&quot; + price + &quot;, available_seats=&quot;
+				+ available_seats + &quot;, status=&quot; + status + &quot;, created_at=&quot; + created_at + &quot;, movieTitle=&quot; + movieTitle
+				+ &quot;, theatreName=&quot; + theatreName + &quot;, totalSeats=&quot; + totalSeats + &quot;]&quot;;
+	}
+
+
+
+	
+    
+
+    
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

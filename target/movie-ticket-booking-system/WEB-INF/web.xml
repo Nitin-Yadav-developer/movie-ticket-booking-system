@@ -35,16 +35,6 @@
   </error-page>
 
   <servlet>
-      <servlet-name>InitiateBooking</servlet-name>
-      <servlet-class>com.booking.servlet.InitiateBookingServlet</servlet-class>
-  </servlet>
-
-  <servlet>
-      <servlet-name>InitiatePaymentServlet</servlet-name>
-      <servlet-class>com.controller.InitiatePaymentServlet</servlet-class>
-  </servlet>
-
-  <servlet>
     <servlet-name>PaymentServlet</servlet-name>
     <servlet-class>com.controller.PaymentServlet</servlet-class>
   </servlet>

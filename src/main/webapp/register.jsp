@@ -2,41 +2,61 @@
 <!DOCTYPE html>
 <html>
 <head>
+
     <meta charset="UTF-8">
     <title>Register</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function validateRegisterForm() {
-            var email = document.getElementById("reg-email").value;
-            var password = document.getElementById("reg-password").value;
-            var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-            if (!emailPattern.test(email)) {
-                alert("Please enter a valid email address.");
-                return false;
-            }
-            if (password.length < 6) {
-                alert("Password must be at least 6 characters long.");
-                return false;
-            }
-            return true;
-        }
+        $(document).ready(function() {
+            $("#registerForm").submit(function(event) {
+                var username = $("#username").val().trim();
+                var email = $("#email").val().trim();
+                var password = $("#password").val();
+                
+                // Username validation
+                if (username.length < 3) {
+                    alert("Username must be at least 3 characters long");
+                    event.preventDefault();
+                    return false;
+                }
+                
+                // Email validation
+                var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+                if (!emailPattern.test(email)) {
+                    alert("Please enter a valid email address");
+                    event.preventDefault();
+                    return false;
+                }
+                
+                // Password validation
+                var passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+                if (!passwordPattern.test(password)) {
+                    alert("Password must be at least 6 characters and contain both letters and numbers");
+                    event.preventDefault();
+                    return false;
+                }
+                
+                return true;
+            });
+        });
     </script>
-    
 </head>
 <body>
+<%@ include file="navbar.jsp"%>
     <div class="container mt-5">
         <div class="form-container">
             <h2 class="text-center">Register</h2>
             <!-- Fix form attributes and field names to match servlet -->
             <form id="registerForm" action="Userservlet" method="post">
                 <input type="hidden" name="action" value="register">
+                <input type="hidden" name="role" value="USER">
                 
                 <div class="form-group">
                     <label for="username">Username:</label>
-                    <input type="text" class="form-control" id="username" name="username" required>
-                    <div class="invalid-feedback"></div>
+                    <input type="text" class="form-control" id="username" name="username" required minlength="3" maxlength="50">
+                    <small class="form-text text-muted">Username must be 3-50 characters long</small>
                 </div>
 
                 <div class="form-group">
@@ -65,14 +85,21 @@
 
                 <div class="form-group">
                     <label for="password">Password:</label>
-                    <input type="password" class="form-control" id="password" name="password" required>
-                    <div class="invalid-feedback"></div>
+                    <input type="password" class="form-control" id="password" name="password" required minlength="6">
+                    <small class="form-text text-muted">Password must be at least 6 characters with letters and numbers</small>
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-block">Register</button>
             </form>
             
-            <!-- Add error message display -->
+            <!-- Success message -->
+            <% if(request.getParameter("registered") != null) { %>
+                <div class="alert alert-success mt-3">
+                    Registration successful! Please login.
+                </div>
+            <% } %>
+            
+            <!-- Error message -->
             <% if(request.getAttribute("error") != null) { %>
                 <div class="alert alert-danger mt-3">
                     <%= request.getAttribute("error") %>

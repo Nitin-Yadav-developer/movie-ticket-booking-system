@@ -117,37 +117,6 @@ public class BookingDao {
         return bookings;
     }
 
-    public List<Booking> getAllBookings() throws SQLException {
-        List<Booking> bookings = new ArrayList<>();
-        String sql = "SELECT b.*, m.title, t.name as theatre_name, " +
-                    "s.show_date, s.show_time " +
-                    "FROM bookings b " +
-                    "LEFT JOIN showtimes s ON b.showtime_id = s.showtime_id " +
-                    "LEFT JOIN movies m ON s.movie_id = m.movie_id " +
-                    "LEFT JOIN theatres t ON b.theatre_id = t.theatre_id " +
-                    "ORDER BY b.booking_date DESC";
-
-        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                Booking booking = new Booking();
-                booking.setBookingId(rs.getInt("booking_id"));
-                booking.setShowtimeId(rs.getInt("showtime_id"));
-                booking.setUserId(rs.getInt("user_id"));
-                booking.setSeatsBooked(rs.getString("seats_booked"));
-                booking.setBookingDate(rs.getTimestamp("booking_date"));
-                booking.setTheatreId(rs.getInt("theatre_id"));
-                booking.setTotalSeats(rs.getInt("total_seats"));
-                booking.setMovieTitle(rs.getString("title"));
-                booking.setTheatreName(rs.getString("theatre_name"));
-                booking.setTotalAmount(rs.getDouble("total_amount"));
-                booking.setBooking_status(rs.getString("booking_status"));
-                bookings.add(booking);
-            }
-        }
-        return bookings;
-    }
-
     private Booking extractBookingFromResultSet(ResultSet rs) throws SQLException {
         Booking booking = new Booking();
         booking.setBookingId(rs.getInt("booking_id"));
@@ -157,17 +126,8 @@ public class BookingDao {
         booking.setBookingDate(rs.getTimestamp("booking_date"));
         booking.setTheatreId(rs.getInt("theatre_id"));
         booking.setTotalSeats(rs.getInt("total_seats"));
-        
-        // Handle nullable columns
-        try {
-            booking.setMovieTitle(rs.getString("title"));
-            booking.setTheatreName(rs.getString("theatre_name"));
-        } catch (SQLException e) {
-            // If these columns don't exist, set default values
-            booking.setMovieTitle("N/A");
-            booking.setTheatreName("N/A");
-        }
-        
+        booking.setMovieTitle(rs.getString("movie_title")); // Changed from 'title' to 'movie_title'
+        booking.setTheatreName(rs.getString("theatre_name")); // Changed from 'name' to 'theatre_name'
         booking.setTotalAmount(rs.getDouble("total_amount"));
         booking.setBooking_status(rs.getString("booking_status"));
         return booking;
@@ -187,6 +147,14 @@ public class BookingDao {
         String sql = "DELETE FROM bookings WHERE booking_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, bookingId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    public boolean deleteBookingsByShowtime(int showtimeId) throws SQLException {
+        String sql = "DELETE FROM bookings WHERE showtime_id = ?";
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setInt(1, showtimeId);
             return stmt.executeUpdate() > 0;
         }
     }
@@ -219,7 +187,25 @@ public class BookingDao {
         return null;
     }
 
-  
+    public List<Booking> getAllBookings() throws SQLException {
+        List<Booking> bookings = new ArrayList<>();
+        String sql = "SELECT b.*, m.title as movie_title, t.name as theatre_name " +
+                    "FROM bookings b " +
+                    "LEFT JOIN showtimes s ON b.showtime_id = s.showtime_id " +
+                    "LEFT JOIN movies m ON s.movie_id = m.movie_id " +
+                    "LEFT JOIN theatres t ON b.theatre_id = t.theatre_id " +
+                    "ORDER BY b.booking_date DESC";
+        
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            System.out.println("Executing query: " + sql); // Debug log
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                bookings.add(extractBookingFromResultSet(rs));
+            }
+        }
+        return bookings;
+    }
+
     public int getLastGeneratedBookingId() throws SQLException {
         String sql = "SELECT LAST_INSERT_ID()";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {

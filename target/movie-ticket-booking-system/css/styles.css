@@ -393,3 +393,19 @@ body {
 .badge-secondary {
     background-color: #6c757d;
 }
+
+.movie-details {
+    font-size: 0.9em;
+    color: #666;
+    margin: 10px 0;
+}
+
+.movie-duration, .movie-status, .movie-release {
+    margin-bottom: 5px;
+}
+
+.movie-details i {
+    width: 20px;
+    margin-right: 5px;
+    color: #007bff;
+}

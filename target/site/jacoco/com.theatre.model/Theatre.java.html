@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Theatre.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">movie-ticket-booking-system Maven Webapp</a> &gt; <a href="index.source.html" class="el_package">com.theatre.model</a> &gt; <span class="el_source">Theatre.java</span></div><h1>Theatre.java</h1><pre class="source lang-java linenums">package com.theatre.model;
+
+import java.sql.Timestamp;
+
+public class Theatre {
+
+    // Match exact database column names
+    private int theatre_id;
+    private String name;
+    private String location;
+    private int total_seats;
+    private String status;
+    private Timestamp created_at;
+
+<span class="nc" id="L15">    public Theatre() {</span>
+<span class="nc" id="L16">        this.status = &quot;ACTIVE&quot;; // Set default status</span>
+<span class="nc" id="L17">    }</span>
+
+<span class="nc" id="L19">    public Theatre(int theatre_id, String name, String location, int total_seats) {</span>
+<span class="nc" id="L20">        this.theatre_id = theatre_id;</span>
+<span class="nc" id="L21">        this.name = name;</span>
+<span class="nc" id="L22">        this.location = location;</span>
+<span class="nc" id="L23">        this.total_seats = total_seats;</span>
+<span class="nc" id="L24">        this.status = &quot;ACTIVE&quot;;</span>
+<span class="nc" id="L25">    }</span>
+
+    // Update getters/setters to match column names
+<span class="nc" id="L28">    public int getTheatre_id() { return theatre_id; }</span>
+<span class="nc" id="L29">    public void setTheatre_id(int theatre_id) { this.theatre_id = theatre_id; }</span>
+
+<span class="nc" id="L31">    public String getName() { return name; }</span>
+<span class="nc" id="L32">    public void setName(String name) { this.name = name; }</span>
+
+<span class="nc" id="L34">    public String getLocation() { return location; }</span>
+<span class="nc" id="L35">    public void setLocation(String location) { this.location = location; }</span>
+
+<span class="nc" id="L37">    public int getTotal_seats() { return total_seats; }</span>
+<span class="nc" id="L38">    public void setTotal_seats(int total_seats) { this.total_seats = total_seats; }</span>
+
+<span class="nc" id="L40">    public String getStatus() { return status; }</span>
+<span class="nc" id="L41">    public void setStatus(String status) { this.status = status; }</span>
+
+<span class="nc" id="L43">    public Timestamp getCreated_at() { return created_at; }</span>
+<span class="nc" id="L44">    public void setCreated_at(Timestamp created_at) { this.created_at = created_at; }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L48">        return &quot;Theatre [theatreId=&quot; + theatre_id + &quot;, name=&quot; + name + &quot;, location=&quot; + location + &quot;, total_seats=&quot;</span>
+                + total_seats + &quot;, status=&quot; + status + &quot;, created_at=&quot; + created_at + &quot;]&quot;;
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

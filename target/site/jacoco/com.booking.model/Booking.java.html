@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Booking.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">movie-ticket-booking-system Maven Webapp</a> &gt; <a href="index.source.html" class="el_package">com.booking.model</a> &gt; <span class="el_source">Booking.java</span></div><h1>Booking.java</h1><pre class="source lang-java linenums">package com.booking.model;
+
+import java.sql.Timestamp;
+
+public class Booking {
+    private int bookingId;
+    private int showtimeId;
+    private Integer userId;    // Changed to Integer to allow null
+    private String seatsBooked; // Changed to String to store JSON
+    private Timestamp bookingDate;
+    private int theatreId;    // Added new field
+    private int totalSeats;   // Added new field
+    private String theatreLocation; // Add this field
+    
+    // Additional fields for display purposes
+    private String movieTitle;
+    private String theatreName;
+    private double ticketPrice;
+    private double totalAmount;
+    private String booking_status;
+    // Default constructor
+<span class="nc" id="L22">    public Booking() {}</span>
+    
+    // Updated constructor with new fields
+    
+
+    // Getters and Setters
+<span class="nc" id="L28">    public int getBookingId() { return bookingId; }</span>
+    public Booking(int bookingId, int showtimeId, Integer userId, String seatsBooked, Timestamp bookingDate,
+			int theatreId, int totalSeats, String movieTitle, String theatreName, double ticketPrice,
+			double totalAmount, String booking_status) {
+<span class="nc" id="L32">		super();</span>
+<span class="nc" id="L33">		this.bookingId = bookingId;</span>
+<span class="nc" id="L34">		this.showtimeId = showtimeId;</span>
+<span class="nc" id="L35">		this.userId = userId;</span>
+<span class="nc" id="L36">		this.seatsBooked = seatsBooked;</span>
+<span class="nc" id="L37">		this.bookingDate = bookingDate;</span>
+<span class="nc" id="L38">		this.theatreId = theatreId;</span>
+<span class="nc" id="L39">		this.totalSeats = totalSeats;</span>
+<span class="nc" id="L40">		this.movieTitle = movieTitle;</span>
+<span class="nc" id="L41">		this.theatreName = theatreName;</span>
+<span class="nc" id="L42">		this.ticketPrice = ticketPrice;</span>
+<span class="nc" id="L43">		this.totalAmount = totalAmount;</span>
+<span class="nc" id="L44">		this.booking_status = booking_status;</span>
+<span class="nc" id="L45">	}</span>
+
+<span class="nc" id="L47">	public void setBookingId(int bookingId) { this.bookingId = bookingId; }</span>
+
+<span class="nc" id="L49">    public int getShowtimeId() { return showtimeId; }</span>
+<span class="nc" id="L50">    public void setShowtimeId(int showtimeId) { this.showtimeId = showtimeId; }</span>
+
+<span class="nc" id="L52">    public Integer getUserId() { return userId; }</span>
+<span class="nc" id="L53">    public void setUserId(Integer userId) { this.userId = userId; }</span>
+
+<span class="nc" id="L55">    public String getSeatsBooked() { return seatsBooked; }</span>
+<span class="nc" id="L56">    public void setSeatsBooked(String seatsBooked) { this.seatsBooked = seatsBooked; }</span>
+
+<span class="nc" id="L58">    public Timestamp getBookingDate() { return bookingDate; }</span>
+<span class="nc" id="L59">    public void setBookingDate(Timestamp bookingDate) { this.bookingDate = bookingDate; }</span>
+
+<span class="nc" id="L61">    public int getTheatreId() { return theatreId; }</span>
+<span class="nc" id="L62">    public void setTheatreId(int theatreId) { this.theatreId = theatreId; }</span>
+
+<span class="nc" id="L64">    public int getTotalSeats() { return totalSeats; }</span>
+<span class="nc" id="L65">    public void setTotalSeats(int totalSeats) { this.totalSeats = totalSeats; }</span>
+
+<span class="nc" id="L67">    public String getMovieTitle() { return movieTitle; }</span>
+<span class="nc" id="L68">    public void setMovieTitle(String movieTitle) { this.movieTitle = movieTitle; }</span>
+
+<span class="nc" id="L70">    public String getTheatreName() { return theatreName; }</span>
+<span class="nc" id="L71">    public void setTheatreName(String theatreName) { this.theatreName = theatreName; }</span>
+
+<span class="nc" id="L73">    public double getTicketPrice() { return ticketPrice; }</span>
+<span class="nc" id="L74">    public void setTicketPrice(double ticketPrice) { this.ticketPrice = ticketPrice; }</span>
+
+<span class="nc" id="L76">    public double getTotalAmount() { return totalAmount; }</span>
+<span class="nc" id="L77">    public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }</span>
+
+<span class="nc" id="L79">    public String getTheatreLocation() { return theatreLocation; }</span>
+<span class="nc" id="L80">    public void setTheatreLocation(String theatreLocation) { this.theatreLocation = theatreLocation; }</span>
+
+	public String getBooking_status() {
+<span class="nc" id="L83">		return booking_status;</span>
+	}
+
+	public void setBooking_status(String booking_status) {
+<span class="nc" id="L87">		this.booking_status = booking_status;</span>
+<span class="nc" id="L88">	}</span>
+
+	@Override
+	public String toString() {
+<span class="nc" id="L92">		return &quot;Booking [bookingId=&quot; + bookingId + &quot;, showtimeId=&quot; + showtimeId + &quot;, userId=&quot; + userId</span>
+				+ &quot;, seatsBooked=&quot; + seatsBooked + &quot;, bookingDate=&quot; + bookingDate + &quot;, theatreId=&quot; + theatreId
+				+ &quot;, totalSeats=&quot; + totalSeats + &quot;, movieTitle=&quot; + movieTitle + &quot;, theatreName=&quot; + theatreName
+				+ &quot;, ticketPrice=&quot; + ticketPrice + &quot;, totalAmount=&quot; + totalAmount + &quot;, booking_status=&quot; + booking_status
+				+ &quot;]&quot;;
+	}
+	
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

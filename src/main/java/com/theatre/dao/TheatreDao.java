@@ -1,9 +1,9 @@
 package com.theatre.dao;
 
 import java.sql.*;
+
 import java.util.ArrayList;
 import java.util.List;
-
 import com.theatre.model.Theatre;
 import com.util.DatabaseConnection;
 
@@ -22,6 +22,7 @@ public class TheatreDao {
         this.connection = connection;
     }
 
+    
     // Add method to check and refresh connection
     private Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
@@ -86,7 +87,6 @@ public class TheatreDao {
             return stmt.executeUpdate() > 0;
         }
     }
-
     public boolean deleteTheatre(int id) throws SQLException {
         String sql = "DELETE FROM theatres WHERE theatre_id = ?";
         try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {

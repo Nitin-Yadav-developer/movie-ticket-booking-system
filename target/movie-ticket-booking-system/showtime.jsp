@@ -75,6 +75,13 @@
     <div class="container">
         <h1 class="my-4 text-center">Movie Showtimes</h1>
         
+        <!-- Add this debug section -->
+        <% 
+        System.out.println("Showtimes attribute: " + request.getAttribute("showtimes"));
+        System.out.println("Message attribute: " + request.getAttribute("message"));
+        System.out.println("Error attribute: " + request.getAttribute("error"));
+        %>
+        
         <div class="row mb-4">
             <div class="col-md-6">
                 <select class="form-control" id="sortOption" onchange="sortShowtimes()">
@@ -103,24 +110,25 @@
                                     <h5 class="movie-title">${showtime.movieTitle}</h5>
                                     <p class="theatre-name">Theatre: ${showtime.theatreName}</p>
                                     <p class="card-text showtime-date">
-                                        <fmt:formatDate value="${showtime.showDate}" pattern="EEEE, MMMM d, yyyy"/>
+                                        <fmt:formatDate value="${showtime.show_date}" pattern="EEEE, MMMM d, yyyy"/>
                                     </p>
                                     <p class="card-text showtime-time">
-                                        Time: <fmt:formatDate value="${showtime.showtime}" pattern="h:mm a"/>
+                                        Time: <fmt:formatDate value="${showtime.show_time}" pattern="h:mm a"/>
                                     </p>
-                                    <p class="card-text">Price: $${showtime.ticketPrice}</p>
-                                    <p class="card-text">Available Seats: ${showtime.availableSeats}</p>
+                                    <p class="card-text">Price: $${showtime.price}</p>
+                                    <p class="card-text">Available Seats: ${showtime.available_seats}</p>
+                                    <p class="card-text">Status: ${showtime.status}</p>
                                 </div>
                                 <div class="card-footer">
                                     <form action="${pageContext.request.contextPath}/ProcessBooking" method="post" 
-                                          onsubmit="return validateBooking(${showtime.availableSeats})">
+                                          onsubmit="return validateBooking(${showtime.available_seats})">
                                         <input type="hidden" name="showtimeId" value="${showtime.showtime_id}">
                                         <input type="hidden" name="movieTitle" value="${showtime.movieTitle}">
                                         <input type="hidden" name="theatreName" value="${showtime.theatreName}">
-                                        <input type="hidden" name="ticketPrice" value="${showtime.ticketPrice}">
-                                        <input type="hidden" name="showDate" value="<fmt:formatDate value="${showtime.showDate}" pattern="yyyy-MM-dd"/>">
-                                        <input type="hidden" name="showtime" value="<fmt:formatDate value="${showtime.showtime}" pattern="HH:mm:ss"/>">
+                                        <input type="hidden" name="ticketPrice" value="${showtime.price}">
+                                        <input type="hidden" name="showDate" value="<fmt:formatDate value="${showtime.show_date}" pattern="yyyy-MM-dd"/>">
                                         <input type="hidden" name="theatreId" value="${showtime.theatre_id}">
+                                        <input type="hidden" name="show_time" value="<fmt:formatDate value="${showtime.show_time}" pattern="HH:mm:ss"/>">
                                         <button type="submit" class="btn btn-primary btn-block">Book Now</button>
                                     </form>
                                 </div>

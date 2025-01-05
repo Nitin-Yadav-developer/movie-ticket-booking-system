@@ -1,6 +1,8 @@
 package com.controller;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
+
 
 
 import jakarta.servlet.annotation.WebServlet;
@@ -21,12 +23,14 @@ import com.booking.dao.BookingDao;
 import com.booking.model.Booking;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.List;
 import java.sql.Connection;
 import com.util.DatabaseConnection;
-import java.util.ArrayList;
+
 import java.sql.Date;
 
 @WebServlet("/AdminServlet")
@@ -41,31 +45,16 @@ public class AdminServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         try {
-            initializeConnections();
+            // Create single connection instance for the servlet
+            connection = DatabaseConnection.getConnection();
+            userDao = new UserDao();
+            movieDao = new MovieDao();
+            theatreDao = new TheatreDao(connection);
+            showtimeDao = new ShowtimeDao();
+            bookingDao = new BookingDao(connection);
+            System.out.println("All DAOs initialized successfully");
         } catch (SQLException e) {
             throw new ServletException("Error initializing DAOs", e);
-        }
-    }
-
-    private void initializeConnections() throws SQLException {
-        // Create single connection instance for the servlet
-        connection = DatabaseConnection.getConnection();
-        System.out.println("Database connection established");
-        
-        // Initialize DAOs with the connection
-        userDao = new UserDao();
-        movieDao = new MovieDao();
-        theatreDao = new TheatreDao(connection);
-        showtimeDao = new ShowtimeDao();
-        bookingDao = new BookingDao(connection);
-        
-        System.out.println("All DAOs initialized successfully");
-    }
-
-    private void checkAndRefreshConnection() throws SQLException {
-        if (connection == null || connection.isClosed()) {
-            System.out.println("Refreshing database connection");
-            initializeConnections();
         }
     }
 
@@ -144,26 +133,85 @@ public class AdminServlet extends HttpServlet {
             case "updateBooking":
                 updateBooking(request, response);
                 break;
-            case "logout":
-                handleLogout(request, response);
-                break;
+            case "addTheater":
+			try {
+				addTheater(request, response);
+			} catch (ServletException | IOException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            	break;
+            case "deleteTheater":
+            	deleteTheater(request, response);
+            	
+            	break;
+            case "updateTheater":
+            	updateTheater(request, response);
             default:
                 showDashboard(request, response);
         }
     }
+    
+    /*
+     * private void updateTheater(HttpServletRequest request, HttpServletResponse response) 
+        throws ServletException, IOException {
+    Connection conn = null;
+    try {
+        // Get parameters
+        int theaterId = Integer.parseInt(request.getParameter("theaterId"));
+        String name = request.getParameter("name");
+        String location = request.getParameter("location");
+        int totalSeats = Integer.parseInt(request.getParameter("totalSeats"));
+        String status = request.getParameter("status");
+
+        // Create Theater object
+        Theatre theatre = new Theatre(theaterId, name, location, totalSeats);
+        theatre.setStatus(status);
+
+        // Update theater
+        conn = DatabaseConnection.getConnection();
+        TheatreDao theatreDao = new TheatreDao(conn);
+        boolean success = theatreDao.updateTheatre(theatre);
+
+        // Redirect with appropriate message
+        String redirectUrl = "AdminServlet?action=showDashboard&tab=theaters";
+        if (success) {
+            redirectUrl += "&message=" + URLEncoder.encode("Theater updated successfully", "UTF-8");
+        } else {
+            redirectUrl += "&error=" + URLEncoder.encode("Failed to update theater", "UTF-8");
+        }
+        response.sendRedirect(redirectUrl);
+
+    } catch (Exception e) {
+        response.sendRedirect("AdminServlet?action=showDashboard&tab=theaters&error=" + 
+            URLEncoder.encode("Error: " + e.getMessage(), "UTF-8"));
+    } finally {
+        try {
+            if (conn != null && !conn.isClosed()) {
+                conn.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+     * 
+     */
 
     private void updateMovie(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         try {
             int movieId = Integer.parseInt(request.getParameter("movieId"));
             String title = request.getParameter("title");
-            String genre = request.getParameter("genre");
-            String duration = request.getParameter("duration");
-            // Convert String date to SQL Date
-            Date releaseDate = Date.valueOf(request.getParameter("releaseDate"));
             String description = request.getParameter("description");
-            double price = Double.parseDouble(request.getParameter("price"));
+            String genre = request.getParameter("genre");
+            String duration = request.getParameter("duration");          
+            Date releaseDate = Date.valueOf(request.getParameter("releaseDate"));
             String status = request.getParameter("status");
+            BigDecimal rating = new BigDecimal(request.getParameter("Rating"));
+            String ImageUrl = request.getParameter("ImageUrl");
+            double price = Double.parseDouble(request.getParameter("price"));
+          
             
             Movie movie = new Movie();
             movie.setMovieId(movieId);
@@ -174,6 +222,9 @@ public class AdminServlet extends HttpServlet {
             movie.setDescription(description);
             movie.setPrice(price);
             movie.setStatus(status);
+            movie.setImageUrl(ImageUrl);
+            movie.setRating(rating);
+   
             
             movieDao.updateMovie(movie);
             response.sendRedirect("AdminServlet?action=listMovies&success=true");
@@ -201,56 +252,95 @@ public class AdminServlet extends HttpServlet {
 private void showDashboard(HttpServletRequest request, HttpServletResponse response) 
         throws ServletException, IOException {
     try {
-        System.out.println("Fetching dashboard data...");
-        checkAndRefreshConnection(); // Add this line
-
-        // Use single queries with proper connection handling
-        List<Movie> movies;
-        List<Theatre> theaters;
-        List<Showtime> shows;
-        List<User> users;
-        int totalBookings;
-        double totalRevenue;
-
-        // Get all data in try-with-resources blocks
-        try {
-            movies = movieDao.getAllMovies();
-            theaters = theatreDao.getAllTheatres();
-            shows = showtimeDao.getAllShowtimes();
-            users = userDao.selectAllUsers();
-            totalBookings = bookingDao.getTotalBookings();
-            totalRevenue = bookingDao.getTotalRevenue();
-
-            // Add bookings loading
-            List<Booking> bookings = bookingDao.getAllBookings();
-            System.out.println("Loaded bookings: " + (bookings != null ? bookings.size() : 0));
-
-            // Set attributes
-            request.setAttribute("movies", movies);
-            request.setAttribute("theaters", theaters);
-            request.setAttribute("shows", shows);
-            request.setAttribute("users", users);
-            request.setAttribute("bookings", bookings);  // Add this line
-            request.setAttribute("totalBookings", totalBookings);
-            request.setAttribute("totalRevenue", totalRevenue);
-
-            // Debug logs
-            System.out.println("Dashboard data loaded successfully");
-            System.out.println("Movies: " + (movies != null ? movies.size() : 0));
-            System.out.println("Theaters: " + (theaters != null ? theaters.size() : 0));
-            System.out.println("Shows: " + (shows != null ? shows.size() : 0));
-        } catch (SQLException e) {
-            throw new ServletException("Error fetching dashboard data", e);
+        // Load dashboard data
+        loadDashboardData(request);
+        
+        // Get messages from parameters
+        String message = request.getParameter("message");
+        String error = request.getParameter("error");
+        String tab = request.getParameter("tab");
+        
+        if (message != null) {
+            request.setAttribute("message", URLDecoder.decode(message, "UTF-8"));
+        }
+        if (error != null) {
+            request.setAttribute("error", URLDecoder.decode(error, "UTF-8"));
+        }
+        if (tab != null) {
+            request.setAttribute("activeTab", tab);
         }
 
         // Forward to dashboard
-        request.getRequestDispatcher("/admin_dashboard.jsp").forward(request, response);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/admin_dashboard.jsp");
+        dispatcher.forward(request, response);
         
     } catch (Exception e) {
-        System.err.println("Error loading dashboard: " + e.getMessage());
         e.printStackTrace();
-        request.setAttribute("error", "Error loading dashboard: " + e.getMessage());
-        request.getRequestDispatcher("/admin_dashboard.jsp").forward(request, response);
+        if (!response.isCommitted()) {
+            response.sendRedirect("error.jsp?message=" + URLEncoder.encode(e.getMessage(), "UTF-8"));
+        }
+    }
+}
+
+private void loadDashboardData(HttpServletRequest request) throws SQLException {
+    Connection conn = DatabaseConnection.getConnection();
+    
+    // Initialize DAOs
+    TheatreDao theatreDao = new TheatreDao(conn);
+    MovieDao movieDao = new MovieDao();
+    ShowtimeDao showtimeDao = new ShowtimeDao();
+    BookingDao bookingDao = new BookingDao(conn);
+    UserDao userDao = new UserDao();
+
+    try {
+        // Load basic entities
+        List<Theatre> theaters = theatreDao.getAllTheatres();
+        List<Movie> movies = movieDao.getAllMovies();
+        List<Showtime> shows = showtimeDao.getAllShowtimes();
+        List<Booking> bookings = bookingDao.getAllBookings();
+        List<User> users = userDao.selectAllUsers();
+
+        // Calculate statistics
+        double totalRevenue = bookings.stream()
+            .mapToDouble(Booking::getTotalAmount)
+            .sum();
+            
+        long totalBookings = bookings.size();
+        long activeMovies = movies.stream()
+            .filter(m -> "ACTIVE".equals(m.getStatus()))
+            .count();
+        long activeTheaters = theaters.stream()
+            .filter(t -> "ACTIVE".equals(t.getStatus()))
+            .count();
+
+        // Set attributes for JSP
+        request.setAttribute("theaters", theaters);
+        request.setAttribute("movies", movies);
+        request.setAttribute("shows", shows);
+        request.setAttribute("bookings", bookings);
+        request.setAttribute("users", users);
+        
+        // Set statistics
+        request.setAttribute("totalRevenue", totalRevenue);
+        request.setAttribute("totalBookings", totalBookings);
+        request.setAttribute("activeMovies", activeMovies);
+        request.setAttribute("activeTheaters", activeTheaters);
+        
+        // Debug logging
+        System.out.println("Dashboard data loaded successfully:");
+        System.out.println("Theaters: " + theaters.size());
+        System.out.println("Movies: " + movies.size());
+        System.out.println("Shows: " + shows.size());
+        System.out.println("Bookings: " + bookings.size());
+        System.out.println("Users: " + users.size());
+
+    } catch (SQLException e) {
+        System.err.println("Error loading dashboard data: " + e.getMessage());
+        throw e;
+    } finally {
+        if (conn != null && !conn.isClosed()) {
+            conn.close();
+        }
     }
 }
 
@@ -258,23 +348,26 @@ private void showDashboard(HttpServletRequest request, HttpServletResponse respo
             throws ServletException, IOException {
         try {
             String title = request.getParameter("title");
+            String description = request.getParameter("description");
             String genre = request.getParameter("genre");
             String duration = request.getParameter("duration");
-            // Convert String date to SQL Date
             Date releaseDate = Date.valueOf(request.getParameter("releaseDate"));
-            String description = request.getParameter("description");
             double price = Double.parseDouble(request.getParameter("price"));
-            
+            BigDecimal rating = new BigDecimal(request.getParameter("Rating"));
+            String ImageUrl = request.getParameter("ImageUrl");
+           
             Movie movie = new Movie();
             movie.setTitle(title);
+            movie.setDescription(description);
             movie.setGenre(genre);
             movie.setDuration(duration);
-            movie.setReleaseDate(releaseDate); // Now using proper SQL Date
-            movie.setDescription(description);
+            movie.setReleaseDate(releaseDate); 
+            movie.setStatus("ACTIVE");
             movie.setPrice(price);
-            movie.setStatus("ACTIVE"); // Set default status
+            movie.setImageUrl(ImageUrl);
+            movie.setRating(rating);
             
-            // Fix: Use movieDao instead of userDao
+          
             movieDao.addMovie(movie);
             
             response.sendRedirect("AdminServlet?action=listMovies&success=true");
@@ -332,18 +425,83 @@ private void showDashboard(HttpServletRequest request, HttpServletResponse respo
         request.setAttribute("theaters", theaters);
         request.getRequestDispatcher("/admin_dashboard.jsp").forward(request, response);
     }
-
+    
+    
+    
+//add theatres
+    
     private void addTheater(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException, SQLException {
         String name = request.getParameter("theaterName");
         String location = request.getParameter("location");
         int totalSeats = Integer.parseInt(request.getParameter("totalSeats"));
         
-        Theatre theatre = new Theatre(0, name, location, totalSeats);
+        Theatre theatre = new Theatre();
+        theatre.setName(name);
+        theatre.setLocation(location);
+        theatre.setTotal_seats(totalSeats);
+        theatre.setStatus("ACTIVE");
+        
         theatreDao.addTheatre(theatre);
         
         response.sendRedirect("AdminServlet?action=listTheaters");
     }
+    
+    //update theatre
+    
+    private void updateTheater(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+    try {
+        int theaterId = Integer.parseInt(request.getParameter("theaterId"));
+        String name = request.getParameter("name");
+        String location = request.getParameter("location");
+        int totalSeats = Integer.parseInt(request.getParameter("totalSeats"));
+        String status = request.getParameter("status");
+
+        Theatre theatre = new Theatre(theaterId, name, location, totalSeats);
+        theatre.setStatus(status);
+
+        TheatreDao theatreDao = new TheatreDao(DatabaseConnection.getConnection());
+        boolean success = theatreDao.updateTheatre(theatre);
+
+        if (success) {
+        	
+            // Instead of forwarding, redirect to the admin dashboard
+            response.sendRedirect("AdminServlet?action=showDashboard&tab=theaters");
+        } else {
+            response.sendRedirect("AdminServlet?action=listTheaters&error=UpdateFailed");
+        }
+    } catch (Exception e) {
+        response.sendRedirect("AdminServlet?action=listTheaters&error=" + URLEncoder.encode(e.getMessage(), "UTF-8"));
+    }
+}
+
+    
+    private void deleteTheater(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("theaterId"));
+        boolean isDeleted = false; // Initialize isDeleted
+        
+        try {
+            // Ensure you have an instance of TheatreDao
+            TheatreDao theatreDao = new TheatreDao(connection);
+            isDeleted = theatreDao.deleteTheatre(id); // Call instance method
+        } catch (SQLException e) {
+            e.printStackTrace(); // Log the exception
+            request.getSession().setAttribute("error", "An error occurred while deleting the theater.");
+        }
+        
+        if (isDeleted) {
+            request.getSession().setAttribute("message", "Theater deleted successfully.");
+        } else {
+            request.getSession().setAttribute("error", "Failed to delete theater.");
+        }
+        
+        // Redirect to the servlet with updated data or display the updated list
+        response.sendRedirect("AdminServlet?action=listTheaters");
+    }
+
+    
 
     private void addShow(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -380,6 +538,8 @@ private void showDashboard(HttpServletRequest request, HttpServletResponse respo
         request.setAttribute("shows", shows);
         request.getRequestDispatcher("/admin_dashboard.jsp").forward(request, response);
     }
+    
+    
 
     private void updateBooking(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -421,40 +581,16 @@ private void showDashboard(HttpServletRequest request, HttpServletResponse respo
     }
 }
 
-    private void handleLogout(HttpServletRequest request, HttpServletResponse response) 
-            throws ServletException, IOException {
+    @Override
+    public void destroy() {
         try {
-            // Invalidate session first
-            HttpSession session = request.getSession(false);
-            if (session != null) {
-                session.invalidate();
-            }
-
-            // Then close the connection
             if (connection != null && !connection.isClosed()) {
                 connection.close();
             }
-            
-            // Clean up resources
-            userDao = null;
-            movieDao = null;
-            theatreDao = null;
-            showtimeDao = null;
-            bookingDao = null;
-            connection = null;
-            
-            // Redirect to login page
-            response.sendRedirect("login.jsp");
         } catch (SQLException e) {
-            System.err.println("Error during logout: " + e.getMessage());
-            request.setAttribute("error", "Error during logout");
-            request.getRequestDispatcher("/admin_dashboard.jsp").forward(request, response);
+            System.err.println("Error closing connection: " + e.getMessage());
         }
-    }
-
-    @Override
-    public void destroy() {
-        // Only clean up non-connection resources
+        // Clean up other resources
         userDao = null;
         movieDao = null;
         theatreDao = null;

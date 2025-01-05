@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Movie.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">movie-ticket-booking-system Maven Webapp</a> &gt; <a href="index.source.html" class="el_package">com.movie.model</a> &gt; <span class="el_source">Movie.java</span></div><h1>Movie.java</h1><pre class="source lang-java linenums">package com.movie.model;
+
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Timestamp;
+
+public class Movie {
+    
+
+	private int movieId;
+    private String title;
+    private String description;
+    private String genre;
+    private String duration;
+    private Date releaseDate;
+    private String status;
+    private BigDecimal rating;
+    private String imageUrl;
+    private double price;
+    private Timestamp createdAt;
+    
+    
+	public Movie() {
+<span class="nc" id="L24">		super();</span>
+		// TODO Auto-generated constructor stub
+<span class="nc" id="L26">	}</span>
+	
+	
+	public Movie(int movieId, String title, String description, String genre, String duration, Date releaseDate,
+			String status, BigDecimal rating, String imageUrl, double price, Timestamp createdAt) {
+<span class="nc" id="L31">		super();</span>
+<span class="nc" id="L32">		this.movieId = movieId;</span>
+<span class="nc" id="L33">		this.title = title;</span>
+<span class="nc" id="L34">		this.description = description;</span>
+<span class="nc" id="L35">		this.genre = genre;</span>
+<span class="nc" id="L36">		this.duration = duration;</span>
+<span class="nc" id="L37">		this.releaseDate = releaseDate;</span>
+<span class="nc" id="L38">		this.status = status;</span>
+<span class="nc" id="L39">		this.rating = rating;</span>
+<span class="nc" id="L40">		this.imageUrl = imageUrl;</span>
+<span class="nc" id="L41">		this.price = price;</span>
+<span class="nc" id="L42">		this.createdAt = createdAt;</span>
+<span class="nc" id="L43">	}</span>
+
+
+	public int getMovieId() {
+<span class="nc" id="L47">		return movieId;</span>
+	}
+
+
+	public void setMovieId(int movieId) {
+<span class="nc" id="L52">		this.movieId = movieId;</span>
+<span class="nc" id="L53">	}</span>
+
+
+	public String getTitle() {
+<span class="nc" id="L57">		return title;</span>
+	}
+
+
+	public void setTitle(String title) {
+<span class="nc" id="L62">		this.title = title;</span>
+<span class="nc" id="L63">	}</span>
+
+
+	public String getDescription() {
+<span class="nc" id="L67">		return description;</span>
+	}
+
+
+	public void setDescription(String description) {
+<span class="nc" id="L72">		this.description = description;</span>
+<span class="nc" id="L73">	}</span>
+
+
+	public String getGenre() {
+<span class="nc" id="L77">		return genre;</span>
+	}
+
+
+	public void setGenre(String genre) {
+<span class="nc" id="L82">		this.genre = genre;</span>
+<span class="nc" id="L83">	}</span>
+
+
+	public String getDuration() {
+<span class="nc" id="L87">		return duration;</span>
+	}
+
+
+	public void setDuration(String duration) {
+<span class="nc" id="L92">		this.duration = duration;</span>
+<span class="nc" id="L93">	}</span>
+
+
+	public Date getReleaseDate() {
+<span class="nc" id="L97">		return releaseDate;</span>
+	}
+
+
+	public void setReleaseDate(Date releaseDate) {
+<span class="nc" id="L102">		this.releaseDate = releaseDate;</span>
+<span class="nc" id="L103">	}</span>
+
+
+	public String getStatus() {
+<span class="nc" id="L107">		return status;</span>
+	}
+
+
+	public void setStatus(String status) {
+<span class="nc" id="L112">		this.status = status;</span>
+<span class="nc" id="L113">	}</span>
+
+
+	public BigDecimal getRating() {
+<span class="nc" id="L117">		return rating;</span>
+	}
+
+
+	public void setRating(BigDecimal rating) {
+<span class="nc" id="L122">		this.rating = rating;</span>
+<span class="nc" id="L123">	}</span>
+
+
+	public String getImageUrl() {
+<span class="nc" id="L127">		return imageUrl;</span>
+	}
+
+
+	public void setImageUrl(String imageUrl) {
+<span class="nc" id="L132">		this.imageUrl = imageUrl;</span>
+<span class="nc" id="L133">	}</span>
+
+
+	public double getPrice() {
+<span class="nc" id="L137">		return price;</span>
+	}
+
+
+	public void setPrice(double price) {
+<span class="nc" id="L142">		this.price = price;</span>
+<span class="nc" id="L143">	}</span>
+
+
+	public Timestamp getCreatedAt() {
+<span class="nc" id="L147">		return createdAt;</span>
+	}
+
+
+	public void setCreatedAt(Timestamp createdAt) {
+<span class="nc" id="L152">		this.createdAt = createdAt;</span>
+<span class="nc" id="L153">	}</span>
+
+    public double getRatingAsDouble() {
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        return rating != null ? rating.doubleValue() : 0.0;</span>
+    }
+
+	@Override
+	public String toString() {
+<span class="nc" id="L161">		return &quot;Movie [movieId=&quot; + movieId + &quot;, title=&quot; + title + &quot;, description=&quot; + description + &quot;, genre=&quot; + genre</span>
+				+ &quot;, duration=&quot; + duration + &quot;, releaseDate=&quot; + releaseDate + &quot;, status=&quot; + status + &quot;, rating=&quot;
+				+ rating + &quot;, imageUrl=&quot; + imageUrl + &quot;, price=&quot; + price + &quot;, createdAt=&quot; + createdAt + &quot;]&quot;;
+	}
+
+    
+    
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

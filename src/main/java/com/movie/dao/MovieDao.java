@@ -2,6 +2,7 @@ package com.movie.dao;
 
 import java.sql.*;
 
+
 import com.movie.model.Movie;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,15 +18,14 @@ public class MovieDao {
         "SELECT movie_id, title, description, genre, duration, release_date, status, rating, image_url, price, created_at FROM movies";
     private static final String SEARCH_MOVIES = 
         "SELECT movie_id, title, description, genre, rating, image_url, price, created_at FROM movies WHERE title LIKE ? OR genre LIKE ?";
-    private static final String ADD_MOVIE = "INSERT INTO movies (title, genre, duration, release_date, description, price, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    private static final String DELETE_MOVIE = "DELETE FROM movies WHERE movie_id=?";
-    private static final String INSERT_MOVIE = 
-        "INSERT INTO movies (title, description, genre, duration, release_date, " +
-        "status, rating, image_url, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
+    
+    private static final String ADD_MOVIE =  "INSERT INTO movies ( title, description, genre, duration, release_date,status, rating, image_url, price ) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
+    
+    private static final String DELETE_MOVIE =  "DELETE FROM movies WHERE movie_id=?";
+    
     private static final String UPDATE_MOVIE = 
-        "UPDATE movies SET title=?, description=?, genre=?, duration=?, " +
-        "release_date=?, status=?, rating=?, image_url=?, price=? WHERE movie_id=?";
+        "UPDATE movies SET title=?, description=?, genre=?, duration=?, release_date=?, status=?, rating=?, image_url=?, price=? "
+      + "WHERE movie_id=?";
 
     public MovieDao() {
         try {
@@ -128,12 +128,14 @@ public class MovieDao {
         try (Connection connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
              PreparedStatement stmt = connection.prepareStatement(ADD_MOVIE)) {
             stmt.setString(1, movie.getTitle());
-            stmt.setString(2, movie.getGenre());
-            stmt.setString(3, movie.getDuration());
-            stmt.setDate(4, movie.getReleaseDate());
-            stmt.setString(5, movie.getDescription());
-            stmt.setDouble(6, movie.getPrice());
-            stmt.setString(7, movie.getStatus());
+            stmt.setString(2, movie.getDescription());
+            stmt.setString(3, movie.getGenre());
+            stmt.setString(4, movie.getDuration());
+            stmt.setDate(5, movie.getReleaseDate());
+            stmt.setString(6, movie.getStatus());
+            stmt.setBigDecimal(7, movie.getRating());
+            stmt.setString(8, movie.getImageUrl());
+            stmt.setDouble(9, movie.getPrice());
             return stmt.executeUpdate() > 0;
         }
     }
@@ -142,13 +144,15 @@ public class MovieDao {
         try (Connection connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
              PreparedStatement stmt = connection.prepareStatement(UPDATE_MOVIE)) {
             stmt.setString(1, movie.getTitle());
-            stmt.setString(2, movie.getGenre());
-            stmt.setString(3, movie.getDuration());
-            stmt.setDate(4, movie.getReleaseDate());
-            stmt.setString(5, movie.getDescription());
-            stmt.setDouble(6, movie.getPrice());
-            stmt.setString(7, movie.getStatus());
-            stmt.setInt(8, movie.getMovieId());
+            stmt.setString(2, movie.getDescription());
+            stmt.setString(3, movie.getGenre());
+            stmt.setString(4, movie.getDuration());
+            stmt.setDate(5, movie.getReleaseDate());
+            stmt.setString(6, movie.getStatus());
+            stmt.setBigDecimal(7, movie.getRating());
+            stmt.setString(8, movie.getImageUrl());
+            stmt.setDouble(9, movie.getPrice());
+            stmt.setInt(10, movie.getMovieId());
             return stmt.executeUpdate() > 0;
         }
     }

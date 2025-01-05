@@ -1,122 +1,163 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Book Tickets</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .screen {
-            background: #333;
-            height: 70px;
-            width: 100%;
-            margin: 15px 0;
-            color: white;
-            line-height: 70px;
-            font-size: 25px;
-            text-align: center;
-        }
-        .seat {
-            width: 35px;
-            height: 35px;
-            margin: 5px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            position: relative;
-        }
-        .available {
-            background-color: #4CAF50;
-        }
-        .selected {
-            background-color: #2196F3;
-        }
-        .booked {
-            background-color: #f44336;
-            cursor: not-allowed;
-        }
-        .seat-container {
-            margin: 20px auto;
-            max-width: 700px;
-        }
-        .row-label {
-            width: 30px;
-            display: inline-block;
-            text-align: center;
-            margin-right: 10px;
-        }
-        .seat-number {
-            font-size: 12px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #333;
-        }
-    </style>
+<title>Book Tickets</title>
+<link
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+	rel="stylesheet">
+<style>
+.screen {
+	background: #333;
+	height: 70px;
+	width: 100%;
+	margin: 15px 0;
+	color: white;
+	line-height: 70px;
+	font-size: 25px;
+	text-align: center;
+}
+
+.seat {
+	width: 35px;
+	height: 35px;
+	margin: 5px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	position: relative;
+}
+
+.available {
+	background-color: #4CAF50;
+}
+
+.selected {
+	background-color: #2196F3;
+}
+
+.booked {
+	background-color: #f44336;
+	cursor: not-allowed;
+}
+
+.seat-container {
+	margin: 20px auto;
+	max-width: 700px;
+}
+
+.row-label {
+	width: 30px;
+	display: inline-block;
+	text-align: center;
+	margin-right: 10px;
+}
+
+.seat-number {
+	font-size: 12px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	color: #333;
+}
+</style>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-8">
-                <h2>Select Seats</h2>
-                <div class="screen">SCREEN</div>
-                <div class="seat-container" id="seatsContainer">
-                    <!-- Seats will be generated here -->
-                </div>
-                <div class="text-center mt-3">
-                    <div class="d-inline-block mr-3">
-                        <button class="seat available mr-2" disabled></button>Available
-                    </div>
-                    <div class="d-inline-block mr-3">
-                        <button class="seat selected mr-2" disabled></button>Selected
-                    </div>
-                    <div class="d-inline-block">
-                        <button class="seat booked mr-2" disabled></button>Booked
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Booking Summary</h5>
-                        <div class="booking-details">
-                            <p><strong>Movie:</strong> ${showtime.movieTitle}</p>
-                            <p><strong>Theatre:</strong> ${showtime.theatreName}</p>
-                            <p><strong>Date:</strong> <fmt:formatDate value="${showtime.showDate}" pattern="EEE, MMM dd, yyyy"/></p>
-                            <p><strong>Time:</strong> <fmt:formatDate value="${showtime.showtime}" pattern="hh:mm a"/></p>
-                            <p><strong>Price per Ticket:</strong> $${showtime.ticketPrice}</p>
-                            <p><strong>Selected Seats:</strong> <span id="selectedSeatsDisplay">None</span></p>
-                            <p><strong>Total Seats:</strong> <span id="totalSeatsDisplay">0</span></p>
-                            <p><strong>Total Amount:</strong> $<span id="totalAmount">0.00</span></p>
-                            
-                            <form action="${pageContext.request.contextPath}/payment" method="POST" id="bookingForm">
-                                <input type="hidden" name="showtimeId" value="${showtime.showtime_id}">
-                                <input type="hidden" name="movieTitle" value="${showtime.movieTitle}">
-                                <input type="hidden" name="theatreId" value="${showtime.theatre_id}">
-                                <input type="hidden" name="theatreName" value="${showtime.theatreName}">
-                                <input type="hidden" name="showDate" value="<fmt:formatDate value="${showtime.showDate}" pattern="yyyy-MM-dd"/>">
-                                <input type="hidden" name="showtime" value="<fmt:formatDate value="${showtime.showtime}" pattern="HH:mm:ss"/>">
-                                <input type="hidden" name="selectedSeats" id="selectedSeatsInput">
-                                <input type="hidden" name="totalSeats" id="totalSeatsInput">
-                                <input type="hidden" name="ticketPrice" value="${showtime.ticketPrice}">
-                                <input type="hidden" name="totalAmount" id="totalAmountInput">
-                                <button type="submit" class="btn btn-primary btn-block" id="confirmButton" disabled>
-                                    Proceed to Payment
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="container mt-5">
+		<div class="row">
+			<div class="col-md-8">
+				<h2>Select Seats</h2>
+				<div class="screen">SCREEN</div>
+				<div class="seat-container" id="seatsContainer">
+					<!-- Seats will be generated here -->
+				</div>
+				<div class="text-center mt-3">
+					<div class="d-inline-block mr-3">
+						<button class="seat available mr-2" disabled></button>
+						Available
+					</div>
+					<div class="d-inline-block mr-3">
+						<button class="seat selected mr-2" disabled></button>
+						Selected
+					</div>
+					<div class="d-inline-block">
+						<button class="seat booked mr-2" disabled></button>
+						Booked
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card">
+					<div class="card-body">
+						<h5 class="card-title">Booking Summary</h5>
+						<div class="booking-details">
+							<p>
+								<strong>Movie:</strong> ${sessionScope.bookingMovieTitle}
+							</p>
+							<p>
+								<strong>Theatre:</strong> ${sessionScope.bookingTheatreName}
+							</p>
+							<p>
+								<strong>Date:</strong>
+								<fmt:formatDate value="${sessionScope.bookingShowDate}"
+									pattern="EEE, MMM dd, yyyy" />
+							</p>
+							<p>
+								<strong>Time:</strong>
+								<fmt:formatDate value="${sessionScope.show_time}"
+									pattern="hh:mm a" />
+							</p>
+							<p>
+								<strong>Price per Ticket:</strong>
+								$${sessionScope.bookingTicketPrice}
+							</p>
+							<p>
+								<strong>Selected Seats:</strong> <span id="selectedSeatsDisplay">None</span>
+							</p>
+							<p>
+								<strong>Total Seats:</strong> <span id="totalSeatsDisplay">0</span>
+							</p>
+							<p>
+								<strong>Total Amount:</strong> $<span id="totalAmount">0.00</span>
+							</p>
 
-    <script>
+							<form action="${pageContext.request.contextPath}/payment"
+								method="POST" id="bookingForm">
+								<input type="hidden" name="showtimeId"
+									value="${sessionScope.bookingShowtimeId}"> <input
+									type="hidden" name="movieTitle"
+									value="${sessionScope.bookingMovieTitle}"> <input
+									type="hidden" name="theatreName"
+									value="${sessionScope.bookingTheatreName}"> <input
+									type="hidden" name="theatreId"
+									value="${sessionScope.bookingTheatreId}"> <input
+									type="hidden" name="showDate"
+									value="<fmt:formatDate value='${sessionScope.bookingShowDate}' pattern='yyyy-MM-dd'/>">
+								<input type="hidden" name="showTime"
+									value="<fmt:formatDate value='${sessionScope.show_time}' pattern='HH:mm:ss'/>">
+								<input type="hidden" name="ticketPrice"
+									value="${sessionScope.bookingTicketPrice}"> <input
+									type="hidden" name="selectedSeats" id="selectedSeatsInput">
+								<input type="hidden" name="totalSeats" id="totalSeatsInput">
+								<input type="hidden" name="totalAmount" id="totalAmountInput">
+								<button type="submit" class="btn btn-primary btn-block"
+									id="confirmButton" disabled>Proceed to Payment</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
         const ROWS = 8;
         const COLS = 10;
-        const TICKET_PRICE = ${showtime.ticketPrice};
+        const TICKET_PRICE = ${sessionScope.bookingTicketPrice}; // Changed from showtime.ticketPrice
         let selectedSeats = [];
 
         function initializeSeats() {
@@ -183,38 +224,78 @@
         }
 
         function updateBookingSummary() {
-            const totalAmount = selectedSeats.length * TICKET_PRICE;
-            
-            // Format seats display
+            const totalAmount = calculateTotal();
             const seatsDisplay = selectedSeats.length > 0 ? selectedSeats.join(', ') : 'None';
             
-            // Update display elements
             document.getElementById('selectedSeatsDisplay').textContent = seatsDisplay;
             document.getElementById('totalSeatsDisplay').textContent = selectedSeats.length;
             document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
             
-            // Update hidden form inputs
-            document.getElementById('selectedSeatsInput').value = selectedSeats.join(',');
-            document.getElementById('totalSeatsInput').value = selectedSeats.length;
-            document.getElementById('totalAmountInput').value = totalAmount.toFixed(2);
-            
-            // Enable/disable confirm button
+            updatePaymentFormFields();
             document.getElementById('confirmButton').disabled = selectedSeats.length === 0;
-            
-            // Debug output
-            console.log('Selected Seats Array:', selectedSeats);
-            console.log('Seats Display String:', seatsDisplay);
-            console.log('Total Seats:', selectedSeats.length);
         }
         
         function updatePaymentFormFields() {
-            document.getElementById('selectedSeatsInput').value = JSON.stringify(selectedSeats);
+            const total = calculateTotal();
+            document.getElementById('selectedSeatsInput').value = selectedSeats.join(',');
             document.getElementById('totalSeatsInput').value = selectedSeats.length;
-            document.getElementById('totalAmountInput').value = calculateTotal();
+            document.getElementById('totalAmountInput').value = total.toFixed(2);
+            
+            console.log('Payment form fields updated:', {
+                selectedSeats: selectedSeats,
+                totalSeats: selectedSeats.length,
+                totalAmount: total.toFixed(2)
+            });
         }
         
+        function calculateTotal() {
+            return selectedSeats.length * ${sessionScope.bookingTicketPrice};
+        }
+
+        // Add seat status checking
+        function checkBookedSeats() {
+            // You can add AJAX call here to get booked seats from server
+            // For now, let's mark some seats as booked for demonstration
+            const bookedSeats = []; // Add your booked seats array here
+            
+            document.querySelectorAll('.seat').forEach(seat => {
+                const seatNumber = seat.querySelector('.seat-number').textContent;
+                if (bookedSeats.includes(seatNumber)) {
+                    seat.classList.remove('available');
+                    seat.classList.add('booked');
+                    seat.disabled = true;
+                }
+            });
+        }
+
         // Initialize seats when page loads
-        document.addEventListener('DOMContentLoaded', initializeSeats);
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("Session data:", {
+                movieTitle: "${sessionScope.bookingMovieTitle}",
+                theatreName: "${sessionScope.bookingTheatreName}",
+                ticketPrice: "${sessionScope.bookingTicketPrice}",
+                showDate: "${sessionScope.bookingShowDate}"
+            });
+
+            if (!${sessionScope.bookingShowtimeId}) {
+                alert("Booking session data not found!");
+                window.location.href = '${pageContext.request.contextPath}/showtime/list';
+                return;
+            }
+
+            initializeSeats();
+            checkBookedSeats();
+        });
+        
+        // Add form submission validation
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            if (selectedSeats.length === 0) {
+                e.preventDefault();
+                alert('Please select at least one seat');
+                return false;
+            }
+            return true;
+        });
     </script>
 </body>
 </html>

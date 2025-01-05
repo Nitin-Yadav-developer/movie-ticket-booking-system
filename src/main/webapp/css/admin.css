@@ -1,9 +1,11 @@
+/*
 .sidebar {
     background-color: #343a40;
     min-height: 100vh;
     padding: 20px 0;
 }
 
+/*
 .sidebar .list-group-item {
     background-color: transparent;
     border: none;
@@ -19,7 +21,42 @@
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-
+/*
 .table td, .table th {
     vertical-align: middle;
+}
+*/
+/* Make the form appear above all content */
+/* Make the form appear above all content */
+.movie-edit-form {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1050; /* Bootstrap modal has a z-index of 1050 */
+    width: 100%;
+    max-width: 600px;
+    margin-top: 20px;
+    background: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, .1);
+    max-height: 90vh;  /* Set max height to 90% of the viewport */
+    overflow-y: auto;  /* Enable vertical scrolling if content exceeds max height */
+    padding: 20px;
+    border-radius: 8px; /* Optional: Rounded corners */
+}
+
+/* Optional: Adjust the background opacity for the whole page when the form is active */
+body {
+    transition: background-color 0.3s;
+}
+
+.movie-edit-form.show ~ body {
+    background-color: rgba(0, 0, 0, 0.3); /* Slightly darken the background */
+}
+
+/* For mobile devices, you can tweak max width to ensure it fits smaller screens */
+@media (max-width: 767px) {
+    .collapse {
+        max-width: 90%;
+    }
 }

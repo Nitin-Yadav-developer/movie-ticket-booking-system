@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GenerateTicketServlet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">movie-ticket-booking-system Maven Webapp</a> &gt; <a href="index.source.html" class="el_package">com.controller</a> &gt; <span class="el_source">GenerateTicketServlet.java</span></div><h1>GenerateTicketServlet.java</h1><pre class="source lang-java linenums">package com.controller;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+
+import com.booking.dao.BookingDao;
+import com.booking.model.Booking;
+import com.util.DatabaseConnection;
+
+@WebServlet(&quot;/GenerateTicket&quot;)
+<span class="nc" id="L17">public class GenerateTicketServlet extends HttpServlet {</span>
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        try {
+<span class="nc" id="L22">            HttpSession session = request.getSession();</span>
+<span class="nc" id="L23">            String bookingId = request.getParameter(&quot;bookingId&quot;);</span>
+
+<span class="nc bnc" id="L25" title="All 2 branches missed.">            if (bookingId == null) {</span>
+<span class="nc" id="L26">                throw new ServletException(&quot;Missing booking ID&quot;);</span>
+            }
+
+            // Get booking details from database
+<span class="nc" id="L30">            BookingDao bookingDao = new BookingDao(DatabaseConnection.getConnection());</span>
+<span class="nc" id="L31">            Booking booking = bookingDao.getBooking(Integer.parseInt(bookingId));</span>
+            
+<span class="nc bnc" id="L33" title="All 2 branches missed.">            if (booking != null) {</span>
+                // Set all required attributes in session
+<span class="nc" id="L35">                session.setAttribute(&quot;bookingId&quot;, booking.getBookingId());</span>
+<span class="nc" id="L36">                session.setAttribute(&quot;movieTitle&quot;, booking.getMovieTitle());</span>
+<span class="nc" id="L37">                session.setAttribute(&quot;theatreName&quot;, booking.getTheatreName());</span>
+<span class="nc" id="L38">                session.setAttribute(&quot;theatreLocation&quot;, booking.getTheatreLocation()); // Add this line</span>
+<span class="nc" id="L39">                session.setAttribute(&quot;bookingDate&quot;, booking.getBookingDate());</span>
+<span class="nc" id="L40">                session.setAttribute(&quot;selectedSeats&quot;, booking.getSeatsBooked());</span>
+<span class="nc" id="L41">                session.setAttribute(&quot;totalAmount&quot;, booking.getTotalAmount());</span>
+<span class="nc" id="L42">                session.setAttribute(&quot;totalSeats&quot;, booking.getTotalSeats());</span>
+<span class="nc" id="L43">                session.setAttribute(&quot;showDate&quot;, booking.getBookingDate());</span>
+<span class="nc" id="L44">                session.setAttribute(&quot;showtime&quot;, new SimpleDateFormat(&quot;hh:mm a&quot;).format(booking.getBookingDate()));</span>
+
+<span class="nc" id="L46">                request.setAttribute(&quot;booking&quot;, booking);</span>
+<span class="nc" id="L47">                request.getRequestDispatcher(&quot;/ticket.jsp&quot;).forward(request, response);</span>
+            } else {
+<span class="nc" id="L49">                throw new Exception(&quot;Booking not found&quot;);</span>
+            }
+<span class="nc" id="L51">        } catch (Exception e) {</span>
+<span class="nc" id="L52">            e.printStackTrace();</span>
+<span class="nc" id="L53">            request.setAttribute(&quot;error&quot;, &quot;Error generating ticket: &quot; + e.getMessage());</span>
+<span class="nc" id="L54">            request.getRequestDispatcher(&quot;/error.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L55">        }</span>
+<span class="nc" id="L56">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

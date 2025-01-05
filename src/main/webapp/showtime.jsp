@@ -67,6 +67,7 @@
                     <li class="nav-item active">
                         <a class="nav-link" href="${pageContext.request.contextPath}/showtime/list">Showtimes</a>
                     </li>
+                    
                 </ul>
             </div>
         </div>

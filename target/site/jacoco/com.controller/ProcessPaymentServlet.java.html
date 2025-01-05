@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProcessPaymentServlet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">movie-ticket-booking-system Maven Webapp</a> &gt; <a href="index.source.html" class="el_package">com.controller</a> &gt; <span class="el_source">ProcessPaymentServlet.java</span></div><h1>ProcessPaymentServlet.java</h1><pre class="source lang-java linenums">package com.controller;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.io.IOException;
+import java.sql.Timestamp;
+
+import com.booking.dao.BookingDao;
+import com.booking.model.Booking;
+import com.util.DatabaseConnection;
+
+@WebServlet(&quot;/processPayment&quot;)
+<span class="nc" id="L17">public class ProcessPaymentServlet extends HttpServlet {</span>
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+<span class="nc" id="L21">        HttpSession session = request.getSession();</span>
+        try {
+            // Validate user is logged in
+<span class="nc bnc" id="L24" title="All 2 branches missed.">            if (session.getAttribute(&quot;user&quot;) == null) {</span>
+<span class="nc" id="L25">                response.sendRedirect(request.getContextPath() + &quot;/login.jsp&quot;);</span>
+<span class="nc" id="L26">                return;</span>
+            }
+
+            // Validate payment details
+<span class="nc" id="L30">            String cardNumber = request.getParameter(&quot;cardNumber&quot;);</span>
+<span class="nc" id="L31">            String expiryDate = request.getParameter(&quot;expiryDate&quot;);</span>
+<span class="nc" id="L32">            String cvv = request.getParameter(&quot;cvv&quot;);</span>
+
+<span class="nc bnc" id="L34" title="All 2 branches missed.">            if (!validatePaymentDetails(cardNumber, expiryDate, cvv)) {</span>
+<span class="nc" id="L35">                throw new Exception(&quot;Invalid payment details&quot;);</span>
+            }
+
+            // Get and validate seats JSON
+<span class="nc" id="L39">            String selectedSeats = request.getParameter(&quot;selectedSeats&quot;);</span>
+<span class="nc bnc" id="L40" title="All 4 branches missed.">            if (selectedSeats == null || selectedSeats.trim().isEmpty()) {</span>
+<span class="nc" id="L41">                throw new Exception(&quot;No seats selected&quot;);</span>
+            }
+
+            // Ensure it's valid JSON
+<span class="nc bnc" id="L45" title="All 4 branches missed.">            if (!selectedSeats.startsWith(&quot;[&quot;) || !selectedSeats.endsWith(&quot;]&quot;)) {</span>
+<span class="nc" id="L46">                selectedSeats = &quot;[&quot; + selectedSeats + &quot;]&quot;;</span>
+            }
+
+            // Create booking
+<span class="nc" id="L50">            Booking booking = new Booking();</span>
+<span class="nc" id="L51">            booking.setShowtimeId(Integer.parseInt(request.getParameter(&quot;showtimeId&quot;)));</span>
+<span class="nc" id="L52">            booking.setUserId(Integer.parseInt(request.getParameter(&quot;userId&quot;)));</span>
+<span class="nc" id="L53">            booking.setSeatsBooked(selectedSeats); // Now properly formatted JSON</span>
+<span class="nc" id="L54">            booking.setTheatreId(Integer.parseInt(request.getParameter(&quot;theatreId&quot;)));</span>
+<span class="nc" id="L55">            booking.setTotalSeats(Integer.parseInt(request.getParameter(&quot;totalSeats&quot;)));</span>
+<span class="nc" id="L56">            booking.setTotalAmount(Double.parseDouble(request.getParameter(&quot;totalAmount&quot;)));</span>
+<span class="nc" id="L57">            booking.setBookingDate(new Timestamp(System.currentTimeMillis()));</span>
+<span class="nc" id="L58">            booking.setBooking_status(&quot;CONFIRMED&quot;);</span>
+
+            // Debug log
+<span class="nc" id="L61">            System.out.println(&quot;Processing booking with seats: &quot; + selectedSeats);</span>
+
+            // Save booking using BookingDao
+<span class="nc" id="L64">            BookingDao bookingDao = new BookingDao(DatabaseConnection.getConnection());</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">            if (bookingDao.addBooking(booking)) {</span>
+                // Get the generated booking ID
+<span class="nc" id="L67">                int generatedBookingId = bookingDao.getLastGeneratedBookingId(); // Add this method to BookingDao</span>
+                
+                // Store booking details in session
+<span class="nc" id="L70">                session.setAttribute(&quot;bookingId&quot;, generatedBookingId);</span>
+<span class="nc" id="L71">                session.setAttribute(&quot;bookingMovieTitle&quot;, request.getParameter(&quot;movieTitle&quot;));</span>
+<span class="nc" id="L72">                session.setAttribute(&quot;bookingTheatreName&quot;, request.getParameter(&quot;theatreName&quot;));</span>
+<span class="nc" id="L73">                session.setAttribute(&quot;bookingShowDate&quot;, request.getParameter(&quot;showDate&quot;));</span>
+<span class="nc" id="L74">                session.setAttribute(&quot;paymentSelectedSeats&quot;, selectedSeats);</span>
+<span class="nc" id="L75">                session.setAttribute(&quot;paymentTotalSeats&quot;, request.getParameter(&quot;totalSeats&quot;));</span>
+<span class="nc" id="L76">                session.setAttribute(&quot;paymentTotalAmount&quot;, request.getParameter(&quot;totalAmount&quot;));</span>
+<span class="nc" id="L77">                session.setAttribute(&quot;theatreLocation&quot;, request.getParameter(&quot;theatreLocation&quot;));</span>
+                
+<span class="nc" id="L79">                response.sendRedirect(request.getContextPath() + &quot;/booking-success.jsp&quot;);</span>
+<span class="nc" id="L80">            } else {</span>
+<span class="nc" id="L81">                throw new Exception(&quot;Failed to save booking&quot;);</span>
+            }
+
+<span class="nc" id="L84">        } catch (Exception e) {</span>
+<span class="nc" id="L85">            System.err.println(&quot;Payment processing error: &quot; + e.getMessage());</span>
+<span class="nc" id="L86">            e.printStackTrace();</span>
+<span class="nc" id="L87">            request.setAttribute(&quot;error&quot;, &quot;Payment failed: &quot; + e.getMessage());</span>
+<span class="nc" id="L88">            request.getRequestDispatcher(&quot;/payment.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L89">        }</span>
+<span class="nc" id="L90">    }</span>
+
+    private boolean validatePaymentDetails(String cardNumber, String expiryDate, String cvv) {
+<span class="nc bnc" id="L93" title="All 6 branches missed.">        return cardNumber != null &amp;&amp; cardNumber.matches(&quot;\\d{16}&quot;) &amp;&amp;</span>
+<span class="nc bnc" id="L94" title="All 4 branches missed.">               expiryDate != null &amp;&amp; expiryDate.matches(&quot;(0[1-9]|1[0-2])/\\d{2}&quot;) &amp;&amp;</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">               cvv != null &amp;&amp; cvv.matches(&quot;\\d{3}&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdminFilter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">movie-ticket-booking-system Maven Webapp</a> &gt; <a href="index.source.html" class="el_package">com.filter</a> &gt; <span class="el_source">AdminFilter.java</span></div><h1>AdminFilter.java</h1><pre class="source lang-java linenums">package com.filter;
+
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+import com.user.model.User;
+import com.util.Constants;
+
+import java.io.IOException;
+
+@WebFilter(urlPatterns = {&quot;/admin/*&quot;, &quot;/AdminServlet&quot;, &quot;/admin_dashboard.jsp&quot;})
+<span class="nc" id="L20">public class AdminFilter implements Filter {</span>
+    
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        // Initialization code if needed
+<span class="nc" id="L25">    }</span>
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        
+<span class="nc" id="L31">        HttpServletRequest httpRequest = (HttpServletRequest) request;</span>
+<span class="nc" id="L32">        HttpServletResponse httpResponse = (HttpServletResponse) response;</span>
+<span class="nc" id="L33">        HttpSession session = httpRequest.getSession(false);</span>
+
+<span class="nc bnc" id="L35" title="All 4 branches missed.">        boolean isLoggedIn = session != null &amp;&amp; session.getAttribute(&quot;user&quot;) != null;</span>
+        
+<span class="nc bnc" id="L37" title="All 2 branches missed.">        if (isLoggedIn) {</span>
+<span class="nc" id="L38">            User user = (User) session.getAttribute(&quot;user&quot;);</span>
+<span class="nc bnc" id="L39" title="All 4 branches missed.">            if (user != null &amp;&amp; user.isAdmin()) {</span>
+                // User is admin, allow the request to continue
+<span class="nc" id="L41">                chain.doFilter(request, response);</span>
+<span class="nc" id="L42">                return;</span>
+            }
+            // User is logged in but not an admin
+<span class="nc" id="L45">            session.setAttribute(&quot;error&quot;, Constants.ERROR_ACCESS_DENIED);</span>
+<span class="nc" id="L46">        } else {</span>
+            // User is not logged in
+<span class="nc" id="L48">            session.setAttribute(&quot;error&quot;, &quot;Please log in as an administrator to access this area.&quot;);</span>
+        }
+
+        // If not admin or not logged in, redirect to login page
+<span class="nc" id="L52">        httpResponse.sendRedirect(httpRequest.getContextPath() + &quot;/login.jsp&quot;);</span>
+<span class="nc" id="L53">    }</span>
+
+    @Override
+    public void destroy() {
+        // Cleanup code if needed
+<span class="nc" id="L58">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
