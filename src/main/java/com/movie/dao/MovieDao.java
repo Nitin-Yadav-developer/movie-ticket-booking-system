@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.util.Constants;
+import com.util.DatabaseConnection;
 
 public class MovieDao {
     private String jdbcURL = Constants.DB_URL;
@@ -126,7 +127,7 @@ public class MovieDao {
 
     public boolean addMovie(Movie movie) throws SQLException {
         try (Connection connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
-             PreparedStatement stmt = connection.prepareStatement(ADD_MOVIE)) {
+             PreparedStatement stmt = connection.prepareStatement(ADD_MOVIE, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, movie.getTitle());
             stmt.setString(2, movie.getDescription());
             stmt.setString(3, movie.getGenre());
@@ -136,7 +137,17 @@ public class MovieDao {
             stmt.setBigDecimal(7, movie.getRating());
             stmt.setString(8, movie.getImageUrl());
             stmt.setDouble(9, movie.getPrice());
-            return stmt.executeUpdate() > 0;
+            
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        movie.setMovieId(generatedKeys.getInt(1));
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 
@@ -165,6 +176,7 @@ public class MovieDao {
         }
     }
 
+    
     private void setMovieParameters(PreparedStatement stmt, Movie movie) throws SQLException {
         stmt.setString(1, movie.getTitle());
         stmt.setString(2, movie.getDescription());
@@ -175,6 +187,18 @@ public class MovieDao {
         stmt.setBigDecimal(7, movie.getRating());
         stmt.setString(8, movie.getImageUrl());
         stmt.setDouble(9, movie.getPrice());
+    }
+
+    public int getLastInsertedId() throws SQLException {
+        String sql = "SELECT LAST_INSERT_ID()";
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+            return -1;
+        }
     }
     
 }

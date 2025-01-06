@@ -55,7 +55,7 @@ public class UserDao {
     }
     
     
-    public void insertUser(User user) throws SQLException {
+    public boolean insertUser(User user) throws SQLException {
         if (!user.isValidEmail() || !user.isValidPassword()) {
             throw new IllegalArgumentException("Invalid email or password");
         }
@@ -70,7 +70,7 @@ public class UserDao {
             stmt.setString(6, user.getPassword());
             stmt.setString(7, user.getRole() != null ? user.getRole() : "USER");
             
-            stmt.executeUpdate();
+            return stmt.executeUpdate() > 0;
         }
     }
     

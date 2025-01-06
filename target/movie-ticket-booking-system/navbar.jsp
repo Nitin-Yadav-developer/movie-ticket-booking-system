@@ -41,13 +41,6 @@
                                 </a>
                             </li>
                         </c:if>
-                        <!-- Add this to your navbar's user menu -->
-                        <form action="AdminServlet" method="post" style="display: inline;">
-                            <input type="hidden" name="action" value="logout">
-                            <button type="submit" class="dropdown-item">
-                                <i class="fas fa-sign-out-alt"></i> Logout
-                            </button>
-                        </form>
                     </c:when>
                     <c:otherwise>
                         <li class="nav-item">

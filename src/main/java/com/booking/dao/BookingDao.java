@@ -143,21 +143,7 @@ public class BookingDao {
         }
     }
 
-    public boolean deleteBooking(int bookingId) throws SQLException {
-        String sql = "DELETE FROM bookings WHERE booking_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, bookingId);
-            return stmt.executeUpdate() > 0;
-        }
-    }
-
-    public boolean deleteBookingsByShowtime(int showtimeId) throws SQLException {
-        String sql = "DELETE FROM bookings WHERE showtime_id = ?";
-        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
-            stmt.setInt(1, showtimeId);
-            return stmt.executeUpdate() > 0;
-        }
-    }
+  
 
     public int getTotalBookings() throws SQLException {
         String sql = "SELECT COUNT(*) FROM bookings";
@@ -176,7 +162,12 @@ public class BookingDao {
     }
 
     public Booking getBookingById(int bookingId) throws SQLException {
-        String sql = "SELECT * FROM bookings WHERE booking_id = ?";
+        String sql = "SELECT b.*, m.title as movie_title, t.name as theatre_name " +
+                    "FROM bookings b " +
+                    "LEFT JOIN showtimes s ON b.showtime_id = s.showtime_id " +
+                    "LEFT JOIN movies m ON s.movie_id = m.movie_id " +
+                    "LEFT JOIN theatres t ON b.theatre_id = t.theatre_id " +
+                    "WHERE b.booking_id = ?";
         try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
             stmt.setInt(1, bookingId);
             ResultSet rs = stmt.executeQuery();

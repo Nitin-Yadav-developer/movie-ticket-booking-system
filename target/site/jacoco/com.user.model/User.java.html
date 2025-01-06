@@ -15,97 +15,97 @@ public class User {
     private Timestamp created_at;
 
     public User() {
-<span class="nc" id="L18">        super();</span>
+<span class="fc" id="L18">        super();</span>
         // TODO Auto-generated constructor stub
-<span class="nc" id="L20">    }</span>
+<span class="fc" id="L20">    }</span>
 
     // Update constructor to match field names
     public User(int user_id, String username, String name, String email, 
-<span class="nc" id="L24">               String country, String address, String password) {</span>
-<span class="nc" id="L25">        this.user_id = user_id;</span>
-<span class="nc" id="L26">        this.username = username;</span>
-<span class="nc" id="L27">        this.name = name;</span>
-<span class="nc" id="L28">        this.email = email;</span>
-<span class="nc" id="L29">        this.country = country;</span>
-<span class="nc" id="L30">        this.address = address;</span>
-<span class="nc" id="L31">        this.password = password;</span>
-<span class="nc" id="L32">        this.role = &quot;USER&quot;; // Set default role</span>
-<span class="nc" id="L33">    }</span>
+<span class="fc" id="L24">               String country, String address, String password) {</span>
+<span class="fc" id="L25">        this.user_id = user_id;</span>
+<span class="fc" id="L26">        this.username = username;</span>
+<span class="fc" id="L27">        this.name = name;</span>
+<span class="fc" id="L28">        this.email = email;</span>
+<span class="fc" id="L29">        this.country = country;</span>
+<span class="fc" id="L30">        this.address = address;</span>
+<span class="fc" id="L31">        this.password = password;</span>
+<span class="fc" id="L32">        this.role = &quot;USER&quot;; // Set default role</span>
+<span class="fc" id="L33">    }</span>
 
     // Update getter/setter names to match fields
-<span class="nc" id="L36">    public int getUser_id() { return user_id; }</span>
+<span class="fc" id="L36">    public int getUser_id() { return user_id; }</span>
 <span class="nc" id="L37">    public void setUser_id(int user_id) { this.user_id = user_id; }</span>
 
 <span class="nc" id="L39">    public Timestamp getCreated_at() { return created_at; }</span>
-<span class="nc" id="L40">    public void setCreated_at(Timestamp created_at) { this.created_at = created_at; }</span>
+<span class="fc" id="L40">    public void setCreated_at(Timestamp created_at) { this.created_at = created_at; }</span>
 
     public String getName() {
-<span class="nc" id="L43">        return name;</span>
+<span class="fc" id="L43">        return name;</span>
     }
 
     public void setName(String name) {
-<span class="nc" id="L47">        this.name = name;</span>
-<span class="nc" id="L48">    }</span>
+<span class="fc" id="L47">        this.name = name;</span>
+<span class="fc" id="L48">    }</span>
 
     public String getEmail() {
-<span class="nc" id="L51">        return email;</span>
+<span class="fc" id="L51">        return email;</span>
     }
 
     public void setEmail(String email) {
-<span class="nc" id="L55">        this.email = email;</span>
-<span class="nc" id="L56">    }</span>
+<span class="fc" id="L55">        this.email = email;</span>
+<span class="fc" id="L56">    }</span>
 
     public String getCountry() {
-<span class="nc" id="L59">        return country;</span>
+<span class="fc" id="L59">        return country;</span>
     }
 
     public void setCountry(String country) {
-<span class="nc" id="L63">        this.country = country;</span>
-<span class="nc" id="L64">    }</span>
+<span class="fc" id="L63">        this.country = country;</span>
+<span class="fc" id="L64">    }</span>
 
     public String getPassword() {
-<span class="nc" id="L67">        return password;</span>
+<span class="fc" id="L67">        return password;</span>
     }
 
     public void setPassword(String password) {
-<span class="nc" id="L71">        this.password = password;</span>
-<span class="nc" id="L72">    }</span>
+<span class="fc" id="L71">        this.password = password;</span>
+<span class="fc" id="L72">    }</span>
 
     public String getUsername() {
-<span class="nc" id="L75">        return username;</span>
+<span class="fc" id="L75">        return username;</span>
     }
 
     public void setUsername(String username) {
-<span class="nc" id="L79">        this.username = username;</span>
-<span class="nc" id="L80">    }</span>
+<span class="fc" id="L79">        this.username = username;</span>
+<span class="fc" id="L80">    }</span>
 
     public String getAddress() {
-<span class="nc" id="L83">        return address;</span>
+<span class="fc" id="L83">        return address;</span>
     }
 
     public void setAddress(String address) {
-<span class="nc" id="L87">        this.address = address;</span>
-<span class="nc" id="L88">    }</span>
+<span class="fc" id="L87">        this.address = address;</span>
+<span class="fc" id="L88">    }</span>
 
     public String getRole() {
-<span class="nc" id="L91">        return role;</span>
+<span class="fc" id="L91">        return role;</span>
     }
 
     public void setRole(String role) {
-<span class="nc" id="L95">        this.role = role;</span>
-<span class="nc" id="L96">    }</span>
+<span class="fc" id="L95">        this.role = role;</span>
+<span class="fc" id="L96">    }</span>
 
     public boolean isAdmin() {
 <span class="nc" id="L99">        return &quot;ADMIN&quot;.equals(role);</span>
     }
 
     public boolean isValidEmail() {
-<span class="nc" id="L103">        String emailPattern = &quot;^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$&quot;;</span>
-<span class="nc" id="L104">        return this.email.matches(emailPattern);</span>
+<span class="fc" id="L103">        String emailPattern = &quot;^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$&quot;;</span>
+<span class="fc" id="L104">        return this.email.matches(emailPattern);</span>
     }
 
     public boolean isValidPassword() {
-<span class="nc bnc" id="L108" title="All 2 branches missed.">        return this.password.length() &gt;= 6;</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">        return this.password.length() &gt;= 6;</span>
     }
 
     @Override

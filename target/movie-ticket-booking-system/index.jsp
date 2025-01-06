@@ -7,7 +7,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Ticket Booking System</title>
@@ -18,6 +17,7 @@
     <link href="css/styles.css" rel="stylesheet">
     <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon">
 </head>
+
 
 <body>
     <!-- Navigation -->
@@ -168,17 +168,18 @@
             </div>
         </div>
     </section>
+    
 
     <%!
     private String generateStarRating(double rating) {
-        int stars = (int) Math.round(rating);  // Remove the division by 2
+        int stars = (int) Math.round(rating)/2;  // Remove the division by 2
         StringBuilder html = new StringBuilder("<span class='stars'>");
         for (int i = 1; i <= 5; i++) {
             html.append(i <= stars ? "★" : "☆");
         }
         html.append("</span><span class='rating-value'>")
             .append(String.format("%.1f", rating))
-            .append("/5</span>");
+            .append("/10</span>");
         return html.toString();
     }
     %>

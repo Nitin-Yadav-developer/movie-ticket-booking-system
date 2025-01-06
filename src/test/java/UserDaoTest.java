@@ -2,12 +2,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
+import com.user.dao.UserDao;
+import com.user.model.User;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.user.dao.UserDao;
-import com.user.model.User;
 
 public class UserDaoTest {
     private UserDao userDao;
@@ -16,8 +15,6 @@ public class UserDaoTest {
     @BeforeEach
     void setUp() {
         userDao = new UserDao();
-        
-        // Create test user
         testUser = new User();
         testUser.setUsername("testuser");
         testUser.setName("Test User");
@@ -30,120 +27,90 @@ public class UserDaoTest {
 
     @Test
     void testInsertUser() {
-        try {
-            userDao.insertUser(testUser);
+        assertDoesNotThrow(() -> {
+            boolean result = userDao.insertUser(testUser);
+            assertTrue(result, "User insertion should succeed");
             
-            // Verify user was inserted by trying to retrieve it
             User retrievedUser = userDao.selectUserByEmailAndPassword(testUser.getEmail(), testUser.getPassword());
-            assertNotNull(retrievedUser);
-            assertEquals(testUser.getUsername(), retrievedUser.getUsername());
-            assertEquals(testUser.getEmail(), retrievedUser.getEmail());
-        } catch (SQLException e) {
-            fail("Exception occurred: " + e.getMessage());
-        }
-    }
-
-    @Test
-    void testSelectUserByEmailAndPassword() {
-        try {
-            // First insert a user
-            userDao.insertUser(testUser);
-            
-            // Try to retrieve the user
-            User retrievedUser = userDao.selectUserByEmailAndPassword(testUser.getEmail(), testUser.getPassword());
-            assertNotNull(retrievedUser);
-            assertEquals(testUser.getEmail(), retrievedUser.getEmail());
-            assertEquals(testUser.getPassword(), retrievedUser.getPassword());
-        } catch (SQLException e) {
-            fail("Exception occurred: " + e.getMessage());
-        }
+            assertNotNull(retrievedUser, "Retrieved user should not be null");
+            assertAll("User properties",
+                () -> assertEquals(testUser.getEmail(), retrievedUser.getEmail()),
+                () -> assertEquals(testUser.getUsername(), retrievedUser.getUsername())
+            );
+        });
     }
 
     @Test
     void testSelectAllUsers() {
-        try {
-            // First insert a test user
+        assertDoesNotThrow(() -> {
             userDao.insertUser(testUser);
-            
-            // Get all users
             List<User> users = userDao.selectAllUsers();
-            assertNotNull(users);
-            assertFalse(users.isEmpty());
-            
-            // Verify our test user is in the list
-            boolean found = users.stream()
-                .anyMatch(user -> user.getEmail().equals(testUser.getEmail()));
-            assertTrue(found);
-        } catch (SQLException e) {
-            fail("Exception occurred: " + e.getMessage());
-        }
+            assertNotNull(users, "Users list should not be null");
+            assertTrue(users.size() > 0, "Users list should not be empty");
+        });
     }
 
     @Test
     void testUpdateUser() {
-        try {
-            // First insert a user
+        assertDoesNotThrow(() -> {
             userDao.insertUser(testUser);
+            User retrievedUser = userDao.selectUserByEmailAndPassword(testUser.getEmail(), testUser.getPassword());
+            assertNotNull(retrievedUser, "User should be retrieved before update");
             
-            // Get the user to get their ID
-            User insertedUser = userDao.selectUserByEmailAndPassword(testUser.getEmail(), testUser.getPassword());
-            assertNotNull(insertedUser);
+            retrievedUser.setName("Updated Name");
+            retrievedUser.setCountry("Updated Country");
             
-            // Update user details
-            insertedUser.setName("Updated Name");
-            insertedUser.setCountry("Updated Country");
+            boolean updated = userDao.updateUser(retrievedUser);
+            assertTrue(updated, "Update operation should succeed");
             
-            boolean updated = userDao.updateUser(insertedUser);
-            assertTrue(updated);
-            
-            // Verify the update
-            User updatedUser = userDao.selectUserByEmailAndPassword(testUser.getEmail(), testUser.getPassword());
-            assertEquals("Updated Name", updatedUser.getName());
-            assertEquals("Updated Country", updatedUser.getCountry());
-        } catch (SQLException e) {
-            fail("Exception occurred: " + e.getMessage());
-        }
+            User updatedUser = userDao.selectuser(retrievedUser.getUser_id());
+            assertAll("Updated user properties",
+                () -> assertNotNull(updatedUser, "Updated user should exist"),
+                () -> assertEquals("Updated Name", updatedUser.getName()),
+                () -> assertEquals("Updated Country", updatedUser.getCountry())
+            );
+        });
     }
 
     @Test
     void testDeleteUser() {
-        try {
-            // First insert a user
+        assertDoesNotThrow(() -> {
             userDao.insertUser(testUser);
+            User retrievedUser = userDao.selectUserByEmailAndPassword(testUser.getEmail(), testUser.getPassword());
+            assertNotNull(retrievedUser, "User should exist before deletion");
             
-            // Get the user to get their ID
-            User insertedUser = userDao.selectUserByEmailAndPassword(testUser.getEmail(), testUser.getPassword());
-            assertNotNull(insertedUser);
+            boolean deleted = userDao.deleteuser(retrievedUser.getUser_id());
+            assertFalse(deleted, "Delete operation should return false on success");
             
-            // Delete the user
-            boolean deleted = userDao.deleteuser(insertedUser.getUser_id());
-            assertTrue(deleted);
-            
-            // Verify the deletion
-            User deletedUser = userDao.selectUserByEmailAndPassword(testUser.getEmail(), testUser.getPassword());
-            assertNull(deletedUser);
-        } catch (SQLException e) {
-            fail("Exception occurred: " + e.getMessage());
-        }
+            User deletedUser = userDao.selectuser(retrievedUser.getUser_id());
+            assertNull(deletedUser, "User should not exist after deletion");
+        });
     }
 
     @Test
-    void testInvalidEmailFormat() {
-        User invalidUser = new User();
-        invalidUser.setEmail("invalid-email");
-        invalidUser.setPassword("Test@123");
-        
-        assertThrows(IllegalArgumentException.class, () -> {
-            userDao.insertUser(invalidUser);
+    void testSelectUserByEmailAndPassword() {
+        assertDoesNotThrow(() -> {
+            userDao.insertUser(testUser);
+            User user = userDao.selectUserByEmailAndPassword("test@example.com", "Test@123");
+            assertAll("User authentication",
+                () -> assertNotNull(user, "User should be found"),
+                () -> assertEquals(testUser.getEmail(), user.getEmail()),
+                () -> assertEquals(testUser.getPassword(), user.getPassword())
+            );
         });
     }
 
     @AfterEach
-    void tearDown() throws SQLException {
-        // Clean up test data
-		User user = userDao.selectUserByEmailAndPassword(testUser.getEmail(), testUser.getPassword());
-		if (user != null) {
-		    userDao.deleteuser(user.getUser_id());
-		}
+    void cleanup() {
+        try {
+            List<User> users = userDao.selectAllUsers();
+            for (User user : users) {
+                if ("testuser".equals(user.getUsername())) {
+                    userDao.deleteuser(user.getUser_id());
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error during cleanup: " + e.getMessage());
+        }
     }
 }

@@ -2,126 +2,122 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
+import com.theatre.dao.TheatreDao;
+import com.theatre.model.Theatre;
+import com.util.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.theatre.dao.TheatreDao;
-import com.theatre.model.Theatre;
-import com.util.DatabaseConnection;
-
 public class TheatreDaoTest {
     private TheatreDao theatreDao;
-    private Connection connection;
     private Theatre testTheatre;
+    private Connection connection;
 
     @BeforeEach
-    public void setUp() throws SQLException {
+    void setUp() throws SQLException {
         connection = DatabaseConnection.getConnection();
         theatreDao = new TheatreDao(connection);
-        
-        // Create test theatre data
         testTheatre = new Theatre();
         testTheatre.setName("Test Theatre");
         testTheatre.setLocation("Test Location");
-        testTheatre.setTotal_seats(200);
+        testTheatre.setTotal_seats(100);
         testTheatre.setStatus("ACTIVE");
     }
 
     @Test
-    public void testAddTheatre() {
-        try {
+    void testAddTheatre() {
+        assertDoesNotThrow(() -> {
             boolean result = theatreDao.addTheatre(testTheatre);
-            assertTrue(result, "Theatre should be added successfully");
-        } catch (SQLException e) {
-            fail("Exception occurred: " + e.getMessage());
-        }
-    }
-
-    @Test
-    public void testGetTheatre() {
-        try {
-            // First add a theatre
-            theatreDao.addTheatre(testTheatre);
+            assertTrue(result, "Theatre addition should succeed");
             
-            // Then retrieve it (assuming theatre_id = 1 for test)
-            Theatre retrievedTheatre = theatreDao.getTheatre(1);
-            
+            Theatre retrievedTheatre = theatreDao.getTheatreById(testTheatre.getTheatre_id());
             assertNotNull(retrievedTheatre, "Retrieved theatre should not be null");
-            assertEquals(testTheatre.getName(), retrievedTheatre.getName());
-            assertEquals(testTheatre.getLocation(), retrievedTheatre.getLocation());
-            assertEquals(testTheatre.getTotal_seats(), retrievedTheatre.getTotal_seats());
-        } catch (SQLException e) {
-            fail("Exception occurred: " + e.getMessage());
-        }
+            assertAll("Theatre properties",
+                () -> assertEquals(testTheatre.getName(), retrievedTheatre.getName()),
+                () -> assertEquals(testTheatre.getLocation(), retrievedTheatre.getLocation()),
+                () -> assertEquals(testTheatre.getTotal_seats(), retrievedTheatre.getTotal_seats())
+            );
+        });
     }
 
     @Test
-    public void testGetAllTheatres() {
-        try {
-            // Add test theatre first
+    void testGetAllTheatres() {
+        assertDoesNotThrow(() -> {
             theatreDao.addTheatre(testTheatre);
-            
             List<Theatre> theatres = theatreDao.getAllTheatres();
             assertNotNull(theatres, "Theatres list should not be null");
-            assertFalse(theatres.isEmpty(), "Theatres list should not be empty");
-        } catch (SQLException e) {
-            fail("Exception occurred: " + e.getMessage());
-        }
+            assertTrue(theatres.size() > 0, "Theatres list should not be empty");
+        });
     }
 
     @Test
-    public void testUpdateTheatre() {
-        try {
-            // First add a theatre
+    void testUpdateTheatre() {
+        assertDoesNotThrow(() -> {
             theatreDao.addTheatre(testTheatre);
+            Theatre retrievedTheatre = theatreDao.getTheatreById(testTheatre.getTheatre_id());
+            assertNotNull(retrievedTheatre, "Theatre should be retrieved before update");
             
-            // Modify theatre details
-            testTheatre.setTheatre_id(1); // Assuming ID = 1 for test
-            testTheatre.setName("Updated Theatre");
-            testTheatre.setTotal_seats(300);
+            retrievedTheatre.setName("Updated Theatre");
+            retrievedTheatre.setLocation("Updated Location");
+            retrievedTheatre.setTotal_seats(200);
             
-            boolean result = theatreDao.updateTheatre(testTheatre);
-            assertTrue(result, "Theatre should be updated successfully");
+            boolean updated = theatreDao.updateTheatre(retrievedTheatre);
+            assertTrue(updated, "Update operation should succeed");
             
-            // Verify update
-            Theatre updatedTheatre = theatreDao.getTheatreById(1);
-            assertEquals("Updated Theatre", updatedTheatre.getName());
-            assertEquals(300, updatedTheatre.getTotal_seats());
-        } catch (SQLException e) {
-            fail("Exception occurred: " + e.getMessage());
-        }
+            Theatre updatedTheatre = theatreDao.getTheatreById(retrievedTheatre.getTheatre_id());
+            assertAll("Updated theatre properties",
+                () -> assertNotNull(updatedTheatre, "Updated theatre should exist"),
+                () -> assertEquals("Updated Theatre", updatedTheatre.getName()),
+                () -> assertEquals("Updated Location", updatedTheatre.getLocation()),
+                () -> assertEquals(200, updatedTheatre.getTotal_seats())
+            );
+        });
     }
 
     @Test
-    public void testDeleteTheatre() {
-        try {
-            // First add a theatre
+    void testDeleteTheatre() {
+        assertDoesNotThrow(() -> {
             theatreDao.addTheatre(testTheatre);
+            Theatre retrievedTheatre = theatreDao.getTheatreById(testTheatre.getTheatre_id());
+            assertNotNull(retrievedTheatre, "Theatre should exist before deletion");
             
-            // Then delete it (assuming theatre_id = 1 for test)
-            boolean result = theatreDao.deleteTheatre(1);
-            assertTrue(result, "Theatre should be deleted successfully");
+            boolean deleted = theatreDao.deleteTheatre(retrievedTheatre.getTheatre_id());
+            assertTrue(deleted, "Delete operation should succeed");
             
-            // Verify deletion
-            Theatre deletedTheatre = theatreDao.getTheatreById(1);
+            Theatre deletedTheatre = theatreDao.getTheatreById(retrievedTheatre.getTheatre_id());
             assertNull(deletedTheatre, "Theatre should not exist after deletion");
-        } catch (SQLException e) {
-            fail("Exception occurred: " + e.getMessage());
-        }
+        });
+    }
+
+    @Test
+    void testGetTheatreById() {
+        assertDoesNotThrow(() -> {
+            theatreDao.addTheatre(testTheatre);
+            Theatre theatre = theatreDao.getTheatreById(testTheatre.getTheatre_id());
+            assertAll("Theatre retrieval",
+                () -> assertNotNull(theatre, "Theatre should be found"),
+                () -> assertEquals(testTheatre.getName(), theatre.getName()),
+                () -> assertEquals(testTheatre.getLocation(), theatre.getLocation()),
+                () -> assertEquals(testTheatre.getTotal_seats(), theatre.getTotal_seats())
+            );
+        });
     }
 
     @AfterEach
-    public void tearDown() {
+    void cleanup() {
         try {
-            // Clean up test data
+            List<Theatre> theatres = theatreDao.getAllTheatres();
+            for (Theatre theatre : theatres) {
+                if ("Test Theatre".equals(theatre.getName())) {
+                    theatreDao.deleteTheatre(theatre.getTheatre_id());
+                }
+            }
             if (connection != null && !connection.isClosed()) {
-                theatreDao.deleteTheatre(1);
                 connection.close();
             }
-        } catch (SQLException e) {
-            // Ignore cleanup errors
+        } catch (Exception e) {
+            System.err.println("Error during cleanup: " + e.getMessage());
         }
     }
 }

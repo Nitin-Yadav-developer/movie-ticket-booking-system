@@ -118,14 +118,14 @@
     <!-- Add this helper function at the bottom of your JSP -->
     <%!
     private String generateStarRating(double rating) {
-        int stars = (int) Math.round(rating);  // Remove the division by 2
+        int stars = (int) Math.round(rating)/2;  // Remove the division by 2
         StringBuilder html = new StringBuilder("<span class='stars'>");
         for (int i = 1; i <= 5; i++) {
             html.append(i <= stars ? "★" : "☆");
         }
         html.append("</span><span class='rating-value'>")
             .append(String.format("%.1f", rating))
-            .append("/5</span>");
+            .append("/10</span>");
         return html.toString();
     }
     %>

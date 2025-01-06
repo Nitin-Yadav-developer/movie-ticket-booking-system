@@ -32,12 +32,29 @@ public class TheatreDao {
     }
 
     public boolean addTheatre(Theatre theatre) throws SQLException {
-        try (PreparedStatement stmt = getConnection().prepareStatement(INSERT_THEATRE)) {
+        String sql = "INSERT INTO theatres (name, location, total_seats, status) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, theatre.getName());
             stmt.setString(2, theatre.getLocation());
             stmt.setInt(3, theatre.getTotal_seats());
             stmt.setString(4, theatre.getStatus());
-            return stmt.executeUpdate() > 0;
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        theatre.setTheatre_id(generatedKeys.getInt(1));
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+    }
+
+    public int getLastInsertedId() throws SQLException {
+        try (Statement stmt = getConnection().createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT LAST_INSERT_ID()")) {
+            return rs.next() ? rs.getInt(1) : -1;
         }
     }
 
@@ -51,7 +68,7 @@ public class TheatreDao {
                     rs.getInt("theatre_id"),
                     rs.getString("name"),
                     rs.getString("location"),
-                    rs.getInt("totalseats")
+                    rs.getInt("total_seats")  // Changed from "totalseats" to "total_seats"
                 );
             }
         }

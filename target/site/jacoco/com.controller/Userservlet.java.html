@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Userservlet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">movie-ticket-booking-system Maven Webapp</a> &gt; <a href="index.source.html" class="el_package">com.controller</a> &gt; <span class="el_source">Userservlet.java</span></div><h1>Userservlet.java</h1><pre class="source lang-java linenums">package com.controller;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -13,85 +14,84 @@ import com.user.dao.UserDao;
 import com.user.model.User;
 
 @WebServlet(&quot;/Userservlet&quot;)
-<span class="nc" id="L16">public class Userservlet extends HttpServlet {</span>
+<span class="nc" id="L17">public class Userservlet extends HttpServlet {</span>
     private static final long serialVersionUID = 1L;
     private UserDao userDao;
 
     @Override
     public void init() throws ServletException {
-<span class="nc" id="L22">        super.init();</span>
-<span class="nc" id="L23">        userDao = new UserDao();</span>
-<span class="nc" id="L24">    }</span>
+<span class="nc" id="L23">        super.init();</span>
+<span class="nc" id="L24">        userDao = new UserDao();</span>
+<span class="nc" id="L25">    }</span>
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-<span class="nc" id="L29">        String action = request.getParameter(&quot;action&quot;);</span>
+<span class="nc" id="L30">        String action = request.getParameter(&quot;action&quot;);</span>
         
-<span class="nc bnc" id="L31" title="All 2 branches missed.">        if (&quot;logout&quot;.equals(action)) {</span>
-<span class="nc" id="L32">            HttpSession session = request.getSession(false);</span>
-<span class="nc bnc" id="L33" title="All 2 branches missed.">            if (session != null) {</span>
-<span class="nc" id="L34">                session.invalidate();</span>
+<span class="nc bnc" id="L32" title="All 2 branches missed.">        if (&quot;logout&quot;.equals(action)) {</span>
+<span class="nc" id="L33">            HttpSession session = request.getSession(false);</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">            if (session != null) {</span>
+<span class="nc" id="L35">                session.invalidate();</span>
             }
-<span class="nc" id="L36">            response.sendRedirect(request.getContextPath() + &quot;/index.jsp&quot;);</span>
-<span class="nc bnc" id="L37" title="All 2 branches missed.">        } else if (action == null) {</span>
-<span class="nc" id="L38">            response.sendRedirect(&quot;index.jsp&quot;);</span>
+<span class="nc" id="L37">            response.sendRedirect(request.getContextPath() + &quot;/index.jsp&quot;);</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">        } else if (action == null) {</span>
+<span class="nc" id="L39">            response.sendRedirect(&quot;index.jsp&quot;);</span>
         }
         // Add any GET request handling here
-<span class="nc" id="L41">    }</span>
+<span class="nc" id="L42">    }</span>
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-<span class="nc" id="L46">        String action = request.getParameter(&quot;action&quot;);</span>
-<span class="nc bnc" id="L47" title="All 2 branches missed.">        if (&quot;register&quot;.equals(action)) {</span>
-<span class="nc" id="L48">            registerUser(request, response);</span>
-<span class="nc bnc" id="L49" title="All 2 branches missed.">        } else if (&quot;login&quot;.equals(action)) {</span>
-<span class="nc" id="L50">            loginUser(request, response);</span>
-<span class="nc bnc" id="L51" title="All 2 branches missed.">        } else if (&quot;updateProfile&quot;.equals(action)) {</span>
-<span class="nc" id="L52">            updateUserProfile(request, response);</span>
+<span class="nc" id="L47">        String action = request.getParameter(&quot;action&quot;);</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        if (&quot;register&quot;.equals(action)) {</span>
+<span class="nc" id="L49">            registerUser(request, response);</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">        } else if (&quot;login&quot;.equals(action)) {</span>
+<span class="nc" id="L51">            loginUser(request, response);</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        } else if (&quot;updateProfile&quot;.equals(action)) {</span>
+<span class="nc" id="L53">            updateUserProfile(request, response);</span>
         }
-<span class="nc" id="L54">    }</span>
+<span class="nc" id="L55">    }</span>
 
     private void registerUser(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         try {
-            // Get form parameters
-<span class="nc" id="L60">            String username = request.getParameter(&quot;username&quot;);</span>
-<span class="nc" id="L61">            String name = request.getParameter(&quot;name&quot;);</span>
-<span class="nc" id="L62">            String email = request.getParameter(&quot;email&quot;);</span>
-<span class="nc" id="L63">            String country = request.getParameter(&quot;country&quot;);</span>
-<span class="nc" id="L64">            String address = request.getParameter(&quot;address&quot;);</span>
-<span class="nc" id="L65">            String password = request.getParameter(&quot;password&quot;);</span>
+<span class="nc" id="L60">            String username = request.getParameter(&quot;username&quot;).trim();</span>
+<span class="nc" id="L61">            String name = request.getParameter(&quot;name&quot;).trim();</span>
+<span class="nc" id="L62">            String email = request.getParameter(&quot;email&quot;).trim();</span>
+<span class="nc" id="L63">            String country = request.getParameter(&quot;country&quot;).trim();</span>
+<span class="nc" id="L64">            String address = request.getParameter(&quot;address&quot;).trim();</span>
+<span class="nc" id="L65">            String password = request.getParameter(&quot;password&quot;).trim();</span>
+<span class="nc" id="L66">            String role = request.getParameter(&quot;role&quot;);</span>
 
-            // Debug print
-<span class="nc" id="L68">            System.out.println(&quot;Received registration request:&quot;);</span>
-<span class="nc" id="L69">            System.out.println(&quot;Username: &quot; + username);</span>
-<span class="nc" id="L70">            System.out.println(&quot;Email: &quot; + email);</span>
-
-            // Validate required fields
-<span class="nc bnc" id="L73" title="All 12 branches missed.">            if (username == null || name == null || email == null || </span>
-                country == null || address == null || password == null ||
-<span class="nc bnc" id="L75" title="All 4 branches missed.">                username.trim().isEmpty() || name.trim().isEmpty() || </span>
-<span class="nc bnc" id="L76" title="All 4 branches missed.">                email.trim().isEmpty() || country.trim().isEmpty() || </span>
-<span class="nc bnc" id="L77" title="All 4 branches missed.">                address.trim().isEmpty() || password.trim().isEmpty()) {</span>
-<span class="nc" id="L78">                request.setAttribute(&quot;error&quot;, &quot;All fields are required&quot;);</span>
-<span class="nc" id="L79">                request.getRequestDispatcher(&quot;/register.jsp&quot;).forward(request, response);</span>
-<span class="nc" id="L80">                return;</span>
+            // Validate inputs
+<span class="nc bnc" id="L69" title="All 6 branches missed.">            if (username.isEmpty() || name.isEmpty() || email.isEmpty() || </span>
+<span class="nc bnc" id="L70" title="All 6 branches missed.">                country.isEmpty() || address.isEmpty() || password.isEmpty()) {</span>
+<span class="nc" id="L71">                throw new IllegalArgumentException(&quot;All fields are required&quot;);</span>
             }
 
-            // Create user object
-<span class="nc" id="L84">            User user = new User(0, username, name, email, country, address, password);</span>
+            // Check if user already exists
+<span class="nc bnc" id="L75" title="All 2 branches missed.">            if (userDao.selectUserByEmailAndPassword(email, password) != null) {</span>
+<span class="nc" id="L76">                throw new IllegalArgumentException(&quot;Email already registered&quot;);</span>
+            }
+
+            // Create and insert user
+<span class="nc" id="L80">            User user = new User(0, username, name, email, country, address, password);</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">            user.setRole(role != null ? role : &quot;USER&quot;);</span>
             
-            try {
-<span class="nc" id="L87">                userDao.insertUser(user);</span>
-<span class="nc" id="L88">                response.sendRedirect(&quot;login.jsp?registered=true&quot;);</span>
-<span class="nc" id="L89">            } catch (Exception e) {</span>
-<span class="nc" id="L90">                request.setAttribute(&quot;error&quot;, &quot;Registration failed: &quot; + e.getMessage());</span>
-<span class="nc" id="L91">                request.getRequestDispatcher(&quot;/register.jsp&quot;).forward(request, response);</span>
-<span class="nc" id="L92">            }</span>
-<span class="nc" id="L93">        } catch (Exception e) {</span>
-<span class="nc" id="L94">            e.printStackTrace();</span>
+<span class="nc" id="L83">            userDao.insertUser(user);</span>
+            
+            // Redirect with success message
+<span class="nc" id="L86">            response.sendRedirect(&quot;login.jsp?registered=true&amp;message=Registration successful&quot;);</span>
+            
+<span class="nc" id="L88">        } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L89">            request.setAttribute(&quot;error&quot;, e.getMessage());</span>
+<span class="nc" id="L90">            request.getRequestDispatcher(&quot;/register.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L91">        } catch (SQLException e) {</span>
+<span class="nc" id="L92">            request.setAttribute(&quot;error&quot;, &quot;Database error: &quot; + e.getMessage());</span>
+<span class="nc" id="L93">            request.getRequestDispatcher(&quot;/register.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L94">        } catch (Exception e) {</span>
 <span class="nc" id="L95">            request.setAttribute(&quot;error&quot;, &quot;Registration failed: &quot; + e.getMessage());</span>
 <span class="nc" id="L96">            request.getRequestDispatcher(&quot;/register.jsp&quot;).forward(request, response);</span>
 <span class="nc" id="L97">        }</span>

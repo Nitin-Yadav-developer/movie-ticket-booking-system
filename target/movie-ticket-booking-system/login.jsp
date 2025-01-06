@@ -13,6 +13,7 @@
     <link href="css/styles.css" rel="stylesheet">
 </head>
 <body>
+<%@ include file="navbar.jsp"%>
     <div class="container mt-5">
         <div class="form-container">
             <h2 class="text-center mb-4">Login</h2>

@@ -5,24 +5,24 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 <span class="nc" id="L7">public class DatabaseConnection {</span>
-<span class="nc" id="L8">    private static Connection connection = null;</span>
+<span class="fc" id="L8">    private static Connection connection = null;</span>
 
     public static Connection getConnection() throws SQLException {
         try {
-<span class="nc bnc" id="L12" title="All 4 branches missed.">            if (connection == null || connection.isClosed()) {</span>
-<span class="nc" id="L13">                Class.forName(Constants.DB_DRIVER);</span>
-<span class="nc" id="L14">                connection = DriverManager.getConnection(</span>
+<span class="fc bfc" id="L12" title="All 4 branches covered.">            if (connection == null || connection.isClosed()) {</span>
+<span class="fc" id="L13">                Class.forName(Constants.DB_DRIVER);</span>
+<span class="fc" id="L14">                connection = DriverManager.getConnection(</span>
                     Constants.DB_URL, 
                     Constants.DB_USERNAME, 
                     Constants.DB_PASSWORD
                 );
-<span class="nc bnc" id="L19" title="All 2 branches missed.">                if (connection != null) {</span>
-<span class="nc" id="L20">                    System.out.println(&quot;Database connection successful!&quot;);</span>
+<span class="pc bpc" id="L19" title="1 of 2 branches missed.">                if (connection != null) {</span>
+<span class="fc" id="L20">                    System.out.println(&quot;Database connection successful!&quot;);</span>
                 } else {
 <span class="nc" id="L22">                    throw new SQLException(Constants.ERROR_DB_CONNECTION);</span>
                 }
             }
-<span class="nc" id="L25">            return connection;</span>
+<span class="fc" id="L25">            return connection;</span>
 <span class="nc" id="L26">        } catch (ClassNotFoundException e) {</span>
 <span class="nc" id="L27">            throw new SQLException(&quot;Database driver not found&quot;, e);</span>
 <span class="nc" id="L28">        } catch (SQLException e) {</span>
