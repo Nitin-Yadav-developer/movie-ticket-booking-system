@@ -7,37 +7,37 @@
 ## Features
    ### Both Admin and User Features
 
-                 - User Authentication
-                    - Register new account
-                    - Login/Logout
-                    - Profile management
-                    - Update Profile
+    - User Authentication
+      - Register new account
+      - Login/Logout
+      - Profile management
+      - Update Profile
                     
-                 - Admin Authentication
-                   - Admin Login
-                   - Admin Dashboard for management of movies, shows, theatres, users, and bookings
+    - Admin Authentication
+       - Admin Login
+       - Admin Dashboard for management of movies, shows, theatres, users, and bookings
 
-                - Movie Management
-                  - Browse available movies
-                  - Search movies
-                  - View movie details
-                  - Real-time seat availability
+    - Movie Management
+       - Browse available movies
+       - Search movies
+       - View movie details
+       - Real-time seat availability
 
-                - Booking System
-                  - Select show time and seats
-                  - Book multiple tickets
-                  - View booking history
-                  - Ticket download
+    - Booking System
+       - Select show time and seats
+       - Book multiple tickets
+       - View booking history
+       - Ticket download
                   
-                - Showtime Management
-                  - Browse showtime
-                  - Book ticket for that Showtime
-                  - Browse Particular movie showtime
+    - Showtime Management
+       - Browse showtime
+       - Book ticket for that Showtime
+       - Browse Particular movie showtime
                   
-                - Theatre Management 
-                 - Add a new Theatre
-                 - Delete a Theatre 
-                 - Update a theatre
+    - Theatre Management 
+       - Add a new Theatre
+       - Delete a Theatre 
+       - Update a theatre
                 
 
 ## Technology Stack
@@ -83,7 +83,7 @@
 
 # Installation & Setup
    ### 1.Clone the repository:
-   !git clone https://github.com/Nitin-Yadav-developer/movie-ticket-booking-system.git
+   git clone: https://github.com/Nitin-Yadav-developer/movie-ticket-booking-system.git
 
   ### 2.Configure database connection:
 
