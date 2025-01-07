@@ -74,10 +74,10 @@
 # Database Setup
 
  ### 1. Create a new MySQL database:
-  -Follow schema.sql
+  - Follow schema.sql
                    
  ### 2.Create the required tables:
-  -Follow schema.sql
+  - Follow schema.sql
 
 
 
