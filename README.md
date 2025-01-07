@@ -36,7 +36,7 @@
   - Secure payment integration
   - E-ticket generation
   - Booking confirmation
-  - 
+    
 - **Admin Dashboard**
    - Overview
    - User Management
@@ -132,9 +132,9 @@
        │   └── test/
        ├── pom.xml
        └── README.md
-## User Login, Booking a ticket and Download Ticket.
- ### Click on login at top right of the page.
-   ![Screenshot 2025-01-03 144750](https://github.com/user-attachments/assets/13a71504-bdea-4cc8-9058-533f5e4e4374)
+# User Login, Booking a ticket and Download Ticket.
+ - **Click on login at top right of the page.**
+  ![Screenshot 2025-01-03 144750](https://github.com/user-attachments/assets/13a71504-bdea-4cc8-9058-533f5e4e4374)
  ### Login page will appear Enter your email and password.
    ![Screenshot 2025-01-03 141311](https://github.com/user-attachments/assets/1e516cc6-85f8-4ee8-b9bd-3f60d3420ca5)
  ### Then select the movie which you want to book.
