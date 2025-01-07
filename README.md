@@ -1,75 +1,75 @@
 # Movie Ticket Booking System
- 
+  A comprehensive web-based movie ticket booking platform built with Java EE, offering a seamless cinema ticketing experience.
+  A web-based application that allows users to browse movies and book tickets online. Built with Java Servlets, JSP, and MySQL.
   This repository hosts the code for an Online Movie Ticket Booking System built in Java. 
   This application allows users to browse movies, check available showtimes, and book tickets online. The project follows a structured MVC architecture and is designed to provide a seamless booking experience.
-  A web-based application that allows users to browse movies and book tickets online. Built with Java Servlets, JSP, and MySQL.
 
-## Features
-   ### Both Admin and User Features
 
-    - User Authentication
-      - Register new account
-      - Login/Logout
-      - Profile management
-      - Update Profile
-                    
-    - Admin Authentication
+
+## 🎬 Features
+### Both for Admin and User
+
+- **User Management**
+  - User registration and authentication
+  - Profile management
+  - Booking history
+  - Admin Authentication
        - Admin Login
        - Admin Dashboard for management of movies, shows, theatres, users, and bookings
 
-    - Movie Management
-       - Browse available movies
-       - Search movies
-       - View movie details
-       - Real-time seat availability
+- **Movie Management**
+  - Dynamic movie listings
+  - Detailed movie information
+  - Genre categorization
+  - Release date tracking
+  - Price management
 
-    - Booking System
-       - Select show time and seats
-       - Book multiple tickets
-       - View booking history
-       - Ticket download
-                  
-    - Showtime Management
-       - Browse showtime
-       - Book ticket for that Showtime
-       - Browse Particular movie showtime
-                  
-    - Theatre Management 
-       - Add a new Theatre
-       - Delete a Theatre 
-       - Update a theatre
-                
+- **Theatre Management**
+  - Multiple theatre support
+  - Screen management
+  - Seat layout configuration
+  - Theatre location tracking
 
-## Technology Stack
+- **Booking System**
+  - Real-time seat selection
+  - Multiple showtime options
+  - Secure payment integration
+  - E-ticket generation
+  - Booking confirmation
+  - 
+- **Admin Dashboard**
+   - Overview
+   - User Management
+   - Movie Management(Addition, Updation, Deletion)
+   - Theatre Management(Addition, Updation, Deletion)
+   - Shows Managament(Addition, Updation, Deletion)
+   - Booking Management(Addition, Updation)
 
-   ### Frontend
-    - JSP (JavaServer Pages)
-    - HTML5
-    - CSS3
-    - JavaScript
-    - Bootstrap 4.5.2
+## 🛠️ Technology Stack
 
-   ### Backend
-    - Java Model classes
-    - Java DAO classes
-    - Java Servlets
-    - JDBC
-    - MySQL 
-            
+- **Backend**
+  - Java EE
+  - Servlets
+  - JSP
+  - JDBC
+  - MySQL
 
-   ### Tools & Libraries
-    - Maven
-    - jQuery
-    - Font Awesome
-    - MySQL Connector/J
+- **Frontend**
+  - HTML5
+  - CSS3
+  - JavaScript
+  - Bootstrap 4
+  - Font Awesome
 
-## Prerequisites
+- **Database**
+  - MySQL 8.0
 
-    - JDK 11 or higher
-    - Apache Tomcat 10.x or higher
-    - MySQL 8.0
-    - Maven 5.x
-    - IDE (Eclipse/IntelliJ IDEA)
+## ⚙️ Setup Requirements
+
+- JDK 11 or higher
+- Apache Tomcat 9.0 or higher
+- MySQL 8.0
+- Maven
 
 # Database Setup
 
