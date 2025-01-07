@@ -173,6 +173,7 @@
  - **Homepage**
    ![Screenshot 2025-01-03 140859](https://github.com/user-attachments/assets/f068a6e4-4356-4458-ae2f-fb83bfd43a13)
  - **Movies Page**
+   
    ![Screenshot 2025-01-03 140658](https://github.com/user-attachments/assets/76c42a3c-23db-4cb7-96ff-f90568c665b1)
  - **Showtimes Page**
    ![Screenshot 2025-01-03 140922](https://github.com/user-attachments/assets/aa5d2409-42ec-410b-9832-392dba0979b9)
