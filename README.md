@@ -108,21 +108,22 @@
        │   │   │   ├── com/
        │   │   │   │   ├── controller/
        │   │   │   │   ├── booking/
-       │   │   │   │   |  |___ model/
-       │   │   │   │   |  |___ dao/
-       │   │   │   │   |___ User/
-       │   │   │   │   |  |__ model/
-       │   │   │   │   |  |__ dao/
+       │   │   │   │   |  ├── model/
+       │   │   │   │   |  ├── dao/
+       │   │   │   │   ├── User/
+       │   │   │   │   |  ├── model/
+       │   │   │   │   |  ├── dao/
        │   │   │   │   ├── theatre/
-       │   │   │   │   |  |___ model/
-       │   │   │   │   |  |___ dao/
+       │   │   │   │   |  ├── model/
+       │   │   │   │   |  ├── dao/
        │   │   │   │   ├── showtime/
-       │   │   │   │   |  |___ model/
-       │   │   │   │   |  |___ dao/
+       │   │   │   │   |  ├── model/
+       │   │   │   │   |  ├── dao/
        │   │   │   │   ├── movie/
-       │   │   │   │   |  |___ model/
-       │   │   │   │   |  |___ dao/
-       │   │   │   │   └── filter/
+       │   │   │   │   |  ├── model/
+       │   │   │   │   |  ├── dao/
+       │   │   │   │   ├── filter/
+       │   │   │   │   └── util/
        │   │   ├── webapp/
        │   │   │   ├── css/
        │   │   │   ├── js/
