@@ -71,7 +71,7 @@
 - MySQL 8.0
 - Maven
 
-# Database Setup
+# 🚀 Database Setup
 
  ### 1. Create a new MySQL database:
   - Follow schema.sql
@@ -98,7 +98,7 @@
   Start Tomcat server
  ### 5.Access the application:
     http://localhost:8080/movie-ticket-booking-system
- # Project Structure
+ # 📁 Project Structure
        movie-ticket-booking-system/
        ├── src/
        │   ├── main/
@@ -178,3 +178,7 @@
    ![Screenshot 2025-01-03 140942](https://github.com/user-attachments/assets/b10b376f-44c3-43ef-a63d-80791311f886)
  ### My Bookings.
    ![Screenshot 2025-01-03 140954](https://github.com/user-attachments/assets/2a11c437-34d7-41b8-af46-114ee62742e5)
+
+## 📧 Contact
+- Author: Nitin Yadav
+- Email: ny172418@gmail.com
