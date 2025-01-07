@@ -87,8 +87,8 @@
 
   ### 2.Configure database connection:
 
-  -Open src/main/java/com/util/Constants.java
-  -Update the database URL, username, and password according to yours
+  - Open src/main/java/com/util/Constants.java
+  - Update the database URL, username, and password according to yours
 
  ### 3.Build the project:
     mvn clean install
